@@ -14,11 +14,22 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('last_name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->bigInteger('phone')->nullable();
             $table->string('password');
+            //ForeignsKeys
+            $table->unsignedBigInteger('role_id')->nullable();
+            $table->unsignedBigInteger('state_id')->nullable();
+
+            //Config laravel
             $table->rememberToken();
             $table->timestamps();
+
+            //Config ForeignsKeys
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('set null');
+            $table->foreign('state_id')->references('id')->on('states')->onDelete('set null');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
