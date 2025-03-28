@@ -11,17 +11,17 @@
                 'name' => 'Tallas',
                 'icon' => 'ellipsis-horizontal-circle',
                 'url' => route('admin.sizes.index'),
-                'current' => request()->routeIs('admin.tallas.*')
+                'current' => request()->routeIs('admin.sizes.*')
             ],
             [
                 'name' => 'Roles',
-                'icon' => 'home',
+                'icon' => 'user-plus',
                 'url' => route('admin.roles.index'),
                 'current' => request()->routeIs('admin.roles.*')
             ],
             [
                 'name' => 'Estados',
-                'icon' => 'home',
+                'icon' => 'arrow-path',
                 'url' => route('admin.states.index'),
                 'current' => request()->routeIs('admin.states.*')
             ],
