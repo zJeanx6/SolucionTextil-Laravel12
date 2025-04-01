@@ -6,6 +6,8 @@ use App\Models\Role;
 use App\Models\Size;
 use App\Models\State;
 use App\Models\User;
+use App\Models\Brand;
+use App\Models\Color;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -25,8 +27,10 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('12345')
         ]);
 
-        Size::factory(5)->create();
-        Role::factory(5)->create();
-        State::factory(5)->create();
+        Size::factory(3)->create();
+        Role::factory(3)->create();
+        State::factory(3)->create();
+        Brand::factory(5)->create();
+        Color::factory(5)->create();
     }
 }
