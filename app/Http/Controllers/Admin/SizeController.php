@@ -3,66 +3,37 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\sizes;
+use App\Models\Size;
 use Illuminate\Http\Request;
 
 class SizeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $sizes = Sizes::all();
+    public function index(){
+        $sizes = Size::all();
         return view('admin.sizes.index', compact('sizes'));
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
+    public function create(){
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(sizes $sizes)
-    {
+    public function show(Size $sizes){
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(sizes $sizes)
-    {
+    public function edit(Size $sizes){
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, sizes $sizes)
-    {
+    public function update(Request $request, Size $sizes){
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(sizes $sizes)
-    {
+    public function destroy(Size $sizes){
         //
     }
 }

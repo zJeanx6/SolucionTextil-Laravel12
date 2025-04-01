@@ -10,11 +10,6 @@
   @apply inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
 
-.background-fondo {
- @apply background-image: url('{{ asset('img/index/fondoPrincipal.jpg') }}');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  position: absolute;
-  inset: 0;
+.card{
+  @apply bg-white shadow-md rounded-lg p-6;
 }

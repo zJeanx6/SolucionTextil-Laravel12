@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\roles;
-use App\Models\sizes;
-use App\Models\states;
+use App\Models\Role;
+use App\Models\Size;
+use App\Models\State;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -25,8 +25,8 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('12345')
         ]);
 
-        Sizes::factory(3)->create();
-        Roles::factory(3)->create();
-        States::factory(3)->create();
+        Size::factory(5)->create();
+        Role::factory(5)->create();
+        State::factory(5)->create();
     }
 }
