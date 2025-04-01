@@ -18,7 +18,7 @@ class SizesFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
-            'abbreviation' => $this->faker->word
+            'abbreviation' => $this->faker->randomElement()
         ];
     }
 }

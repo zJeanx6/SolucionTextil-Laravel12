@@ -17,7 +17,8 @@ class StatesFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word
+            'name' => $this->faker->word,
+            'description' => $this->faker->text(50)
         ];
     }
 }

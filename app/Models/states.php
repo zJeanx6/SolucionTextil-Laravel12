@@ -10,6 +10,7 @@ class states extends Model
     /** @use HasFactory<\Database\Factories\StatesFactory> */
     use HasFactory;
 
+    public $timestamps = false;
     protected $fillable = [
         'name'
     ];
