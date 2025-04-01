@@ -18,7 +18,7 @@ class RoleFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
-            'description' => $this->faker->text(50)
+            'description' => $this->faker->text(300)
         ];
     }
 }

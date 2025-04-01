@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class RoleController extends Controller
 {
     public function index(){
-        $roles = Role::orderBy('id', 'desc')->get();
+        $roles = Role::orderBy('id', 'desc')->paginate(8);
         return view('admin.roles.index', compact('roles'));
     }
 
@@ -18,37 +18,32 @@ class RoleController extends Controller
     }
 
     public function store(Request $request){
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|min:3|max:255',
             'description' => 'required|string|min:10|max:255',
         ]);
-
-        $rol = new Role();
-        $rol->name = $request->input('name');
-        $rol->description = $request->input('description');
-        $rol->save();
-
+        Role::create($data);
         return redirect()->route('admin.roles.index')->with('success', 'Rol creado correctamente.');
     }
 
-    public function show(string $id)
-    {
-        $rol = Role::findOrFail($id);
-        return view('admin.roles.show', compact('rol'));
+    public function show(Role $role){
     }
 
-    public function edit(request $roles)
-    {
-        //
+    public function edit(Role $role){
+        return view('admin.roles.edit' , compact('role'));
     }
 
-    public function update(Request $request, $id)
-    {
-        //
+    public function update(Request $request, Role $role){
+        $data = $request->validate([
+            'name' => 'required|string|min:3|max:255',
+            'description' => 'required|string|min:10|max:255',
+        ]);
+        $role->update($data);
+        return redirect()->route('admin.roles.edit', $role)->with('success', 'Rol actualizado correctamente.');
     }
 
-    public function destroy(request $roles)
-    {
-        //
+    public function destroy(Role $role){
+        $role->delete();
+        return redirect()->route('admin.roles.index')->with('success', 'Rol eliminado correctamente.');
     }
 }

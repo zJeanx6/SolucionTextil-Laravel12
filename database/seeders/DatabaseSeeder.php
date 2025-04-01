@@ -27,10 +27,10 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('12345')
         ]);
 
-        Size::factory(3)->create();
-        Role::factory(3)->create();
-        State::factory(3)->create();
-        Brand::factory(5)->create();
-        Color::factory(5)->create();
+        Size::factory(15)->create();
+        Role::factory(15)->create();
+        State::factory(15)->create();
+        Brand::factory(15)->create();
+        Color::factory(15)->create();
     }
 }

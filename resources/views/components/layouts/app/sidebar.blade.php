@@ -1,34 +1,34 @@
 @php
-$groups = [
-    'Platform' => [
-        [
-            'name' => 'Dashboard',
-            'icon' => 'home',
-            'url' => route('dashboard'),
-            'current' => request()->routeIs('dashboard')
+    $groups = [
+        'Platform' => [
+            [
+                'name' => 'Dashboard',
+                'icon' => 'home',
+                'url' => route('dashboard'),
+                'current' => request()->routeIs('dashboard'),
+            ],
+            [
+                'name' => 'Roles',
+                'icon' => 'user-plus',
+                'url' => route('admin.roles.index'),
+                'current' => request()->routeIs('admin.roles.*'),
+            ],
         ],
-        [
-            'name' => 'Roles',
-            'icon' => 'user-plus',
-            'url' => route('admin.roles.index'),
-            'current' => request()->routeIs('admin.roles.*')
-        ]
-    ],
-    'Complementos' => [
-        [
-            'name' => 'Tallas',
-            'icon' => 'ellipsis-horizontal-circle',
-            'url' => route('admin.sizes.index'),
-            'current' => request()->routeIs('admin.sizes.*')
+        'Complementos' => [
+            [
+                'name' => 'Tallas',
+                'icon' => 'ellipsis-horizontal-circle',
+                'url' => route('admin.sizes.index'),
+                'current' => request()->routeIs('admin.sizes.*'),
+            ],
+            [
+                'name' => 'Estados',
+                'icon' => 'arrow-path',
+                'url' => route('admin.states.index'),
+                'current' => request()->routeIs('admin.states.*'),
+            ],
         ],
-        [
-            'name' => 'Estados',
-            'icon' => 'arrow-path',
-            'url' => route('admin.states.index'),
-            'current' => request()->routeIs('admin.states.*')
-        ],
-    ]
-];
+    ];
 @endphp
 
 <!DOCTYPE html>
@@ -61,7 +61,7 @@ $groups = [
                 @endforeach
             </flux:navlist.group>
         </flux:navlist>
-        
+
         <flux:spacer />
 
         <flux:navlist variant="outline">
@@ -78,7 +78,7 @@ $groups = [
         <!-- Desktop User Menu -->
         <flux:dropdown position="bottom" align="start">
             <flux:profile :name="auth()->user()->name" :initials="auth()->user()->initials()"
-                icon-trailing="chevrons-up-down" />            
+                icon-trailing="chevrons-up-down" />
 
             <flux:menu class="w-[220px]">
                 <flux:menu.radio.group>
@@ -149,7 +149,8 @@ $groups = [
                 <flux:menu.separator />
 
                 <flux:menu.radio.group>
-                    <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}
+                    <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>
+                        {{ __('Settings') }}
                     </flux:menu.item>
                 </flux:menu.radio.group>
 
@@ -168,6 +169,30 @@ $groups = [
     {{ $slot }}
 
     @fluxScripts
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script> 
+        @if (session('success'))
+
+            var isDarkMode = document.documentElement.classList.contains('dark');
+            var toastBackgroundColor = isDarkMode 
+                ? 'linear-gradient(to right, #444444, #666666)'  // modo oscuro
+                : 'linear-gradient(to right, #333333, #666666)';  // modo claro
+    
+            Toastify({
+                text: "{{ session('success') }}",
+                duration: 2000,
+                // close: true,
+                gravity: "top",
+                position: "center",
+                backgroundColor: toastBackgroundColor,
+                className: "toast-notification",
+                style: {
+                    borderRadius: "10px",
+                }
+            }).showToast();
+        @endif
+    </script>
 </body>
 
 </html>
