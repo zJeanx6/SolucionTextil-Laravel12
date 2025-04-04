@@ -15,6 +15,9 @@
                         ESTADO
                     </th>
                     <th scope="col" class="px-6 py-3">
+                        DESCRIPCION
+                    </th>
+                    <th scope="col" class="px-6 py-3">
                         <span class="sr-only">Edit</span>
                     </th>
                 </tr>
@@ -29,6 +32,9 @@
                         </th>
                         <td class="px-6 py-4">
                             {{$state->name}}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{$state->description}}
                         </td>
                         <td class="px-6 py-4 text-right">
                             <a href="#"

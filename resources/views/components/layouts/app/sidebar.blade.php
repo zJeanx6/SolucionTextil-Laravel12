@@ -7,25 +7,32 @@
                 'url' => route('dashboard'),
                 'current' => request()->routeIs('dashboard'),
             ],
-            [
-                'name' => 'Roles',
-                'icon' => 'user-plus',
-                'url' => route('admin.roles.index'),
-                'current' => request()->routeIs('admin.roles.*'),
-            ],
+
         ],
         'Complementos' => [
             [
                 'name' => 'Tallas',
-                'icon' => 'ellipsis-horizontal-circle',
+                'icon' => 'home',
                 'url' => route('admin.sizes.index'),
                 'current' => request()->routeIs('admin.sizes.*'),
             ],
             [
                 'name' => 'Estados',
-                'icon' => 'arrow-path',
+                'icon' => 'home',
                 'url' => route('admin.states.index'),
                 'current' => request()->routeIs('admin.states.*'),
+            ],
+            [
+                'name' => 'Roles',
+                'icon' => 'home',
+                'url' => route('admin.roles.index'),
+                'current' => request()->routeIs('admin.roles.*'),
+            ],
+            [
+                'name' => 'Marcas',
+                'icon' => 'home',
+                'url' => route('admin.brands.index'),
+                'current' => request()->routeIs('admin.brands.*'),
             ],
         ],
     ];
@@ -53,8 +60,7 @@
                         wire:navigate>{{ $link['name'] }}</flux:navlist.item>
                 @endforeach
             </flux:navlist.group>
-
-            <flux:navlist.group expandable :heading="'Complementos'" class="hidden lg:grid">
+            <flux:navlist.group expandable :heading="'Complementos'" :expanded="collect($groups['Complementos'])->contains(fn($link)=>$link['current'])" class="grid">
                 @foreach ($groups['Complementos'] as $link2)
                     <flux:navlist.item :icon="$link2['icon']" :href="$link2['url']" :current="$link2['current']"
                         wire:navigate>{{ $link2['name'] }}</flux:navlist.item>

@@ -1,12 +1,14 @@
 <x-layouts.app>
-    <flux:breadcrumbs class="mb-4">
-        <flux:breadcrumbs.item :href="route('dashboard')">Dashboard</flux:breadcrumbs.item>
-        <flux:breadcrumbs.item :href="route('admin.roles.index')">Roles</flux:breadcrumbs.item>
-        <flux:breadcrumbs.item :href="route('admin.roles.create')">Crear</flux:breadcrumbs.item>
-    </flux:breadcrumbs>
+    <div class="mb-4 flex justify-between items-center">
+        <flux:breadcrumbs class="mb-4">
+            <flux:breadcrumbs.item :href="route('dashboard')">Dashboard</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item :href="route('admin.roles.index')">Roles</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item :href="route('admin.roles.create')">Crear</flux:breadcrumbs.item>
+        </flux:breadcrumbs>
+    </div>
 
     <div class="card">
-        <form action="{{route('admin.roles.store')}}" method="POST">
+        <form action="{{ route('admin.roles.store') }}" method="POST">
             @csrf
             <div class="mb-4">
                 <flux:input label="Nombre" name="name" placeholder="Escribe el nombre de un nuevo rol">Nuevo
@@ -18,7 +20,7 @@
                     placeholder="Ingresa una descripción sobre este nuevo rol"></flux:textarea>
             </div>
             @error('description')
-            *{{$message}} 
+                *{{ $message }}
             @enderror
 
             <div class="flex justify-end">
