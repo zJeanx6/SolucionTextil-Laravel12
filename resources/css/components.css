@@ -11,5 +11,9 @@
 }
 
 .card{
-  @apply bg-white shadow-md rounded-lg p-6;
+  @apply bg-white dark:bg-black shadow-md rounded-lg p-6;
 }
+
+/* .cabecera-center {
+  @apply px-6 py-3 text-center;
+} */
