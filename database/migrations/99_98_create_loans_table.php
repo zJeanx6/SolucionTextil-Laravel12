@@ -11,6 +11,10 @@ return new class extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('document');
+            $table->string('name');
+            $table->unsignedInteger('file');
+
 
             //ForeignsKeys
             $table->unsignedBigInteger('card_id')->nullable();

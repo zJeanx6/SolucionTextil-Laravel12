@@ -10,17 +10,17 @@ return new class extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description');
+            $table->string('name', 50);
+            $table->longText('description');
         });
 
         Schema::create('users', function (Blueprint $table) {
             $table->unsignedBigInteger('card')->primary();
-            $table->string('name');
-            $table->string('last_name')->nullable();
+            $table->string('name', 50);
+            $table->string('last_name', 50)->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->bigInteger('phone')->nullable();
+            $table->unsignedBigInteger('phone')->nullable();
             $table->string('password');
             
             //ForeignsKeys

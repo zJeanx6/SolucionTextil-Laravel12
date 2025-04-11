@@ -9,12 +9,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('suppliers', function (Blueprint $table) {
-            $table->String('nit')->primary();
-            $table->String('name');
-            $table->String('email')->unique();
-            $table->unsignedBigInteger('phone');
+            $table->string('nit', 50)->primary();
+            $table->enum('person_type', ['Natural', 'Juridica']);
+
+            //Persona natural
+            $table->string('name', 50)->nullable();
+            $table->string('email')->unique()->nullable();
+            $table->unsignedBigInteger('phone')->nullable();
+            
+            //Persona Juridica
+            $table->string('representative_name', 50)->nullable();
+            $table->string('representative_email')->unique()->nullable();
+            $table->unsignedBigInteger('representative_phone')->nullable();
         });
-    }
+    }   
 
     public function down(): void
     {

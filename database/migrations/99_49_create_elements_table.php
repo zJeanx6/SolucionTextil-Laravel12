@@ -8,10 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::create('elements_type', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 50);
+            $table->text('description')->nullable();
+        });
+
         Schema::create('elements', function (Blueprint $table) {
             $table->unsignedInteger('code')->primary();
-            $table->String('name', 150);
-            $table->Integer('stock');
+            $table->String('name', 50);
+            $table->unsignedInteger('stock');
             $table->String('image')->nullable();
             $table->decimal('broad', 5, 2)->nullable();
             $table->decimal('long', 5, 2)->nullable();
@@ -28,6 +34,7 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::dropIfExists('elements_type');
         Schema::dropIfExists('elements');
     }
 };

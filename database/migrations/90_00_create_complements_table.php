@@ -10,24 +10,24 @@ return new class extends Migration
     {
         Schema::create('states', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description');
+            $table->string('name', 50);
+            $table->longText('description');
         });
         
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
-            $table->string('name',100);
+            $table->string('name', 50);
         });
 
         Schema::create('colors', function (Blueprint $table) {
             $table->id();
             $table->string('code',7)->nullable();
-            $table->string('name',20);
+            $table->string('name', 50);
         });
 
         Schema::create('sizes', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name', 50);
             $table->string('abbreviation');
         });
     }

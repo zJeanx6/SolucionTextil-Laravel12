@@ -8,9 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::create('products_type', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 50);
+            $table->text('description')->nullable();
+        });
+
         Schema::create('products', function (Blueprint $table) {
-            $table->unsignedInteger('code', 10);
-            $table->String('name');
+            $table->unsignedInteger('code')->primary();
+            $table->String('name', 50);
             $table->unsignedInteger('stock');
             $table->String('image')->nullable();
 
@@ -28,6 +34,7 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::dropIfExists('products_type');
         Schema::dropIfExists('products');
     }
 };
