@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->Integer('code', 10);
+            $table->unsignedInteger('code', 10);
             $table->String('name');
-            $table->Integer('stock');
+            $table->unsignedInteger('stock');
             $table->String('image')->nullable();
 
             //Foreings Keys
