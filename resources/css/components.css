@@ -11,9 +11,16 @@
 }
 
 .card{
-  @apply bg-white dark:bg-black shadow-md rounded-lg p-6;
+  @apply bg-white dark:bg-zinc-900 shadow-md rounded-lg p-6;
+}
+  
+.hover-input {
+  @apply bg-white dark:bg-zinc-900 dark:hover:bg-zinc-950 ;
 }
 
+.breadcrumbs {
+  @apply h-12 flex justify-between items-center top-8 z-10 px-4;
+}
 /* .cabecera-center {
   @apply px-6 py-3 text-center;
 } */

@@ -175,30 +175,6 @@
     {{ $slot }}
 
     @fluxScripts
-
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script> 
-        @if (session('success'))
-
-            var isDarkMode = document.documentElement.classList.contains('dark');
-            var toastBackgroundColor = isDarkMode 
-                ? 'linear-gradient(to right, #444444, #666666)'  // modo oscuro
-                : 'linear-gradient(to right, #333333, #666666)';  // modo claro
-    
-            Toastify({
-                text: "{{ session('success') }}",
-                duration: 2000,
-                // close: true,
-                gravity: "top",
-                position: "center",
-                backgroundColor: toastBackgroundColor,
-                className: "toast-notification",
-                style: {
-                    borderRadius: "10px",
-                }
-            }).showToast();
-        @endif
-    </script>
 </body>
 
 </html>

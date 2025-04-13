@@ -1,6 +1,6 @@
 <x-layouts.app>
-<div class="mb-4 flex justify-between items-center">
-    <flux:breadcrumbs class="mb-4">
+<div class="h-4 flex justify-between items-center top-8 z-10 px-4 mb-6"> 
+    <flux:breadcrumbs>
         <flux:breadcrumbs.item :href="route('dashboard')">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item :href="route('admin.roles.index')">Roles</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>Editar</flux:breadcrumbs.item>
@@ -12,12 +12,12 @@
             @csrf
             @method('PUT')
             <div class="mb-4">
-                <flux:input label="Nombre" name="name" value="{{old('name', $role->name)}}" placeholder="Escribe el nombre de un nuevo rol">Nuevo
+                <flux:input class="hover-input" label="Nombre" name="name" value="{{old('name', $role->name)}}" placeholder="Escribe el nombre de un nuevo rol">Nuevo
                 </flux:input>
             </div>
 
             <div class="mb-4">
-                <flux:textarea label="Descripción" name="description"
+                <flux:textarea class="dark:hover:bg-zinc-800" label="Descripción" name="description"
                     placeholder="Ingresa una descripción sobre este nuevo rol">{{old('description', $role->description)}}</flux:textarea>
             </div>
             @error('description')
