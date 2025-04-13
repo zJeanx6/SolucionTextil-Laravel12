@@ -9,4 +9,4 @@ use Illuminate\Support\Facades\Route;
 Route::resource('sizes', SizeController::class);
 Route::resource('roles', RoleController::class);
 Route::resource('states', StateController::class);
-Route::resource('brands', BrandController::class);
+Route::resource('marcas', BrandController::class)->parameter( 'marcas', 'brand')->names('brands');
