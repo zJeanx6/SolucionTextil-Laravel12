@@ -57,8 +57,9 @@ return new class extends Migration
 
         Schema::create('maintenance_detail', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('maintenance_id');
+            $table->unsignedBigInteger('maintenance_id')->nullable();
             $table->unsignedBigInteger('maintenance_type_id')->nullable();
+            $table->foreign('maintenance_id')->references('id')->on('maintenance')->onDelete('set null');
             $table->foreign('maintenance_type_id')->references('id')->on('maintenance_types')->onDelete('set null');
         });
     }
