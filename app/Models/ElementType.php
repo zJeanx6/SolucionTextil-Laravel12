@@ -5,19 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Role extends Model
+class ElementType extends Model
 {
-    /** @use HasFactory<\Database\Factories\RolesFactory> */
+    /** @use HasFactory<\Database\Factories\ElementTypeFactory> */
     use HasFactory;
 
     public $timestamps = false;
+
     protected $fillable = [
         'name',
         'description',
     ];
 
-    public function users()
+    public function elements()
     {
-        return $this->hasMany(User::class, 'role_id');
+        return $this->hasMany(Element::class, 'element_type_id', 'id');
     }
 }

@@ -5,19 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Role extends Model
+class ProductType extends Model
 {
-    /** @use HasFactory<\Database\Factories\RolesFactory> */
+    /** @use HasFactory<\Database\Factories\ProductTypeFactory> */
     use HasFactory;
 
     public $timestamps = false;
+
     protected $fillable = [
         'name',
         'description',
     ];
 
-    public function users()
+    public function products()
     {
-        return $this->hasMany(User::class, 'role_id');
+        return $this->hasMany(Product::class, 'product_type_id');
     }
 }

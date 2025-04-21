@@ -13,7 +13,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $primaryKey = 'card';
-    protected $keyType = 'unsignedBigInteger';
+    protected $keyType = 'int';
     public $incrementing = false;
 
     protected $fillable = [
@@ -22,12 +22,49 @@ class User extends Authenticatable
         'last_name',
         'email',
         'password',
+        'role_id',
+        'state_id',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function state()
+    {
+        return $this->belongsTo(State::class);
+    }
+
+    public function maintenances()
+    {
+        return $this->hasMany(Maintenance::class, 'card_id', 'card');
+    }
+
+    public function loans()
+    {
+        return $this->hasMany(Loan::class, 'card_id', 'card');
+    }
+
+    public function exits()
+    {
+        return $this->hasMany(ProductExit::class, 'card_id', 'card');
+    }
+
+    public function shoppings()
+    {
+        return $this->hasMany(Shopping::class, 'card_id', 'card');
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'card_id', 'card');
+    }
 
     protected function casts(): array
     {
@@ -41,7 +78,7 @@ class User extends Authenticatable
     {
         return Str::of($this->name)
             ->explode(' ')
-            ->map(fn (string $name) => Str::of($name)->substr(0, 1))
+            ->map(fn(string $name) => Str::of($name)->substr(0, 1))
             ->implode('');
     }
 }

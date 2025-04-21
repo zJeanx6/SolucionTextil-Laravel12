@@ -15,4 +15,19 @@ class State extends Model
         'name',
         'description',
     ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'state_id');
+    }
+
+    public function machines()
+    {
+        return $this->hasMany(Machine::class, 'state_id');
+    }
+
+    public function maintenances()
+    {
+        return $this->hasMany(Maintenance::class, 'state_id');
+    }
 }

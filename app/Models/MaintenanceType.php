@@ -5,19 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Role extends Model
+class MaintenanceType extends Model
 {
-    /** @use HasFactory<\Database\Factories\RolesFactory> */
+    /** @use HasFactory<\Database\Factories\MaintenanceTypeFactory> */
     use HasFactory;
 
     public $timestamps = false;
+
     protected $fillable = [
         'name',
         'description',
     ];
 
-    public function users()
+    public function details()
     {
-        return $this->hasMany(User::class, 'role_id');
+        return $this->hasMany(MaintenanceDetail::class, 'maintenance_type_id');
     }
 }
