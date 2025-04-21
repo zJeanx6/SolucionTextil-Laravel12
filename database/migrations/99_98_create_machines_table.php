@@ -63,7 +63,7 @@ return new class extends Migration
             $table->unsignedBigInteger('maintenance_type_id')->nullable();
 
             //Config ForeignsKeys
-            $table->foreign('maintenance_id')->references('id')->on('maintenance')->onDelete('set null');
+            $table->foreign('maintenance_id')->references('id')->on('maintenances')->onDelete('set null');
             $table->foreign('maintenance_type_id')->references('id')->on('maintenance_types')->onDelete('set null');
         });
     }
