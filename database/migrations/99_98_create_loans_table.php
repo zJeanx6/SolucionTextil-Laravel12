@@ -26,7 +26,7 @@ return new class extends Migration
             $table->foreign('card_id')->references('card')->on('users')->onDelete('set null');
         });
 
-        Schema::create('loans_detail', function (Blueprint $table) {
+        Schema::create('loan_details', function (Blueprint $table) {
             $table->id();
             $table->integer('amount');
 
@@ -44,6 +44,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('loans');
-        Schema::dropIfExists('loans_detail');
+        Schema::dropIfExists('loan_details');
     }
 };

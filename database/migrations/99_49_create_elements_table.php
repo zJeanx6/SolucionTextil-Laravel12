@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('elements_type', function (Blueprint $table) {
+        Schema::create('element_types', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
             $table->text('description')->nullable();
@@ -16,9 +16,9 @@ return new class extends Migration
 
         Schema::create('elements', function (Blueprint $table) {
             $table->unsignedInteger('code')->primary();
-            $table->String('name', 50);
+            $table->string('name', 50);
             $table->unsignedInteger('stock');
-            $table->String('image')->nullable();
+            $table->string('image')->nullable();
             $table->decimal('broad', 5, 2)->nullable();
             $table->decimal('long', 5, 2)->nullable();
 
@@ -28,13 +28,13 @@ return new class extends Migration
 
             //Config ForeignsKeys
             $table->foreign('color_id')->references('id')->on('colors')->onDelete('set null');
-            $table->foreign('element_type_id')->references('id')->on('elements_type')->onDelete('set null');
+            $table->foreign('element_type_id')->references('id')->on('element_types')->onDelete('set null');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('elements_type');
+        Schema::dropIfExists('element_types');
         Schema::dropIfExists('elements');
     }
 };
