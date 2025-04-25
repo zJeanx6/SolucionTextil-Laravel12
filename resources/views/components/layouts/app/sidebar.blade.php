@@ -12,25 +12,31 @@
         'Complementos' => [
             [
                 'name' => 'Tallas',
-                'icon' => 'home',
+                'icon' => 'swatch',
                 'url' => route('admin.sizes.index'),
                 'current' => request()->routeIs('admin.sizes.*'),
             ],
             [
+                'name' => 'Colores',
+                'icon' => 'swatch',
+                'url' => route('admin.colors.index'),
+                'current' => request()->routeIs('admin.colors.*'),
+            ],
+            [
                 'name' => 'Estados',
-                'icon' => 'home',
+                'icon' => 'cpu-chip',
                 'url' => route('admin.states.index'),
                 'current' => request()->routeIs('admin.states.*'),
             ],
             [
                 'name' => 'Roles',
-                'icon' => 'home',
+                'icon' => 'user-plus',
                 'url' => route('admin.roles.index'),
                 'current' => request()->routeIs('admin.roles.*'),
             ],
             [
                 'name' => 'Marcas',
-                'icon' => 'home',
+                'icon' => 'globe-americas',
                 'url' => route('admin.brands.index'),
                 'current' => request()->routeIs('admin.brands.*'),
             ],
