@@ -19,7 +19,9 @@ class StateController extends Controller
 
     public function store(Request $request){
         $data = $request->validate([
-            'name' => 'required|min:3|max:100'
+            'name' => 'required|min:3|max:100',
+            'description' => 'nullable|min:10|max:255',
+
         ]);
 
         State::create($data);

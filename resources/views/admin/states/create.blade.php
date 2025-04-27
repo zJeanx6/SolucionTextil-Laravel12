@@ -13,7 +13,21 @@
             <div class="mb-4">
                 <flux:input class="hover-input" label="Nombre" name="name" placeholder="Escribe el nombre de un nuevo estado">Nuevo</flux:input>
             </div>
-            <div class="flex justify-end"><flux:button variant="primary" type="submit">Guardar</flux:button></div>
+
+            <div class="mb-4">
+                <flux:textarea class="dark:hover:bg-zinc-800"
+                    label="Descripción" name="description" placeholder="Ingresa una descripción sobre este nuevo estado" />
+
+            </div>
+            @error('description')
+                *{{ $message }}
+            @enderror
+
+            <div class="flex justify-end">
+                <flux:button variant="primary" type="submit">
+                    Crear
+                </flux:button>
+            </div>
         </form>
     </div>
 </x-layouts.app>

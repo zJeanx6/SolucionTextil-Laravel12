@@ -13,6 +13,9 @@
                 <tr>
                     <th scope="col" class="px-6 py-3 text-center dark:text-white">ID</th>
                     <th scope="col" class="px-6 py-3 text-center dark:text-white">NOMBRE</th>
+                    <th scope="col" class="px-6 py-3 w-4/6 text-center dark:text-white ">
+                        DESCRIPCION
+                    </th>
                     <th scope="col" class="px-6 py-3 text-center dark:text-white">ACCIONES</th>
                 </tr>
             </thead>
@@ -25,6 +28,9 @@
                            {{$state->id}}
                         </th>
                         <td class="px-6 py-4 text-center">{{ $state->name }}</td>
+                        <td class="px-10 py-4 text-center break-words max-w-[200px]">
+                            {{ $state->description }}
+                        </td>
                         <td class="px-6 py-4 text-center">
                             <div class="flex justify-center">
                                 <form action="{{ route('admin.states.destroy', $state) }}" method="POST">
@@ -44,5 +50,4 @@
         </table>
     </div>
     <div class="mx-4 mt-4 mb-4">{{ $states->links() }}</div>
-
 </x-layouts.app>

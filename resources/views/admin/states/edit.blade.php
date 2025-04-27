@@ -14,6 +14,14 @@
                 <flux:input class="hover-input" label="Nombre" name="name" value="{{ old('name', $state->name) }}" placeholder="Escribe el nombre del nuevo estado">Nuevo</flux:input>
             </div>
 
+            <div class="mb-4">
+                <flux:textarea class="dark:hover:bg-zinc-800" label="Descripción" name="description"
+                    placeholder="Ingresa una descripción sobre este nuevo rol">{{old('description', $state->description)}}</flux:textarea>
+            </div>
+            @error('description')
+            *{{$message}} 
+            @enderror
+
             <div class="flex justify-end">
                 <flux:button variant="primary" type="submit">
                     Guardar
