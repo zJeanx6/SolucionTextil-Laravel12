@@ -9,6 +9,14 @@
             ],
 
         ],
+        'Users' => [
+            [
+                'name' => 'Usuarios',
+                'icon' => 'users',
+                'url' => route('admin.users.index'),
+                'current' => request()->routeIs('admin.users.*'),
+            ],
+        ],
         'Complementos' => [
             [
                 'name' => 'Tallas',
@@ -62,6 +70,12 @@
         <flux:navlist variant="outline">
             <flux:navlist.group :heading="'Platform'" class="grid">
                 @foreach ($groups['Platform'] as $link)
+                    <flux:navlist.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']"
+                        wire:navigate>{{ $link['name'] }}</flux:navlist.item>
+                @endforeach
+            </flux:navlist.group>
+            <flux:navlist.group :heading="'Users'" class="grid">
+                @foreach ($groups['Users'] as $link)
                     <flux:navlist.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']"
                         wire:navigate>{{ $link['name'] }}</flux:navlist.item>
                 @endforeach
