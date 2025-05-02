@@ -14,3 +14,5 @@ Route::resource('states', StateController::class);
 Route::resource('marcas', BrandController::class)->parameter( 'marcas', 'brand')->names('brands');
 Route::resource('colores', ColorController::class)->parameter( 'colores', 'color')->names('colors');
 Route::resource('users', UsersController::class)->names('users');
+
+Route::get('tipos', TypeManager::class)->name('types.index');

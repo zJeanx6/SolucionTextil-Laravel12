@@ -48,6 +48,12 @@
                 'url' => route('admin.brands.index'),
                 'current' => request()->routeIs('admin.brands.*'),
             ],
+            [
+                'name' => 'Tipos',
+                'icon' => 'swatch',
+                'url' => route('admin.types.index'),
+                'current' => request()->routeIs('admin.types.index'),
+            ],
         ],
     ];
 @endphp
