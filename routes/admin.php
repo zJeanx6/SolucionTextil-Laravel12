@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\Admin\StateController;
 use App\Http\Controllers\Admin\UsersController;
+use App\Livewire\TypeManager;
 use Illuminate\Support\Facades\Route;
 
 Route::resource('sizes', SizeController::class);
