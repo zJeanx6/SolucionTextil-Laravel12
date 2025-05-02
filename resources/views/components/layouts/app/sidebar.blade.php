@@ -9,14 +9,6 @@
             ],
 
         ],
-        'Users' => [
-            [
-                'name' => 'Usuarios',
-                'icon' => 'users',
-                'url' => route('admin.users.index'),
-                'current' => request()->routeIs('admin.users.*'),
-            ],
-        ],
         'Complementos' => [
             [
                 'name' => 'Tallas',
@@ -80,12 +72,6 @@
                         wire:navigate>{{ $link['name'] }}</flux:navlist.item>
                 @endforeach
             </flux:navlist.group>
-            <flux:navlist.group :heading="'Users'" class="grid">
-                @foreach ($groups['Users'] as $link)
-                    <flux:navlist.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']"
-                        wire:navigate>{{ $link['name'] }}</flux:navlist.item>
-                @endforeach
-            </flux:navlist.group>
             <flux:navlist.group expandable :heading="'Complementos'" :expanded="collect($groups['Complementos'])->contains(fn($link)=>$link['current'])" class="grid">
                 @foreach ($groups['Complementos'] as $link2)
                     <flux:navlist.item :icon="$link2['icon']" :href="$link2['url']" :current="$link2['current']"
@@ -102,8 +88,8 @@
                 {{ __('Repository') }}
             </flux:navlist.item>
 
-            <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits" target="_blank">
-                {{ __('Documentation') }}
+            <flux:navlist.item icon="users" :href="route('admin.users.index')" :current="request()->routeIs('admin.users.*')">
+                {{ __('Usuarios') }}
             </flux:navlist.item>
         </flux:navlist>
 

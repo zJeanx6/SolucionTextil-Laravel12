@@ -6,16 +6,17 @@ use App\Models\ElementType;
 use App\Models\MachineType;
 use App\Models\ProductType;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class TypeManager extends Component
 {
+    use WithPagination;
+
     public $modelSelected = 'element_types';
     public $name;
     public $view = 'index';
-    public $types = [];
     public $editId = null;
     public $search = '';
-
 
     protected $models = [
         'element_types' => ElementType::class,
@@ -23,34 +24,19 @@ class TypeManager extends Component
         'machine_types' => MachineType::class,
     ];
 
-    public function mount()
-    {
-        $this->loadTypes();
-    }
-
     public function getCurrentModel()
     {
         return $this->models[$this->modelSelected];
     }
 
-    public function loadTypes()
+    public function updatingSearch()
     {
-        $model = $this->getCurrentModel();
-        // $this->types = $model::all();
-        $this->types = $model::query()
-            ->where('name', 'like', '%' . $this->search . '%')
-            ->get();
+        $this->resetPage();
     }
 
-    public function updatedSearch()
+    public function updatingModelSelected()
     {
-        $this->loadTypes();
-    }
-
-
-    public function updatedModelSelected()
-    {
-        $this->loadTypes();
+        $this->resetPage();
     }
 
     public function save()
@@ -67,7 +53,6 @@ class TypeManager extends Component
         $this->reset('name');
         $this->view = 'index';
         session()->flash('success', 'Tipo creado exitosamente.');
-        $this->loadTypes();
     }
 
     public function create()
@@ -78,7 +63,6 @@ class TypeManager extends Component
     public function index()
     {
         $this->view = 'index';
-        $this->loadTypes();
     }
 
     public function edit($id)
@@ -107,7 +91,6 @@ class TypeManager extends Component
         $this->reset('name', 'editId');
         $this->view = 'index';
         session()->flash('success', 'Tipo actualizado exitosamente.');
-        $this->loadTypes();
     }
 
     public function delete($id)
@@ -117,11 +100,17 @@ class TypeManager extends Component
         $type->delete();
 
         session()->flash('success', 'Tipo eliminado exitosamente.');
-        $this->loadTypes();
     }
 
     public function render()
     {
-        return view('livewire.type-manager');
+        $model = $this->getCurrentModel();
+
+        $types = $model::query()
+            ->where('name', 'like', '%' . $this->search . '%')
+            ->orderBy('id', 'desc')
+            ->paginate(12);
+
+        return view('livewire.type-manager', compact('types'));
     }
 }

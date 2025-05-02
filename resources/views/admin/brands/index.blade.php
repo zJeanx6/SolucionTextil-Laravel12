@@ -10,7 +10,7 @@
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead
-                class="text border-b dark:border-zinc-700 border-gray-200 text-gray-700 uppercase bg-gray-50 dark:bg-zinc-900 dark:text-gray-400">
+                class="head-table">
                 <tr>
                     <th scope="col" class="px-6 py-3 text-center dark:text-white">ID</th>
                     <th scope="col" class="px-6 py-3 text-center dark:text-white">NOMBRE</th>

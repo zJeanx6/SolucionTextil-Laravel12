@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('machine_types', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
-            $table->longText('description')->nullable();
         });
 
         Schema::create('machines', function (Blueprint $table) {

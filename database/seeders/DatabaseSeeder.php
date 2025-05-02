@@ -8,6 +8,9 @@ use App\Models\State;
 use App\Models\User;
 use App\Models\Brand;
 use App\Models\Color;
+use App\Models\ElementType;
+use App\Models\MachineType;
+use App\Models\ProductType;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -28,5 +31,8 @@ class DatabaseSeeder extends Seeder
         State::factory(15)->create();
         Brand::factory(15)->create();
         Color::factory(15)->create();
+        ElementType::factory(15)->create();
+        ProductType::factory(15)->create();
+        MachineType::factory(15)->create();
     }
 }
