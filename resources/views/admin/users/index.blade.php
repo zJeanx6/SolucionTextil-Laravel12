@@ -1,5 +1,5 @@
-<x-layouts.app>
-    <div class="h-4 flex justify-between items-center top-8 z-10 px-4 mb-6">
+<x-layouts.app :title="'Usuarios'">
+    <div class="breadcrumbs-center">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item :href="route('dashboard')">Dashboard</flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.users.index')">Usuarios</flux:breadcrumbs.item>
@@ -8,9 +8,9 @@
     </div>
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <table class="table">
             <thead
-                class="text border-b dark:border-zinc-700 border-gray-200 text-gray-700 uppercase bg-gray-50 dark:bg-zinc-900 dark:text-gray-400">
+                class="head-table">
                 <tr>
                     <th scope="col" class="px-6 py-3 text-center dark:text-white">CARD</th>
                     <th scope="col" class="px-6 py-3 text-center dark:text-white">NOMBRE</th>
@@ -21,7 +21,7 @@
             <tbody>
                 @foreach ($users as $user)
                     <tr
-                        class="bg-white border-b dark:bg-zinc-900 dark:border-zinc-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800">
+                        class="table-content">
                         <th scope="row" class="px-6 py-4 text-center font-medium whitespace-nowrap">
                             {{ $user->card }}</th>
                         <td class="px-6 py-4 text-center uppercase">{{ $user->name }}</td>

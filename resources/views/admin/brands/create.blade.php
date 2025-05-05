@@ -1,5 +1,5 @@
-<x-layouts.app>
-    <div class="h-4 flex justify-between items-center top-8 z-10 px-4 mb-6">
+<x-layouts.app :title="'Crear Marca'">
+    <div class="breadcrumbs-center">
     <flux:breadcrumbs>
         <flux:breadcrumbs.item :href="route('dashboard')">Dashboard</flux:breadcrumbs.item>
         <flux:breadcrumbs.item :href="route('admin.brands.index')">Marcas</flux:breadcrumbs.item>

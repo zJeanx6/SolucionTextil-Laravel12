@@ -1,5 +1,5 @@
-<x-layouts.app>
-    <div class="h-4 flex justify-between items-center top-8 z-10 px-4 mb-6">
+<x-layouts.app :title="'Tallas'">
+    <div class="breadcrumbs-center">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item :href="route('dashboard')">Dashboard</flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.sizes.index')">Tallas</flux:breadcrumbs.item>
@@ -8,10 +8,10 @@
     </div>    
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text border-b dark:border-zinc-700 border-gray-200 text-gray-700 uppercase bg-gray-50 dark:bg-zinc-900 dark:text-gray-400">
+            <table class="table">
+                <thead 
+                    class="head-table">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-center dark:text-white">ID</th>
                         <th scope="col" class="px-6 py-3 text-center dark:text-white">NOMBRE</th>
                         <th scope="col" class="px-6 py-3 text-center dark:text-white">ABREVIACION-TALLA</th>
                         <th scope="col" class="px-6 py-3 text-center dark:text-white">ACCIONES</th>
@@ -20,11 +20,7 @@
                 <tbody>
                     @foreach ($sizes as $size)
                         <tr
-                            class="bg-white border-b dark:bg-zinc-900 dark:border-zinc-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800">
-                            <th scope="row"
-                                class="px-6 py-4 text-center font-medium whitespace-nowrap">
-                                {{$size->id}}
-                            </th>
+                            class="table-content">
                             <td class="px-6 py-4 text-center">{{$size->name}}</td>
                             <td class="px-10 py-4 break-words max-w-[200px] text-center align-middle">{{$size->abbreviation}}</td>
                             <td class="px-6 py-4 text-center">
