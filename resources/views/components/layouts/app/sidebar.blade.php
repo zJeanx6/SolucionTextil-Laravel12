@@ -9,6 +9,26 @@
             ],
 
         ],
+        'Inventarios' =>[
+            [
+                'name' => 'Elementos',
+                'icon' => 'home',
+                'url' => route('admin.elements.index'),
+                'current' => request()->routeIs('admin.elements.index'),
+            ],
+            [
+                'name' => 'Productos',
+                'icon' => 'home',
+                'url' => route('admin.products.index'),
+                'current' => request()->routeIs('admin.products.index'),
+            ],
+            [
+                'name' => 'Maquinas',
+                'icon' => 'home',
+                'url' => route('admin.machines.index'),
+                'current' => request()->routeIs('admin.machines.index'),
+            ],           
+        ],
         'Complementos' => [
             [
                 'name' => 'Tallas',
@@ -74,6 +94,12 @@
             </flux:navlist.group>
             <flux:navlist.group expandable :heading="'Complementos'" :expanded="collect($groups['Complementos'])->contains(fn($link)=>$link['current'])" class="grid">
                 @foreach ($groups['Complementos'] as $link2)
+                    <flux:navlist.item :icon="$link2['icon']" :href="$link2['url']" :current="$link2['current']"
+                        wire:navigate>{{ $link2['name'] }}</flux:navlist.item>
+                @endforeach
+            </flux:navlist.group>
+            <flux:navlist.group expandable :heading="'Inventarios'" :expanded="collect($groups['Inventarios'])->contains(fn($link)=>$link['current'])" class="grid">
+                @foreach ($groups['Inventarios'] as $link2)
                     <flux:navlist.item :icon="$link2['icon']" :href="$link2['url']" :current="$link2['current']"
                         wire:navigate>{{ $link2['name'] }}</flux:navlist.item>
                 @endforeach
