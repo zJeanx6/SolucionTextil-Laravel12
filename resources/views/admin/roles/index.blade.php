@@ -1,8 +1,8 @@
-<x-layouts.app :title="'Marcas'">
+<x-layouts.app :title="'Roles'">
     <div class="breadcrumbs-center">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item :href="route('dashboard')">Dashboard</flux:breadcrumbs.item>
-            <flux:breadcrumbs.item :href="route('admin.roles.index')">Marcas</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item :href="route('admin.roles.index')">Roles</flux:breadcrumbs.item>
         </flux:breadcrumbs>
         <flux:button size="sm" variant="primary" :href="route('admin.roles.create')">Nuevo</flux:button>
     </div>
