@@ -61,7 +61,7 @@
                 'current' => request()->routeIs('admin.brands.*'),
             ],
             [
-                'name' => 'Tipos',
+                'name' => 'Tipos/Categorias',
                 'icon' => 'swatch',
                 'url' => route('admin.types.index'),
                 'current' => request()->routeIs('admin.types.index'),

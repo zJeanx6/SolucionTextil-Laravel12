@@ -1,5 +1,5 @@
 <div>
-    <div class="h-4 flex justify-between items-center top-8 z-10 px-4 mb-6">
+    <div class="breadcrumbs-center">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item :href="route('dashboard')">Dashboard</flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.types.index')">Tipos</flux:breadcrumbs.item>
@@ -13,21 +13,21 @@
     </div>
 
     @if ($view === 'index')
-        {{-- Vista de listado --}}
-        <div class="flex gap-4 mb-4">
-            <div class="w-1/2">
-                <flux:select wire:model.live="modelSelected">
-                    <flux:select.option value="element_types">Tipos de Elementos</flux:select.option>
-                    <flux:select.option value="product_types">Tipos de Productos</flux:select.option>
-                    <flux:select.option value="machine_types">Tipos de Máquinas</flux:select.option>
-                </flux:select>
-            </div>
-            <div class="w-1/2">
-                <flux:input type="text" wire:model.live="search" class="hover-input" name="search"
-                    placeholder="Buscar por nombre..." />
+        <div class="card mb-6">
+            <div class="flex gap-4 mb-4">
+                <div class="w-1/2">
+                    <flux:select label="Lista de Tipos/Categorias" wire:model.live="modelSelected">
+                        <flux:select.option value="element_types">Elementos</flux:select.option>
+                        <flux:select.option value="product_types">Productos</flux:select.option>
+                        <flux:select.option value="machine_types">Máquinas</flux:select.option>
+                    </flux:select>
+                </div>
+                <div class="w-1/2">
+                    <flux:input label="Barra de Búsqueda" type="text" wire:model.live="search" class="hover-input" name="search"
+                        placeholder="Buscar por nombre..." />
+                </div>
             </div>
         </div>
-
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -60,26 +60,30 @@
             </table>
         </div>
         <div class="mx-4 mt-4 mb-4">{{ $types->links() }}</div>
+
+
     @elseif ($view === 'create')
-        {{-- Formulario de creación --}}
-        <flux:select class="mb-4" wire:model="modelSelected">
-            <flux:select.option value="element_types">Tipos de Elementos</flux:select.option>
-            <flux:select.option value="product_types">Tipos de Productos</flux:select.option>
-            <flux:select.option value="machine_types">Tipos de Máquinas</flux:select.option>
-        </flux:select>
+        <div class="card">
+            <flux:select label="Selecciona un Tipo/Categoria" class="mb-4" wire:model="modelSelected">
+                <flux:select.option value="element_types">Elementos</flux:select.option>
+                <flux:select.option value="product_types">Productos</flux:select.option>
+                <flux:select.option value="machine_types">Máquinas</flux:select.option>
+            </flux:select>
+            
+            <flux:input type="text" wire:model="name" class="hover-input mb-4" label="Nombre" name="name"
+                placeholder="Nombre del tipo..." />
 
-        <flux:input type="text" wire:model="name" class="hover-input mb-4" label="Nombre" name="name"
-            placeholder="Nombre del tipo..." />
-
-        <div class="flex justify-end">
-            <flux:button wire:click="save" variant="primary" type="submit">Guardar</flux:button>
+            <div class="flex justify-end">
+                <flux:button wire:click="save" variant="primary" type="submit">Guardar</flux:button>
+            </div>
         </div>
+    
+
     @elseif ($view === 'edit')
-        {{-- Formulario de edición --}}
         <flux:select class="mb-4" wire:model="modelSelected">
-            <flux:select.option value="element_types">Tipos de Elementos</flux:select.option>
-            <flux:select.option value="product_types">Tipos de Productos</flux:select.option>
-            <flux:select.option value="machine_types">Tipos de Máquinas</flux:select.option>
+            <flux:select.option value="element_types">Elementos</flux:select.option>
+            <flux:select.option value="product_types">Productos</flux:select.option>
+            <flux:select.option value="machine_types">Máquinas</flux:select.option>
         </flux:select>
 
         <flux:input type="text" wire:model="name" class="hover-input mb-4" label="Nombre" name="name"
@@ -89,4 +93,5 @@
             <flux:button wire:click="update" variant="primary" type="submit">Actualizar</flux:button>
         </div>
     @endif
+
 </div>
