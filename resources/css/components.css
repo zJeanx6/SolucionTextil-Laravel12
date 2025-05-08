@@ -1,30 +1,43 @@
 .btn {
-    @apply font-bold py-2 px-4 rounded;
-  }
+  @apply font-bold py-2 px-4 rounded;
+}
 
-  .btn-blue {
-    @apply bg-blue-500 text-white hover:bg-blue-700;
-  }
+.btn-blue {
+  @apply bg-blue-500 text-white hover:bg-blue-700;
+}
 
 .btn-jetstream{
   @apply inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
 
-.card{
-  @apply bg-zinc-50 dark:bg-zinc-900 shadow-md rounded-lg p-6;
+.card {
+  @apply bg-zinc-50 dark:bg-zinc-900 shadow-md rounded-lg p-3;
 }
 
 .head-table {
-  @apply text-sm border-b dark:border-zinc-700 border-gray-200 text-gray-700 uppercase bg-gray-50 dark:bg-zinc-900 dark:text-gray-400;
+  @apply bg-zinc-50 dark:bg-zinc-900 uppercase text-gray-700 dark:text-gray-400 text-sm border-b dark:border-zinc-700 border-gray-200;
+}
+
+.head-table-item {
+  @apply px-6 py-3 text-center dark:text-white;
 }
 
 .table-content {
   @apply bg-white border-b dark:bg-zinc-900 dark:border-zinc-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800;
 }
 
-.table{
+.column-item {
+  @apply px-6 py-2 text-center;
+}
+
+.table {
   @apply w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400;
 }
+
+.two-actions {
+  @apply flex justify-center gap-2;
+}
+
 .hover-input {
   @apply bg-white dark:bg-zinc-900 dark:hover:bg-zinc-950 rounded-lg;
 }

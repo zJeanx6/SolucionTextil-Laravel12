@@ -17,7 +17,9 @@ class ElementFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'code' => $this->faker->unique()->randomNumber(9),
+            'name' => $this->faker->words(2, true),
+            'stock' => $this->faker->numberBetween(0, 100),
         ];
     }
 }

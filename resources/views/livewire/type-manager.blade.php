@@ -23,31 +23,29 @@
                     </flux:select>
                 </div>
                 <div class="w-1/2">
-                    <flux:input label="Barra de Búsqueda" type="text" wire:model.live="search" class="hover-input" name="search"
-                        placeholder="Buscar por nombre..." />
+                    <flux:input label="Barra de Búsqueda" type="text" wire:model.live="search" class="hover-input"
+                        name="search" placeholder="Buscar por nombre..." />
                 </div>
             </div>
         </div>
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead
-                    class="text border-b dark:border-zinc-700 border-gray-200 text-gray-700 uppercase bg-gray-50 dark:bg-zinc-900 dark:text-gray-400">
+                <thead class="head-table">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-center dark:text-white">NOMBRE</th>
-                        <th scope="col" class="px-6 py-3 text-center dark:text-white">ACCIONES</th>
+                        <th scope="col" class="px-6 py-2 text-center dark:text-white">NOMBRE</th>
+                        <th scope="col" class="px-6 py-2 text-center dark:text-white">ACCIONES</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($types as $type)
-                        <tr
-                            class="bg-white border-b dark:bg-zinc-900 dark:border-zinc-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800">
-                            <td class="px-6 py-4 text-center">{{ $type->name }}</td>
-                            <td class="px-6 py-4 text-center">
+                        <tr class="table-content">
+                            <td class="px-6 py-2 text-center">{{ $type->name }}</td>
+                            <td class="px-6 py-2 text-center">
                                 <div class="flex justify-center gap-2">
                                     <flux:button.group>
                                         <flux:button size="sm" variant="primary"
-                                            wire:click="edit({{ $type->id }})">Editar</flux:button>
+                                                wire:click="edit({{ $type->id }})">Editar</flux:button>
                                         <flux:button size="sm" variant="danger"
                                             wire:click="delete({{ $type->id }})">Eliminar</flux:button>
                                     </flux:button.group>
@@ -60,16 +58,14 @@
             </table>
         </div>
         <div class="mx-4 mt-4 mb-4">{{ $types->links() }}</div>
-
-
     @elseif ($view === 'create')
         <div class="card">
-            <flux:select label="Selecciona un Tipo/Categoria" class="mb-4" wire:model="modelSelected">
+            <flux:select label="Selecciona un Tipo/Categoria a Crear" class="mb-4" wire:model="modelSelected">
                 <flux:select.option value="element_types">Elementos</flux:select.option>
                 <flux:select.option value="product_types">Productos</flux:select.option>
                 <flux:select.option value="machine_types">Máquinas</flux:select.option>
             </flux:select>
-            
+
             <flux:input type="text" wire:model="name" class="hover-input mb-4" label="Nombre" name="name"
                 placeholder="Nombre del tipo..." />
 
@@ -77,44 +73,44 @@
                 <flux:button wire:click="save" variant="primary" type="submit">Guardar</flux:button>
             </div>
         </div>
-    
-
     @elseif ($view === 'edit')
-        <flux:select class="mb-4" wire:model="modelSelected">
-            <flux:select.option value="element_types">Elementos</flux:select.option>
-            <flux:select.option value="product_types">Productos</flux:select.option>
-            <flux:select.option value="machine_types">Máquinas</flux:select.option>
-        </flux:select>
+        <div class="card">
+            <flux:select class="mb-4" wire:model="modelSelected">
+                <flux:select.option value="element_types">Elementos</flux:select.option>
+                <flux:select.option value="product_types">Productos</flux:select.option>
+                <flux:select.option value="machine_types">Máquinas</flux:select.option>
+            </flux:select>
 
-        <flux:input type="text" wire:model="name" class="hover-input mb-4" label="Nombre" name="name"
-            placeholder="Nombre del tipo..." />
+            <flux:input type="text" wire:model="name" class="hover-input mb-4" label="Nombre" name="name"
+                placeholder="Nombre del tipo..." />
 
-        <div class="flex justify-end">
-            <flux:button wire:click="update" variant="primary" type="submit">Actualizar</flux:button>
+            <div class="flex justify-end">
+                <flux:button wire:click="update" variant="primary" type="submit">Actualizar</flux:button>
+            </div>
         </div>
     @endif
 
     @push('js')
-    <script>
-        Livewire.on('notification', function(notification) {
-            var isDarkMode = document.documentElement.classList.contains('dark');
-            var toastBackgroundColor = isDarkMode ?
-                'linear-gradient(to right, #444444, #666666)' // modo oscuro
-                :
-                'linear-gradient(to right, #333333, #666666)'; // modo claro
-            Toastify({
-                text: notification[0],
-                duration: 2000,
-                // close: true,
-                gravity: "top",
-                position: "center",
-                backgroundColor: toastBackgroundColor,
-                className: "toast-notification",
-                style: {
-                    borderRadius: "10px",
-                }
-            }).showToast();
-        });
-    </script>
-@endpush
+        <script>
+            Livewire.on('notification', function(notification) {
+                var isDarkMode = document.documentElement.classList.contains('dark');
+                var toastBackgroundColor = isDarkMode ?
+                    'linear-gradient(to right, #444444, #666666)' // modo oscuro
+                    :
+                    'linear-gradient(to right, #333333, #666666)'; // modo claro
+                Toastify({
+                    text: notification[0],
+                    duration: 2000,
+                    // close: true,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: toastBackgroundColor,
+                    className: "toast-notification",
+                    style: {
+                        borderRadius: "10px",
+                    }
+                }).showToast();
+            });
+        </script>
+    @endpush
 </div>
