@@ -28,6 +28,12 @@
                 'url' => route('admin.machines.index'),
                 'current' => request()->routeIs('admin.machines.index'),
             ],           
+            [
+                'name' => 'Proveedores',
+                'icon' => 'users',
+                'url' => route('admin.suppliers.index'),
+                'current' => request()->routeIs('admin.suppliers.index'),
+            ],           
         ],
         'Complementos' => [
             [

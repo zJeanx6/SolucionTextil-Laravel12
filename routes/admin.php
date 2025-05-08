@@ -8,7 +8,7 @@ use App\Http\Controllers\Admin\StateController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\TypeController;
-use App\Livewire\TypeManager;
+use App\Http\Controllers\Admin\SupplierController;
 use Illuminate\Support\Facades\Route;
 
 Route::resource('sizes', SizeController::class);
@@ -22,3 +22,4 @@ Route::resource('types', TypeController::class)->parameter( 'tipos', 'type')->na
 Route::get('productos', [InventoryController::class, 'products'])->name('products.index');
 Route::get('elementos', [InventoryController::class, 'elements'])->name('elements.index');
 Route::get('maquinas', [InventoryController::class, 'machines'])->name('machines.index');
+Route::get('suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
