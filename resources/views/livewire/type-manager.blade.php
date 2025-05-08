@@ -94,4 +94,27 @@
         </div>
     @endif
 
+    @push('js')
+    <script>
+        Livewire.on('notification', function(notification) {
+            var isDarkMode = document.documentElement.classList.contains('dark');
+            var toastBackgroundColor = isDarkMode ?
+                'linear-gradient(to right, #444444, #666666)' // modo oscuro
+                :
+                'linear-gradient(to right, #333333, #666666)'; // modo claro
+            Toastify({
+                text: notification[0],
+                duration: 2000,
+                // close: true,
+                gravity: "top",
+                position: "center",
+                backgroundColor: toastBackgroundColor,
+                className: "toast-notification",
+                style: {
+                    borderRadius: "10px",
+                }
+            }).showToast();
+        });
+    </script>
+@endpush
 </div>

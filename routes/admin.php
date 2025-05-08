@@ -22,5 +22,3 @@ Route::resource('types', TypeController::class)->parameter( 'tipos', 'type')->na
 Route::get('productos', [InventoryController::class, 'products'])->name('products.index');
 Route::get('elementos', [InventoryController::class, 'elements'])->name('elements.index');
 Route::get('maquinas', [InventoryController::class, 'machines'])->name('machines.index');
-
-Route::get('tipos', TypeManager::class)->name('types.index');

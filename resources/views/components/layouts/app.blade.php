@@ -3,6 +3,7 @@
         {{ $slot }}
     </flux:main>
 
+    @livewireScripts
     @stack('js')
 
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -39,7 +40,7 @@
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
-                cancelButtonColor: '##27272a',
+                cancelButtonColor: '#27272a',
                 confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
