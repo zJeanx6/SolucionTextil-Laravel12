@@ -10,7 +10,6 @@ class Element extends Model
     /** @use HasFactory<\Database\Factories\ElementFactory> */
     use HasFactory;
 
-    public $timestamps = false;
     public $incrementing = false;
     protected $primaryKey = 'code';
 

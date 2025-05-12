@@ -18,6 +18,12 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call([
+            ColorSeeder::class,        // 1º  ← Colores
+            ElementTypeSeeder::class,  // 2º  ← Tipos
+            ElementSeeder::class,      // 3º  ← Elementos
+        ]);
+
         User::factory()->create([
             'card' => '10000000',
             'name' => 'admin',
@@ -30,8 +36,6 @@ class DatabaseSeeder extends Seeder
         Role::factory(15)->create();
         State::factory(15)->create();
         Brand::factory(15)->create();
-        Color::factory(15)->create();
-        ElementType::factory(15)->create();
         ProductType::factory(15)->create();
         MachineType::factory(15)->create();
     }

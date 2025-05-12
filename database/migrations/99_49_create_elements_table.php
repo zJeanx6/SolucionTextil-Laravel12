@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->decimal('broad', 5, 2)->nullable();
             $table->decimal('long', 5, 2)->nullable();
+            $table->timestamps();
 
             //Foreign Keys
             $table->unsignedBigInteger('color_id')->nullable();
