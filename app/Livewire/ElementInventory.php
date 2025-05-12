@@ -12,12 +12,17 @@ class ElementInventory extends Component
     use WithPagination, WithFileUploads;
 
     /* ---------- estado y catálogos ----------- */
-    public $view = 'index';
+    public $view = 'index', $search = '';
     public $elementTypes = [];
     public $colors       = [];
 
+    /* ---------- filtros ----------- */
+    public $elementTypeFilter = '', $colorFilter = '';
+    public string $sortField = 'code';
+    public string $sortDirection = 'desc';
+
     /* ---------- formulario ----------- */
-    public $code, $name, $stock, $broad, $long, $color_id, $element_type_id, $photo;                      
+    public $code, $name, $stock, $broad, $long, $color_id = '', $element_type_id, $photo;                      
     public array $visibleFields = [];
 
     /* grupos → campos requeridos */
@@ -83,13 +88,50 @@ class ElementInventory extends Component
 
         $this->dispatch('notification', 'Elemento creado correctamente');
         $this->index();
+    }   
+
+    public function delete($code)
+    {
+        Element::findOrFail($code)->delete();
+        $this->dispatch('notification', 'Elemento Eliminado exitosamente.');
+    }
+
+    /* ------------- helpers para paginación ---------- */
+    public function updatingSearch()            { $this->resetPage(); }
+    public function updatingElementTypeFilter() { $this->resetPage(); }
+    public function updatingColorFilter()       { $this->resetPage(); }
+
+    /* ---------------- ordenar ----------------------- */
+    public function sortBy(string $field)
+    {
+        if ($this->sortField === $field) {
+            // mismo campo ⇒ invierte dirección
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            // nuevo campo ⇒ comienza ascendente
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
     }
 
     /* ---------------- render ----------------------- */
     public function render()
     {
-        $elements = Element::latest()->paginate(12);
-        return view('livewire.element-inventory',compact('elements'));
+        $elements = Element::query()
+            ->when($this->search, fn ($q) =>
+                $q->where('name', 'like', '%' . $this->search . '%')
+                  ->orWhere('code', 'like', '%' . $this->search . '%')
+            )
+            ->when($this->elementTypeFilter, fn ($q) =>
+                $q->where('element_type_id', $this->elementTypeFilter)
+            )
+            ->when($this->colorFilter, fn ($q) =>
+                $q->where('color_id', $this->colorFilter)
+            )
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate(8);
+
+        return view('livewire.element-inventory', compact('elements'));
     }
 
     /* ---------------- helpers ---------------------- */
