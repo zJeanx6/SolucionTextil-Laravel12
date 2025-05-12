@@ -11,26 +11,16 @@ class ElementInventory extends Component
 {
     use WithPagination, WithFileUploads;
 
-    /* ---------- navegación ---------- */
-    public string $view = 'index';
-
-    /* ---------- catálogos ----------- */
+    /* ---------- estado y catálogos ----------- */
+    public $view = 'index';
     public $elementTypes = [];
     public $colors       = [];
 
     /* ---------- formulario ----------- */
-    public ?int    $code            = null;   // ← ahora sí
-    public ?string $name            = null;
-    public ?int    $stock           = null;
-    public ?float  $broad           = null;
-    public ?float  $long            = null;
-    public ?int    $color_id        = null;
-    public ?int    $element_type_id = null;
-    public $photo                   = null;   // imagen (TemporaryUploadedFile)
-
+    public $code, $name, $stock, $broad, $long, $color_id, $element_type_id, $photo;                      
     public array $visibleFields = [];
 
-    /* grupos → campos requeridos (imagen ya no está aquí) */
+    /* grupos → campos requeridos */
     protected array $groups = [
         'G1' => ['range'=>[101,118],'fields'=>['broad','long','color_id']],
         'G2' => ['range'=>[201,211],'fields'=>['color_id']],
@@ -39,18 +29,18 @@ class ElementInventory extends Component
     ];
 
     /* ---------------- ciclo de vida ---------------- */
-    public function mount(): void
+    public function mount()
     {
         $this->elementTypes = ElementType::orderBy('name')->get();
         $this->colors       = Color::orderBy('name')->get();
     }
 
     /* ---------------- navegación ------------------- */
-    public function index(): void  { $this->resetForm(); $this->view = 'index'; }
-    public function create(): void { $this->resetForm(); $this->view = 'create'; }
+    public function index()  { $this->resetForm(); $this->view = 'index'; }
+    public function create() { $this->resetForm(); $this->view = 'create'; }
 
     /* ---- al cambiar tipo decide campos visibles --- */
-    public function updatedElementTypeId($value): void
+    public function updatedElementTypeId($value)
     {
         $this->visibleFields = [];
         foreach ($this->groups as $g) {
@@ -60,18 +50,11 @@ class ElementInventory extends Component
                 break;
             }
         }
-
-        /*  sugerir código si aún no se escribió  */
-        if (blank($this->code) && $value) {
-            // Ej: 115 → 11501
-            $this->code = $value * 100 + 1;
-        }
     }
 
     /* ---------------- guardar ---------------------- */
-    public function save(): void
+    public function save()
     {
-        /* reglas base */
         $rules = [
             'code'            => 'required|integer|unique:elements,code',
             'name'            => 'required|string|max:255',
@@ -110,7 +93,7 @@ class ElementInventory extends Component
     }
 
     /* ---------------- helpers ---------------------- */
-    private function resetForm(): void
+    private function resetForm()
     {
         $this->reset([
             'code','name','stock','broad','long',
