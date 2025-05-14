@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\MachineController;
 use Illuminate\Support\Facades\Route;
 
 Route::resource('sizes', SizeController::class);
@@ -23,3 +24,4 @@ Route::get('productos', [InventoryController::class, 'products'])->name('product
 Route::get('elementos', [InventoryController::class, 'elements'])->name('elements.index');
 Route::get('maquinas', [InventoryController::class, 'machines'])->name('machines.index');
 Route::get('suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
+Route::get('machines', [MachineController::class, 'index'])->name('machine.index');
