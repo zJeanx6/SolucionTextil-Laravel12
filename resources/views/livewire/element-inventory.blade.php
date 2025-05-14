@@ -19,8 +19,7 @@
         <div class="card mb-4">
             <div class="flex gap-4">
                 <div class="w-1/3">
-                    <flux:input type="text" name="search" placeholder="Buscar elementos..." wire:model.live="search"
-                        class="hover-input w-full" />
+                    <flux:input type="text" placeholder="Buscar elementos..." wire:model.live="search" />
                 </div>
 
                 {{-- Filtro por tipo de elemento --}}
@@ -99,7 +98,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="mx-4 mt-4 mb-4">{{ $elements->links() }}</div>
+        <div class="mx-4 mt-4 mb-4">{{ $elements->links(data: ['scrollTo' => false]) }}</div>
     @elseif ($view === 'create')
         <div class="card p-6">
 
@@ -118,7 +117,7 @@
                     </flux:select>
 
                     {{-- recuadro de imagen --}}
-                    <div class="relative w-full h-60 bg-gray-100 rounded-md flex items-center justify-center">
+                    <div class="relative w-full h-60 bg-gray-100 rounded-md flex items-center justify-center dark:bg-[#2f2f2f]">    
                         @if ($photo)
                             <img src="{{ $photo->temporaryUrl() }}"
                                 class="absolute inset-0 object-cover w-full h-full rounded-md" />
@@ -128,15 +127,34 @@
                                 &times;
                             </button>
                         @else
-                            <label class="flex flex-col items-center justify-center cursor-pointer w-full h-full">
-                                <span class="text-sm text-gray-500">Cargar imagen</span>
-                                <input type="file" class="hidden" wire:model="photo" accept="image/*">
-                            </label>
+                            <div class="mb-4">
+                                <div x-data="{ uploading: false, progress: 0 }" x-on:livewire-upload-start="uploading = true"
+                                    x-on:livewire-upload-finish="uploading = false"
+                                    x-on:livewire-upload-cancel="uploading = false"
+                                    x-on:livewire-upload-error="uploading = false"
+                                    x-on:livewire-upload-progress="progress = $event.detail.progress">
+                                    <!-- File Input -->
+                                    {{-- <x-input type="file" wire:model="postCreate.image"
+                                        wire:key="{{ $postCreate->imageKey }}" /> --}}
+                                    <label class="flex flex-col items-center justify-center cursor-pointer w-full h-full">
+                                        <span wire:loading.class="hidden" class="text-sm text-gray-500">Cargar imagen</span>
+                                        <input type="file" class="hidden" wire:model="photo" accept="image/*">
+                                    </label>
+
+                                    <!-- Progress Bar -->
+                                    <div x-show="uploading">
+                                        <progress max="100" x-bind:value="progress"></progress>
+                                    </div>
+                                </div>
+                            </div>
                         @endif
                     </div>
                     @error('photo')
                         <span class="text-red-500 text-xs">{{ $message }}</span>
                     @enderror
+
+
+
                 </div>
 
                 {{-- divisor --}}
@@ -149,7 +167,7 @@
                     <flux:input type="number" wire:model="code" label="Código" />
 
                     {{-- nombre --}}
-                    <flux:input type="text" wire:model="name" label="Nombre" />
+                    <flux:input type="text" wire:model.live="name" label="Nombre" />
 
                     {{-- ancho / largo / color según grupo --}}
                     @if (in_array('broad', $visibleFields))
