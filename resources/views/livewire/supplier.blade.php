@@ -135,11 +135,12 @@
             <div class="mb-4">
                 <flux:input class="hover-input" label="Telefono del representante" wire:model="representative_phone"  placeholder="Escribe el telefono del representante"></flux:input>
             </div>
+            
             <div class="flex justify-end">
                 <flux:button wire:click="update" variant="primary" type="submit">
                     Actualizar
                 </flux:button>
-        </div>
+            </div>
     @endif
     
 </div>

@@ -89,7 +89,7 @@ class Suppliers extends Component
             'representative_phone' => 'required|min:3|max:50',
         ]);
 
-        $supplier = Supplier::resetFields($this->editId);
+        $supplier = Supplier::findOrFail($this->editId);
         $supplier->update([
             'name' => $this->name,
             'person_type' => $this->person_type,
