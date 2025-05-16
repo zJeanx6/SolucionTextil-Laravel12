@@ -39,19 +39,20 @@
                 </thead>
                 <tbody>
                     @foreach ($types as $type)
-                        <tr class="table-content">
+                        <tr wire:key="type-{{ $type->id }}" class="table-content">
                             <td class="px-6 py-2 text-center">{{ $type->name }}</td>
                             <td class="px-6 py-2 text-center">
                                 <div class="flex justify-center gap-2">
                                     <flux:button.group>
-                                        <flux:button size="sm" variant="primary"
-                                                wire:click="edit({{ $type->id }})">Editar</flux:button>
-                                        <flux:button size="sm" variant="danger"
-                                            wire:click="delete({{ $type->id }})">Eliminar</flux:button>
+                                        <flux:button size="sm" variant="primary" wire:click="edit({{ $type->id }})">
+                                            Editar
+                                        </flux:button>
+                                        <flux:button size="sm" variant="danger" wire:click="delete({{ $type->id }})">
+                                            Eliminar
+                                        </flux:button>
                                     </flux:button.group>
                                 </div>
                             </td>
-
                         </tr>
                     @endforeach
                 </tbody>
