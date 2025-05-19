@@ -12,6 +12,14 @@
         @endif        
     </div>
     @if ($view === 'index')
+    <div class="flex gap-4 mb-4">
+        <div class="w-1/2">
+            <flux:input label="Busqueda por nit" type="text" wire:model.live="searchByNit" class="hover-input" name="searchByNit" placeholder="Buscar por nit..." />
+        </div>
+        <div class="w-1/2">
+            <flux:input label="Busqueda por representante" type="text" wire:model.live="searchByRepresentative" class="hover-input" name="searchByRepresentative" placeholder="Buscar por representante..." />
+        </div>
+    </div>
     
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table class="table">

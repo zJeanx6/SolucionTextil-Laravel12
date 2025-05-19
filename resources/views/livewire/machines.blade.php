@@ -12,6 +12,21 @@
         @endif        
     </div>
     @if ($view === 'index')
+    <div class="card mb-6">
+        <div class="flex gap-4 mb-4">
+            <div class="w-1/2">
+                <flux:input label="Busqueda por serial" type="text" wire:model.live="search" class="hover-input"
+                    name="search" placeholder="Buscar por serial..." />
+            </div>
+            <div class="w-1/2">
+                <flux:select label="Busqueda por tipo de maquina" wire:model.live="modelSelected">
+                    @foreach ($machine_types as $machine_type)
+                        <flux:select.option value="{{ $machine_type->id }}">{{ $machine_type->name }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+            </div>
+        </div>
+    </div>
     
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table class="table">
