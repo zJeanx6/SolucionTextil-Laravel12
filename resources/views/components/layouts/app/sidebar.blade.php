@@ -72,6 +72,12 @@
                 'url' => route('admin.types.index'),
                 'current' => request()->routeIs('admin.types.index'),
             ],
+            [
+                'name' => 'Tipos de Mantenimiento',
+                'icon' => 'swatch',
+                'url' => route('admin.maintenance.index'),
+                'current' => request()->routeIs('admin.maintenance.index'),
+            ],
         ],
     ];
 @endphp
