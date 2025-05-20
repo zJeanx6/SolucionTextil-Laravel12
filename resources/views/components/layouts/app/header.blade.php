@@ -1,14 +1,3 @@
-@php
-    $links = [
-        [
-            'name' => 'Inicio',
-            'icon' => 'layout-grid',
-            'url' => route('home'),
-            'current' => request()->routeIs('home'),
-        ],
-    ];
-@endphp
-
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
@@ -23,18 +12,39 @@
             </a>
 
             <flux:navbar class="-mb-px max-lg:hidden">
-                @foreach ($links as $link)
-                    <flux:navbar.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']" wire:navigate>
-                        {{ $link['name']}}
-                    </flux:navbar.item>          
-                @endforeach
+                <flux:navbar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                    {{ __('Dashboard') }}
+                </flux:navbar.item>
             </flux:navbar>
 
             <flux:spacer />
 
+            <flux:navbar class="mr-1.5 space-x-0.5 py-0!">
+                <flux:tooltip :content="__('Search')" position="bottom">
+                    <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="magnifying-glass" href="#" :label="__('Search')" />
+                </flux:tooltip>
+                <flux:tooltip :content="__('Repository')" position="bottom">
+                    <flux:navbar.item
+                        class="h-10 max-lg:hidden [&>div>svg]:size-5"
+                        icon="folder-git-2"
+                        href="https://github.com/laravel/livewire-starter-kit"
+                        target="_blank"
+                        :label="__('Repository')"
+                    />
+                </flux:tooltip>
+                <flux:tooltip :content="__('Documentation')" position="bottom">
+                    <flux:navbar.item
+                        class="h-10 max-lg:hidden [&>div>svg]:size-5"
+                        icon="book-open-text"
+                        href="https://laravel.com/docs/starter-kits"
+                        target="_blank"
+                        label="Documentation"
+                    />
+                </flux:tooltip>
+            </flux:navbar>
+
             <!-- Desktop User Menu -->
-            @auth
-                <flux:dropdown position="top" align="end">
+            <flux:dropdown position="top" align="end">
                 <flux:profile
                     class="cursor-pointer"
                     :initials="auth()->user()->initials()"
@@ -75,23 +85,7 @@
                         </flux:menu.item>
                     </form>
                 </flux:menu>
-                </flux:dropdown>
-            @else
-                <flux:dropdown position="top" align="end">
-                    <flux:button class="cursor-pointer" icon="user"/>
-                    <flux:menu>
-                        <flux:menu.radio.group>
-                            <flux:menu.item :href="route('login')" wire:navigate>
-                                {{ __('Log In') }}
-                            </flux:menu.item>
-                            <flux:menu.item :href="route('register')" wire:navigate>
-                                {{ __('Register') }}
-                            </flux:menu.item>
-                        </flux:menu.radio.group>
-                    </flux:menu>
-                </flux:dropdown>
-            @endauth
-
+            </flux:dropdown>
         </flux:header>
 
         <!-- Mobile Menu -->
@@ -104,13 +98,9 @@
 
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')">
-                    @foreach ($links as $link)
-                        
-                        <flux:navlist.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']" wire:navigate>
-                        {{ $link['name'] }}
-                        </flux:navlist.item>
-
-                    @endforeach
+                    <flux:navlist.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                    {{ __('Dashboard') }}
+                    </flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 
