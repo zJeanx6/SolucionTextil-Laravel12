@@ -14,6 +14,8 @@ class Suppliers extends Component
     public $view = 'index';
     public $editId = null;
     public $search = '';
+    public $searchByNit = '';
+    public $searchByRepresentative = '';
 
     public function updatingSearch()
     {
@@ -123,13 +125,16 @@ class Suppliers extends Component
     public function render()
     {
         $suppliers = Supplier::query()
-            ->where('name', 'like', '%' . $this->search . '%')
-            ->orderBy('nit', 'desc')
-            ->paginate(12);
+            ->when($this->searchByNit, function ($query) {
+                $query->where('nit', 'like', '%' . $this->searchByNit . '%');
+            })
+            ->when($this->searchByRepresentative, function ($query) {
+                $query->where('representative_name', 'like', '%' . $this->searchByRepresentative . '%');
+            })
+            ->paginate(10);
 
         return view('livewire.supplier', [
             'suppliers' => $suppliers,
-            'view' => $this->view,
         ]);
     }
 

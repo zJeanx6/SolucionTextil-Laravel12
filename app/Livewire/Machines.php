@@ -23,6 +23,7 @@ class Machines extends Component
     public $editId = null;
     public $search = '';
     public $currentImagePath;
+    public $modelSelected = null; 
 
     public function updatingSearch()
     {
@@ -88,7 +89,7 @@ class Machines extends Component
             $this->brand_id = $machine->brand_id;
             $this->supplier_nit = $machine->supplier_nit;
         }
-}
+    }
 
 
 public function update()    
@@ -160,7 +161,7 @@ public function update()
         $this->supplier_nit = '';
         $this->editId = null;
 
-        // 👇 Esto evita perder la ruta de la imagen cuando entras a editar
+        //  evita perder la ruta de la imagen cuando entras a editar
         if ($this->view !== 'edit') {
             $this->currentImagePath = '';
         }
@@ -180,26 +181,15 @@ public function update()
     public function render()
     {
         $machines = Machine::query()
+            ->when($this->modelSelected, function ($query) {
+                $query->where('machine_type_id', $this->modelSelected);
+            })
             ->where('serial', 'like', '%' . $this->search . '%')
-            ->orWhere('image', 'like', '%' . $this->search . '%')
-            ->orWhere('state_id', 'like', '%' . $this->search . '%')
-            ->orWhere('machine_type_id', 'like', '%' . $this->search . '%')
-            ->orWhere('brand_id', 'like', '%' . $this->search . '%')
-            ->orWhere('supplier_nit', 'like', '%' . $this->search . '%')
             ->paginate(10);
 
-            $states = \App\Models\State::whereIn('id', [3,4,5])->get(); 
-            $machine_types = \App\Models\MachineType::all();
-            $brands = \App\Models\Brand::all();
-            $suppliers = \App\Models\Supplier::all();
-        
         return view('livewire.machines', [
             'machines' => $machines,
-            'view' => $this->view,
-            'states' => $states,
-            'machine_types' => $machine_types,
-            'brands' => $brands,
-            'suppliers' => $suppliers,
+            'machine_types' => MachineType::all(),
         ]);
     }
 
