@@ -19,9 +19,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            ColorSeeder::class,        // 1º  ← Colores
-            ElementTypeSeeder::class,  // 2º  ← Tipos
-            ElementSeeder::class,      // 3º  ← Elementos
+            ColorSeeder::class,         // 1º  ← Colores
+            ElementTypeSeeder::class,   // 2º  ← Tipos Elementos
+            ElementSeeder::class,       // 3º  ← Elementos
+            SizesSeeder::class,         // 4º  ← Tallas
+            ProductTypesSeeder::class,  // 5º  ← Tipos Productos
+            ProductsSeeder::class,
         ]);
 
         User::factory()->create([
@@ -32,11 +35,9 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('12345')
         ]);
 
-        Size::factory(15)->create();
         Role::factory(15)->create();
         State::factory(15)->create();
         Brand::factory(15)->create();
-        ProductType::factory(15)->create();
         MachineType::factory(15)->create();
     }
 }

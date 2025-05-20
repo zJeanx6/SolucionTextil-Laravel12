@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name', 50);
             $table->unsignedInteger('stock');
             $table->string('image')->nullable();
+            $table->timestamps();
 
             //Foreings Keys
             $table->unsignedBigInteger('color_id')->nullable();
