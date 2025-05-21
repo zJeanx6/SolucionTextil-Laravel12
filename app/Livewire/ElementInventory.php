@@ -2,13 +2,13 @@
 
 namespace App\Livewire;
 
-use App\Livewire\Forms\{ElementCreateForm, ElementEditForm};
+use App\Livewire\Forms\{ElementCreateForm, ElementEditForm, ElementShowForm};
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Models\{Element, ElementType, Color};
 use Illuminate\Support\Facades\Storage;
-use Livewire\Attributes\{Lazy,Url};
+use Livewire\Attributes\{Lazy, Url};
 
 // #[Lazy]
 class ElementInventory extends Component
@@ -21,7 +21,7 @@ class ElementInventory extends Component
     public $search = '';
 
     #[Url(as: 'edit', except: '', keep: false, history: true)]
-    public $editId = ''; 
+    public $editId = '';
 
     public $sortField = 'code';
     public $sortDirection = 'desc';
@@ -32,6 +32,7 @@ class ElementInventory extends Component
     public $elementTypes = [];
     public $colors       = [];
 
+    public ElementShowForm $elementDetail;
     public ElementCreateForm $elementCreate;
     public ElementEditForm $elementEdit;
 
@@ -66,6 +67,13 @@ class ElementInventory extends Component
         $this->editId = '';
         $this->view   = 'index';
     }
+    
+    public function show($code)
+    {
+        $this->elementDetail->show($code);
+        $this->view = 'show';
+    }
+
     public function create(): void
     {
         $this->reset('search', 'elementTypeFilter', 'colorFilter');
@@ -73,6 +81,7 @@ class ElementInventory extends Component
         $this->elementCreate->reset();
         $this->view   = 'create';
     }
+
     public function edit($code)
     {
         $this->resetValidation();
@@ -87,13 +96,20 @@ class ElementInventory extends Component
         $this->dispatch('notification-elementos', 'Elemento creado');
         $this->index();
     }
+
     public function update()
     {
         $this->elementEdit->update();
         $this->dispatch('notification-elementos', 'Elemento actualizado.');
         $this->index();
     }
+
     public function delete($code)
+    {
+        $this->dispatch('confirm-delete-element', $code);
+    }
+
+    public function deleteConfirmed($code)
     {
         $element = Element::where('code', $code)->firstOrFail();
         if ($element->image && Storage::disk('public')->exists($element->image)) {
@@ -146,14 +162,17 @@ class ElementInventory extends Component
     {
         $this->resetPage();
     }
+
     public function updatingElementTypeFilter()
     {
         $this->resetPage();
     }
+
     public function updatingColorFilter()
     {
         $this->resetPage();
     }
+
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
@@ -163,4 +182,5 @@ class ElementInventory extends Component
             $this->sortDirection = 'asc';
         }
     }
+
 }
