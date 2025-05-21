@@ -220,8 +220,7 @@
                                     accept="image/*">
                             </label>
                             {{-- Botón equis para quitar la imagen de BD (opcional: solo resetea el input) --}}
-                            <button
-                                wire:click="$set('elementEdit.image_path', null); $set('elementEdit.photo', null);"
+                            <button wire:click="$set('elementEdit.image_path', null); $set('elementEdit.photo', null);"
                                 class="absolute top-1 right-1 w-6 h-6 rounded-full bg-white/70 hover:bg-red-500 flex items-center justify-center text-xs font-bold z-10">
                                 &times;
                             </button>
@@ -274,9 +273,9 @@
         </div>
     @endif
 
-    @script
-        <script>
-            Livewire.on('notification', function(notification) {
+    @push('js')
+        <script data-navigate-once>
+            Livewire.on('notification-elementos', function(notification) {
                 var isDarkMode = document.documentElement.classList.contains('dark');
                 var toastBackgroundColor = isDarkMode ?
                     'linear-gradient(to right, #444444, #666666)' // modo oscuro
@@ -296,5 +295,5 @@
                 }).showToast();
             });
         </script>
-    @endscript
+    @endpush
 </div>

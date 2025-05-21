@@ -65,7 +65,7 @@ class TypeManager extends Component
         $model::create(['name' => $this->name]);
         $this->reset('name');
         $this->view = 'index';
-        $this->dispatch('notification', 'Tipo creado exitosamente.');
+        $this->dispatch('notification-tipos', 'Tipo creado.');
     }
 
     public function create(){
@@ -96,14 +96,14 @@ class TypeManager extends Component
         $type->update(['name' => $this->name]);
         $this->reset(['name', 'editId']);
         $this->view = 'index';
-        $this->dispatch('notification', 'Tipo Actualizado exitosamente.');
+        $this->dispatch('notification-tipos', 'Tipo Actualizado.');
     }
 
     public function delete($id)
     {
         $model = $this->getCurrentModel();
         $model::findOrFail($id)->delete();
-        $this->dispatch('notification', 'Tipo Eliminado exitosamente.');
+        $this->dispatch('notification-tipos', 'Tipo Eliminado.');
     }
 
     public function render()

@@ -10,7 +10,7 @@ use App\Models\{Element, ElementType, Color};
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\{Lazy,Url};
 
-#[Lazy]
+// #[Lazy]
 class ElementInventory extends Component
 {
     use WithPagination, WithFileUploads;
@@ -84,13 +84,13 @@ class ElementInventory extends Component
     public function save()
     {
         $this->elementCreate->save();
-        $this->dispatch('notification', ['Elemento creado correctamente']);
+        $this->dispatch('notification-elementos', 'Elemento creado');
         $this->index();
     }
     public function update()
     {
         $this->elementEdit->update();
-        $this->dispatch('notification', ['Elemento actualizado.']);
+        $this->dispatch('notification-elementos', 'Elemento actualizado.');
         $this->index();
     }
     public function delete($code)
@@ -100,7 +100,7 @@ class ElementInventory extends Component
             Storage::disk('public')->delete($element->image);
         }
         $element->delete();
-        $this->dispatch('notification', ['Elemento eliminado.']);
+        $this->dispatch('notification-elementos', 'Elemento eliminado.');
     }
 
     public function updatedElementTypeId($value)

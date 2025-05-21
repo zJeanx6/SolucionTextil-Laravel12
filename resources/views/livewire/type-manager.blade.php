@@ -92,8 +92,8 @@
     @endif
 
     @push('js')
-        <script>
-            Livewire.on('notification', function(notification) {
+        <script data-navigate-once>
+            Livewire.on('notification-tipos', function(notification) {
                 var isDarkMode = document.documentElement.classList.contains('dark');
                 var toastBackgroundColor = isDarkMode ?
                     'linear-gradient(to right, #444444, #666666)' // modo oscuro
