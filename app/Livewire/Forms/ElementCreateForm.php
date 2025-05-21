@@ -12,7 +12,7 @@ class ElementCreateForm extends Form
 {
     use WithFileUploads;
 
-    #[Rule('required|integer|unique:elements,code')]
+    #[Rule('required|digits_between:5,10|unique:elements,code')]
     public $code;
 
     #[Rule('required|string|min:3|max:255')]
@@ -28,13 +28,35 @@ class ElementCreateForm extends Form
     public $long;
 
     #[Rule('nullable|exists:colors,id')]
-    public $color_id;
+    public $color_id = '';
 
     #[Rule('required|exists:element_types,id')]
-    public $element_type_id;
+    public $element_type_id = '';
 
     #[Rule('nullable|image|max:2048')]
     public $photo;
+
+    public $visibleFields = [];
+
+    protected $groups = [
+        'G1' => ['range' => [101, 118], 'fields' => ['broad', 'long', 'color_id']],
+        'G2' => ['range' => [201, 211], 'fields' => ['color_id']],
+        'G3' => ['range' => [301, 311], 'fields' => []],
+        'G4' => ['range' => [401, 410], 'fields' => []],
+    ];
+
+    public function updatedElementTypeId($value)
+    {
+        $this->element_type_id = $value;
+        $this->visibleFields = [];
+        foreach ($this->groups as $g) {
+            [$min, $max] = $g['range'];
+            if ($value >= $min && $value <= $max) {
+                $this->visibleFields = $g['fields'];
+                break;
+            }
+        }
+    }
 
     public function save()
     {

@@ -36,15 +36,8 @@ class ElementInventory extends Component
     public ElementCreateForm $elementCreate;
     public ElementEditForm $elementEdit;
 
-    public array $visibleFields = [];
+    public $change_type_id = '';
     public $editing = null;
-
-    protected array $groups = [
-        'G1' => ['range' => [101, 118], 'fields' => ['broad', 'long', 'color_id']],
-        'G2' => ['range' => [201, 211], 'fields' => ['color_id']],
-        'G3' => ['range' => [301, 311], 'fields' => []],
-        'G4' => ['range' => [401, 410], 'fields' => []],
-    ];
 
     public function mount(): void
     {
@@ -119,16 +112,9 @@ class ElementInventory extends Component
         $this->dispatch('notification-elementos', 'Elemento eliminado.');
     }
 
-    public function updatedElementTypeId($value)
-    {
-        $this->visibleFields = [];
-        foreach ($this->groups as $g) {
-            [$min, $max] = $g['range'];
-            if ($value >= $min && $value <= $max) {
-                $this->visibleFields = $g['fields'];
-                break;
-            }
-        }
+    public function updatedChangeTypeId($value)
+    {  
+        $this->elementCreate->updatedElementTypeId($value);
     }
 
     public function render()
@@ -153,7 +139,7 @@ class ElementInventory extends Component
                 $q->where('color_id', $this->colorFilter)
             )
             ->orderBy($this->sortField, $this->sortDirection)
-            ->paginate(16);
+            ->paginate(8);
 
         return view('livewire.element-inventory', compact('elements'));
     }

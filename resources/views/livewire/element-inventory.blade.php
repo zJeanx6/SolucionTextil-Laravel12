@@ -137,7 +137,7 @@
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
 
                     {{-- tipo / categoría --}}
-                    <flux:select wire:model.live="elementCreate.element_type_id">
+                    <flux:select wire:model.live="change_type_id">
                         <flux:select.option value=""> Tipo de Elemento </flux:select.option>
                         @foreach ($elementTypes as $type)
                             <flux:select.option value="{{ $type->id }}">{{ $type->id }} {{ $type->name }}
@@ -189,15 +189,15 @@
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
                     <flux:input type="number" wire:model="elementCreate.code" label="Código" />
                     <flux:input type="text" wire:model.live="elementCreate.name" label="Nombre" />
-                    @if (in_array('broad', $visibleFields))
+                    @if (in_array('broad', $elementCreate->visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementCreate.broad"
                             label="Ancho (m)" />
                     @endif
-                    @if (in_array('long', $visibleFields))
+                    @if (in_array('long', $elementCreate->visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementCreate.long"
                             label="Largo (m)" />
                     @endif
-                    @if (in_array('color_id', $visibleFields))
+                    @if (in_array('color_id', $elementCreate->visibleFields))
                         <flux:select label="Color" wire:model="elementCreate.color_id">
                             <flux:select.option value="" disabled> Selecciona color </flux:select.option>
                             @foreach ($colors as $color)
@@ -272,14 +272,14 @@
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
                     <flux:input type="number" wire:model="elementEdit.code" label="Código" disabled />
                     <flux:input type="text" wire:model="elementEdit.name" label="Nombre" />
-                    @if (in_array('broad', $visibleFields))
+                    @if (in_array('broad', $elementCreate->visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementEdit.broad"
                             label="Ancho (m)" />
                     @endif
-                    @if (in_array('long', $visibleFields))
+                    @if (in_array('long', $elementCreate->visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementEdit.long" label="Largo (m)" />
                     @endif
-                    @if (in_array('color_id', $visibleFields))
+                    @if (in_array('color_id', $elementCreate->visibleFields))
                         <flux:select label="Color" wire:model="elementEdit.color_id">
                             <flux:select.option value="" disabled> Selecciona color </flux:select.option>
                             @foreach ($colors as $color)
@@ -333,17 +333,17 @@
                     <flux:input type="number" wire:model="elementDetail.code" label="Código" disabled />
                     <flux:input type="text" wire:model="elementDetail.name" label="Nombre" disabled />
 
-                    @if (in_array('broad', $visibleFields))
+                    @if (in_array('broad', $elementCreate->visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementDetail.broad" label="Ancho (m)"
                             disabled />
                     @endif
 
-                    @if (in_array('long', $visibleFields))
+                    @if (in_array('long', $elementCreate->visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementDetail.long" label="Largo (m)"
                             disabled />
                     @endif
 
-                    @if (in_array('color_id', $visibleFields))
+                    @if (in_array('color_id', $elementCreate->visibleFields))
                         <flux:select label="Color" wire:model="elementDetail.color_id" disabled>
                             <flux:select.option value="" disabled> Selecciona color </flux:select.option>
                             @foreach ($colors as $color)
