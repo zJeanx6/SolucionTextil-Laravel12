@@ -241,33 +241,30 @@
         @livewireScripts
         @stack('js')
 
+        {{-- Importacion de notificaciones --}}
         <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-        <script>
-            @if (session('success'))
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+        {{-- Notificaciones Controladores laravel --}}        
+        <script data-navigate-once>
+            @if (session('success'))
                 var isDarkMode = document.documentElement.classList.contains('dark');
                 var toastBackgroundColor = isDarkMode ?
-                    'linear-gradient(to right, #444444, #666666)' // modo oscuro
-                    :
-                    'linear-gradient(to right, #333333, #666666)'; // modo claro
-
+                    'linear-gradient(to right, #444444, #666666)' :
+                    'linear-gradient(to right, #333333, #666666)';
                 Toastify({
-                    text: "{{ session('success') }}",
-                    duration: 2000,
-                    // close: true,
+                    text:"{{ session('success') }}",
+                    duration: 1500,
                     gravity: "top",
                     position: "center",
-                    backgroundColor: toastBackgroundColor,
                     className: "toast-notification",
                     style: {
                         borderRadius: "10px",
+                        background: toastBackgroundColor
                     }
                 }).showToast();
             @endif
-        </script>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
             function confirmDelete(button) {
                 Swal.fire({
                     title: '¿Estás seguro?',
@@ -285,5 +282,44 @@
                 });
             }
         </script>
+
+        {{-- Notificaciones Componentes livewire --}}
+        <script data-navigate-once>
+            Livewire.on('event-confirm', (id) => {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¡No podrás revertir esta acción!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#27272a',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Livewire.dispatch('deleteConfirmed', id);
+                    }
+                });
+            });
+
+            Livewire.on('event-notify', function(event) {
+                var isDarkMode = document.documentElement.classList.contains('dark');
+                var toastBackgroundColor = isDarkMode ?
+                    'linear-gradient(to right, #444444, #666666)' :
+                    'linear-gradient(to right, #333333, #666666)';
+                Toastify({
+                    text: event[0],
+                    duration: 1500,
+                    gravity: "top",
+                    position: "center",
+                    className: "toast-notification",
+                    style: {
+                        borderRadius: "10px",
+                        background: toastBackgroundColor
+                    }
+                }).showToast();
+            });
+        </script>
+
     </body>
 </html>
