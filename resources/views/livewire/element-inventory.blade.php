@@ -189,15 +189,15 @@
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
                     <flux:input type="number" wire:model="elementCreate.code" label="Código" />
                     <flux:input type="text" wire:model.live="elementCreate.name" label="Nombre" />
-                    @if (in_array('broad', $visibleFields))
+                    @if (in_array('broad', $elementCreate->visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementCreate.broad"
                             label="Ancho (m)" />
                     @endif
-                    @if (in_array('long', $visibleFields))
+                    @if (in_array('long', $elementCreate->visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementCreate.long"
                             label="Largo (m)" />
                     @endif
-                    @if (in_array('color_id', $visibleFields))
+                    @if (in_array('color_id', $elementCreate->visibleFields))
                         <flux:select label="Color" wire:model="elementCreate.color_id">
                             <flux:select.option value="" disabled> Selecciona color </flux:select.option>
                             @foreach ($colors as $color)
@@ -271,14 +271,14 @@
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
                     <flux:input type="number" wire:model="elementEdit.code" label="Código" disabled />
                     <flux:input type="text" wire:model="elementEdit.name" label="Nombre" />
-                    @if (in_array('broad', $visibleFields))
+                    @if (in_array('broad', $elementEdit->visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementEdit.broad"
                             label="Ancho (m)" />
                     @endif
-                    @if (in_array('long', $visibleFields))
+                    @if (in_array('long', $elementEdit->visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementEdit.long" label="Largo (m)" />
                     @endif
-                    @if (in_array('color_id', $visibleFields))
+                    @if (in_array('color_id', $elementEdit->visibleFields))
                         <flux:select label="Color" wire:model="elementEdit.color_id">
                             <flux:select.option value="" disabled> Selecciona color </flux:select.option>
                             @foreach ($colors as $color)
@@ -303,7 +303,7 @@
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
 
                     {{-- Tipo / Categoría --}}
-                    <flux:select wire:model.live="elementDetail.element_type_id" disabled>
+                    <flux:select wire:model.live="elementShow.element_type_id" disabled>
                         <flux:select.option value=""> Tipo de Elemento </flux:select.option>
                         @foreach ($elementTypes as $type)
                             <flux:select.option value="{{ $type->id }}">
@@ -315,8 +315,8 @@
                     {{-- Imagen --}}
                     <div
                         class="relative w-full h-60 bg-gray-100 rounded-md flex items-center justify-center dark:bg-[#2f2f2f]">
-                        @if ($elementDetail->image_path)
-                            <img src="{{ asset('storage/' . $elementDetail->image_path) }}"
+                        @if ($elementShow->image_path)
+                            <img src="{{ asset('storage/' . $elementShow->image_path) }}"
                                 class="object-cover w-full h-full rounded-md" />
                         @else
                             <span class="text-sm text-gray-500">No hay imagen disponible</span>
@@ -329,21 +329,21 @@
 
                 {{-- COLUMNA DERECHA --}}
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                    <flux:input type="number" wire:model="elementDetail.code" label="Código" disabled />
-                    <flux:input type="text" wire:model="elementDetail.name" label="Nombre" disabled />
+                    <flux:input type="number" wire:model="elementShow.code" label="Código" disabled />
+                    <flux:input type="text" wire:model="elementShow.name" label="Nombre" disabled />
 
-                    @if (in_array('broad', $visibleFields))
-                        <flux:input type="number" step="0.01" wire:model="elementDetail.broad" label="Ancho (m)"
+                    @if (in_array('broad', $elementShow->visibleFields))
+                        <flux:input type="number" step="0.01" wire:model="elementShow.broad" label="Ancho (m)"
                             disabled />
                     @endif
 
-                    @if (in_array('long', $visibleFields))
-                        <flux:input type="number" step="0.01" wire:model="elementDetail.long" label="Largo (m)"
+                    @if (in_array('long', $elementShow->visibleFields))
+                        <flux:input type="number" step="0.01" wire:model="elementShow.long" label="Largo (m)"
                             disabled />
                     @endif
 
-                    @if (in_array('color_id', $visibleFields))
-                        <flux:select label="Color" wire:model="elementDetail.color_id" disabled>
+                    @if (in_array('color_id', $elementShow->visibleFields))
+                        <flux:select label="Color" wire:model="elementShow.color_id" disabled>
                             <flux:select.option value="" disabled> Selecciona color </flux:select.option>
                             @foreach ($colors as $color)
                                 <flux:select.option value="{{ $color->id }}">{{ $color->name }}
@@ -352,7 +352,7 @@
                         </flux:select>
                     @endif
 
-                    <flux:input type="number" wire:model="elementDetail.stock" label="Stock" disabled />
+                    <flux:input type="number" wire:model="elementShow.stock" label="Stock" disabled />
                 </div>
             </div>
         </div>
