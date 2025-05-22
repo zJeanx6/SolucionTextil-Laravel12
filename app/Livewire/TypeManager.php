@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\ElementType;
 use App\Models\MachineType;
 use App\Models\ProductType;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -65,7 +66,7 @@ class TypeManager extends Component
         $model::create(['name' => $this->name]);
         $this->reset('name');
         $this->view = 'index';
-        $this->dispatch('notification-tipos', 'Tipo creado.');
+        $this->dispatch('event-notify', 'Tipo creado.');
     }
 
     public function create(){
@@ -96,14 +97,19 @@ class TypeManager extends Component
         $type->update(['name' => $this->name]);
         $this->reset(['name', 'editId']);
         $this->view = 'index';
-        $this->dispatch('notification-tipos', 'Tipo Actualizado.');
+        $this->dispatch('event-notify', 'Tipo Actualizado.');
     }
 
-    public function delete($id)
+    public function delete($id){
+        $this->dispatch('event-confirm', $id);
+    }
+
+    #[On('deleteConfirmed')]
+    public function deleteConfirmed($id)
     {
         $model = $this->getCurrentModel();
         $model::findOrFail($id)->delete();
-        $this->dispatch('notification-tipos', 'Tipo Eliminado.');
+        $this->dispatch('event-notify', 'Tipo Eliminado.');
     }
 
     public function render()
