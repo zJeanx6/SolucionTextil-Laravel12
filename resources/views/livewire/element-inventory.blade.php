@@ -137,7 +137,7 @@
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
 
                     {{-- tipo / categoría --}}
-                    <flux:select wire:model.live="change_type_id">
+                    <flux:select wire:model.live="elementCreate.element_type_id">
                         <flux:select.option value=""> Tipo de Elemento </flux:select.option>
                         @foreach ($elementTypes as $type)
                             <flux:select.option value="{{ $type->id }}">{{ $type->id }} {{ $type->name }}
@@ -189,15 +189,15 @@
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
                     <flux:input type="number" wire:model="elementCreate.code" label="Código" />
                     <flux:input type="text" wire:model.live="elementCreate.name" label="Nombre" />
-                    @if (in_array('broad', $elementCreate->visibleFields))
+                    @if (in_array('broad', $visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementCreate.broad"
                             label="Ancho (m)" />
                     @endif
-                    @if (in_array('long', $elementCreate->visibleFields))
+                    @if (in_array('long', $visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementCreate.long"
                             label="Largo (m)" />
                     @endif
-                    @if (in_array('color_id', $elementCreate->visibleFields))
+                    @if (in_array('color_id', $visibleFields))
                         <flux:select label="Color" wire:model="elementCreate.color_id">
                             <flux:select.option value="" disabled> Selecciona color </flux:select.option>
                             @foreach ($colors as $color)
@@ -213,7 +213,6 @@
                 </div>
             </div>
         </div>
-        
     @elseif ($view === 'edit')
         <div class="card p-6">
             <div class="flex flex-col lg:flex-row gap-6">
@@ -272,14 +271,14 @@
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
                     <flux:input type="number" wire:model="elementEdit.code" label="Código" disabled />
                     <flux:input type="text" wire:model="elementEdit.name" label="Nombre" />
-                    @if (in_array('broad', $elementCreate->visibleFields))
+                    @if (in_array('broad', $visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementEdit.broad"
                             label="Ancho (m)" />
                     @endif
-                    @if (in_array('long', $elementCreate->visibleFields))
+                    @if (in_array('long', $visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementEdit.long" label="Largo (m)" />
                     @endif
-                    @if (in_array('color_id', $elementCreate->visibleFields))
+                    @if (in_array('color_id', $visibleFields))
                         <flux:select label="Color" wire:model="elementEdit.color_id">
                             <flux:select.option value="" disabled> Selecciona color </flux:select.option>
                             @foreach ($colors as $color)
@@ -333,17 +332,17 @@
                     <flux:input type="number" wire:model="elementDetail.code" label="Código" disabled />
                     <flux:input type="text" wire:model="elementDetail.name" label="Nombre" disabled />
 
-                    @if (in_array('broad', $elementCreate->visibleFields))
+                    @if (in_array('broad', $visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementDetail.broad" label="Ancho (m)"
                             disabled />
                     @endif
 
-                    @if (in_array('long', $elementCreate->visibleFields))
+                    @if (in_array('long', $visibleFields))
                         <flux:input type="number" step="0.01" wire:model="elementDetail.long" label="Largo (m)"
                             disabled />
                     @endif
 
-                    @if (in_array('color_id', $elementCreate->visibleFields))
+                    @if (in_array('color_id', $visibleFields))
                         <flux:select label="Color" wire:model="elementDetail.color_id" disabled>
                             <flux:select.option value="" disabled> Selecciona color </flux:select.option>
                             @foreach ($colors as $color)
@@ -359,51 +358,4 @@
         </div>
     @endif
 
-
-    @push('js')
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-        <script data-navigate-once>
-            Livewire.on('confirm-delete-element', (code) => {
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¡No podrás revertir esta acción!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#27272a',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Livewire.dispatch('deleteConfirmedElement', code);
-                    }
-                });
-            });
-
-            Livewire.on('deleteConfirmedElement', (code) => {
-                @this.call('deleteConfirmed', code);
-            });
-            
-            Livewire.on('notification-elementos', function(notification) {
-                var isDarkMode = document.documentElement.classList.contains('dark');
-                var toastBackgroundColor = isDarkMode ?
-                    'linear-gradient(to right, #444444, #666666)'
-                    :
-                    'linear-gradient(to right, #333333, #666666)';
-                Toastify({
-                    text: notification[0],
-                    duration: 1500,
-                    // close: true,
-                    gravity: "top",
-                    position: "center",
-                    backgroundColor: toastBackgroundColor,
-                    className: "toast-notification",
-                    style: {
-                        borderRadius: "10px",
-                    }
-                }).showToast();
-            });
-        </script>
-    @endpush
 </div>

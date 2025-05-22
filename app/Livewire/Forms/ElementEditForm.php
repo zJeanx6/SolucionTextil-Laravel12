@@ -40,6 +40,15 @@ class ElementEditForm extends Form
 
     public $image_path = null;
 
+    public $visibleFields = [];
+
+    protected $groups = [
+        'G1' => ['range' => [101, 118], 'fields' => ['broad', 'long', 'color_id']],
+        'G2' => ['range' => [201, 211], 'fields' => ['color_id']],
+        'G3' => ['range' => [301, 311], 'fields' => []],
+        'G4' => ['range' => [401, 410], 'fields' => []],
+    ];
+
     public function edit($code)
     {
         $element = Element::where('code', $code)->firstOrFail();
@@ -53,10 +62,24 @@ class ElementEditForm extends Form
         $this->color_id        = $element->color_id;
         $this->element_type_id = $element->element_type_id;
         $this->photo           = null;
-
-        // Nuevo: path de la imagen actual
         $this->image_path      = $element->image;
+
+        // Aquí actualizamos los campos visibles según el tipo de elemento
+        $this->updateVisibleFields();
     }
+
+    protected function updateVisibleFields()
+    {
+        $this->visibleFields = [];
+        foreach ($this->groups as $g) {
+            [$min, $max] = $g['range'];
+            if ($this->element_type_id >= $min && $this->element_type_id <= $max) {
+                $this->visibleFields = $g['fields'];
+                break;
+            }
+        }
+    }
+
     public function update()
     {
         $this->validate();

@@ -8,9 +8,9 @@ use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Models\{Element, ElementType, Color};
 use Illuminate\Support\Facades\Storage;
-use Livewire\Attributes\{Lazy, Url};
+use Livewire\Attributes\{Lazy, On, Url};
 
-// #[Lazy]
+#[Lazy]
 class ElementInventory extends Component
 {
     use WithPagination, WithFileUploads;
@@ -32,7 +32,7 @@ class ElementInventory extends Component
     public $elementTypes = [];
     public $colors       = [];
 
-    public ElementShowForm $elementDetail;
+    public ElementShowForm $elementShow;
     public ElementCreateForm $elementCreate;
     public ElementEditForm $elementEdit;
 
@@ -63,7 +63,7 @@ class ElementInventory extends Component
     
     public function show($code)
     {
-        $this->elementDetail->show($code);
+        $this->elementShow->show($code);
         $this->view = 'show';
     }
 
@@ -86,22 +86,23 @@ class ElementInventory extends Component
     public function save()
     {
         $this->elementCreate->save();
-        $this->dispatch('notification-elementos', 'Elemento creado');
+        $this->dispatch('event-notify', 'Elemento creado');
         $this->index();
     }
 
     public function update()
     {
         $this->elementEdit->update();
-        $this->dispatch('notification-elementos', 'Elemento actualizado.');
+        $this->dispatch('event-notify', 'Elemento actualizado.');
         $this->index();
     }
 
     public function delete($code)
     {
-        $this->dispatch('confirm-delete-element', $code);
+        $this->dispatch('event-confirm', $code);
     }
 
+    #[On('deleteConfirmed')] 
     public function deleteConfirmed($code)
     {
         $element = Element::where('code', $code)->firstOrFail();
@@ -109,7 +110,7 @@ class ElementInventory extends Component
             Storage::disk('public')->delete($element->image);
         }
         $element->delete();
-        $this->dispatch('notification-elementos', 'Elemento eliminado.');
+        $this->dispatch('event-notify', 'Elemento eliminado.');
     }
 
     public function updatedChangeTypeId($value)
