@@ -1,5 +1,7 @@
 <div>
-    <div class="flex justify-between items-center -mt-4 mb-3">
+
+    {{-- Migaja de pan --}}
+    <div class="breadcrumbs">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item :href="route('dashboard')">Dashboard</flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.elements.index')">Elementos</flux:breadcrumbs.item>
@@ -43,12 +45,11 @@
             </div>
         </div>
 
-        {{-- Tabla --}}
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        {{-- Tabla de contenido --}}
+        <div class="div-table">
             <table class="table">
                 <thead class="head-table">
                     <tr>
-                        {{-- Cada <th> ordena al hacer clic --}}
                         <th class="head-table-item cursor-pointer" wire:click="sortBy('code')">
                             Cod
                             @include('partials.sort-icon', ['field' => 'code'])

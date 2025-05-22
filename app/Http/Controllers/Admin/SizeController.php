@@ -8,45 +8,47 @@ use Illuminate\Http\Request;
 
 class SizeController extends Controller
 {
-    public function index(){
-        $sizes = Size::orderBy('id', 'asc')->paginate(12);
+    public function index()
+    {
+        $sizes = Size::all();
         return view('admin.sizes.index', compact('sizes'));
     }
 
-    public function create(){
+    public function create()
+    {
         return view('admin.sizes.create');
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $data = $request->validate([
-            'name' => 'required|min:3|max:100',
-            'abbreviation' => 'required|min:3|max:25'
+            'name' => 'required|min:3|max:50',
+            'abbreviation' => 'required|min:1|max:10'
         ]);
 
         Size::create($data);
-        return redirect()->route('admin.sizes.index')->with('success', 'Talla creada correctamente.');
+        return redirect()->route('admin.sizes.index')->with('success', 'Talla creada.');
     }
 
-    public function show(Size $sizes){
-        //
-    }
-
-    public function edit(Size $size){
+    public function edit(Size $size)
+    {
         return view('admin.sizes.edit', compact('size'));
     }
 
-    public function update(Request $request, Size $size){
+    public function update(Request $request, Size $size)
+    {
         $data = $request->validate([
-            'name' => 'required|min:3|max:100',
-            'abbreviation' => 'required|min:3|max:25'
+            'name' => 'required|min:3|max:50',
+            'abbreviation' => 'required|min:1|max:10'
         ]);
 
         $size->update($data);
-        return redirect()->route('admin.sizes.index', $size)->with('success', 'Talla actualizada correctamente.');
+        return redirect()->route('admin.sizes.index', $size)->with('success', 'Talla actualizada.');
     }
 
-    public function destroy(Size $size){
+    public function destroy(Size $size)
+    {
         $size->delete();
-        return redirect()->route('admin.sizes.index')->with('success', 'Talla eliminada correctamente.');
+        return redirect()->route('admin.sizes.index')->with('success', 'Talla eliminada.');
     }
 }
