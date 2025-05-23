@@ -1,4 +1,6 @@
-@php
+@php 
+    $userRole = auth()->check() ? auth()->user()->role->name : null;
+
     $links = [
         [
             'name' => 'Inicio',
@@ -76,8 +78,22 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('dashboard')" icon="home" wire:navigate>{{ __('Dashboard') }}</flux:menu.item>
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
+                        @if($userRole === 'inventory')
+                            <flux:menu.item :href="route('admin.dashboard-inventory')" icon="home" wire:navigate>
+                                {{ __('Dashboard') }}
+                            </flux:menu.item>
+                        @elseif($userRole === 'maintenance')
+                            <flux:menu.item :href="route('admin.dashboard-maintenance')" icon="home" wire:navigate>
+                                {{ __('Dashboard') }}
+                            </flux:menu.item>
+                        @elseif($userRole === 'admin')
+                            <flux:menu.item :href="route('dashboard')" icon="home" wire:navigate>
+                                {{ __('Dashboard') }}
+                            </flux:menu.item>
+                        @endif
+                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>
+                            {{ __('Settings') }}
+                        </flux:menu.item>
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />

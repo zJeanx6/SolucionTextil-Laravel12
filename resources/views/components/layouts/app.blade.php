@@ -1,4 +1,6 @@
 @php
+    $userRole = auth()->user()->role->name;
+
     $groups = [
         'Platform' => [
             [
@@ -6,34 +8,52 @@
                 'icon' => 'home',
                 'url' => route('dashboard'),
                 'current' => request()->routeIs('dashboard'),
+                'roles' => ['admin'],
             ],
-
+            [
+                'name' => 'Resumen',
+                'icon' => 'home',
+                'url' => route('admin.dashboard-inventory'),
+                'current' => request()->routeIs('admin.dashboard-inventory'),
+                'roles' => ['admin', 'inventory'],
+            ],
+            [
+                'name' => 'Control',
+                'icon' => 'home',
+                'url' => route('admin.dashboard-maintenance'),
+                'current' => request()->routeIs('admin.dashboard-maintenance'),
+                'roles' => ['admin', 'maintenance'],
+            ],
         ],
-        'Inventarios' =>[
+        'Inventarios' => [
             [
                 'name' => 'Elementos',
                 'icon' => 'home',
                 'url' => route('admin.elements.index'),
                 'current' => request()->routeIs('admin.elements.index'),
+                'roles' => ['admin', 'inventory'],
             ],
             [
                 'name' => 'Productos',
                 'icon' => 'home',
                 'url' => route('admin.products.index'),
                 'current' => request()->routeIs('admin.products.index'),
+                'roles' => ['admin', 'inventory'],
             ],
             [
                 'name' => 'Maquinas',
                 'icon' => 'home',
                 'url' => route('admin.machines.index'),
                 'current' => request()->routeIs('admin.machines.index'),
-            ],           
+                'roles' => ['admin'],
+            ],
             [
                 'name' => 'Proveedores',
                 'icon' => 'users',
                 'url' => route('admin.suppliers.index'),
                 'current' => request()->routeIs('admin.suppliers.index'),
-            ],           
+                'roles' => ['admin'],
+            ],
         ],
         'Complementos' => [
             [
@@ -41,45 +61,56 @@
                 'icon' => 'swatch',
                 'url' => route('admin.sizes.index'),
                 'current' => request()->routeIs('admin.sizes.*'),
+                'roles' => ['admin'],
             ],
             [
                 'name' => 'Colores',
                 'icon' => 'swatch',
                 'url' => route('admin.colors.index'),
                 'current' => request()->routeIs('admin.colors.*'),
+                'roles' => ['admin'],
             ],
             [
                 'name' => 'Estados',
                 'icon' => 'cpu-chip',
                 'url' => route('admin.states.index'),
                 'current' => request()->routeIs('admin.states.*'),
+                'roles' => ['admin'],
             ],
             [
                 'name' => 'Roles',
                 'icon' => 'user-plus',
                 'url' => route('admin.roles.index'),
                 'current' => request()->routeIs('admin.roles.*'),
+                'roles' => ['admin'],
             ],
             [
                 'name' => 'Marcas',
                 'icon' => 'globe-americas',
                 'url' => route('admin.brands.index'),
                 'current' => request()->routeIs('admin.brands.*'),
+                'roles' => ['admin'],
             ],
             [
                 'name' => 'Tipos/Categorias',
                 'icon' => 'swatch',
                 'url' => route('admin.types.index'),
                 'current' => request()->routeIs('admin.types.index'),
+                'roles' => ['admin'],
             ],
             [
                 'name' => 'Tipos de Mantenimiento',
                 'icon' => 'swatch',
                 'url' => route('admin.maintenance.index'),
                 'current' => request()->routeIs('admin.maintenance.index'),
+                'roles' => ['admin'],
             ],
         ],
     ];
+
+    $complementosLinks = collect($groups['Complementos'])->filter(fn($link) => in_array($userRole, $link['roles']));
+    $complementosLinks2 = collect($groups['Inventarios'])->filter(fn($link) => in_array($userRole, $link['roles']));
+
 @endphp
 
 <!DOCTYPE html>
@@ -109,24 +140,38 @@
             </a>
 
             <flux:navlist variant="outline">
+
                 <flux:navlist.group :heading="'Platform'" class="grid">
-                    @foreach ($groups['Platform'] as $link)
-                        <flux:navlist.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']"
-                            wire:navigate>{{ $link['name'] }}</flux:navlist.item>
+                    @foreach ($groups['Platform'] as $link)      
+                        @if (in_array($userRole, $link['roles']))              
+                            <flux:navlist.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']"
+                                wire:navigate>{{ $link['name'] }}</flux:navlist.item>
+                        @endif
                     @endforeach
                 </flux:navlist.group>
-                <flux:navlist.group expandable :heading="'Complementos'" :expanded="collect($groups['Complementos'])->contains(fn($link)=>$link['current'])" class="grid">
-                    @foreach ($groups['Complementos'] as $link2)
-                        <flux:navlist.item :icon="$link2['icon']" :href="$link2['url']" :current="$link2['current']"
-                            wire:navigate>{{ $link2['name'] }}</flux:navlist.item>
-                    @endforeach
-                </flux:navlist.group>
-                <flux:navlist.group expandable :heading="'Inventarios'" :expanded="collect($groups['Inventarios'])->contains(fn($link)=>$link['current'])" class="grid">
-                    @foreach ($groups['Inventarios'] as $link2)
-                        <flux:navlist.item :icon="$link2['icon']" :href="$link2['url']" :current="$link2['current']"
-                            wire:navigate>{{ $link2['name'] }}</flux:navlist.item>
-                    @endforeach
-                </flux:navlist.group>
+
+                @if($complementosLinks->isNotEmpty())
+                    <flux:navlist.group expandable :heading="'Complementos'" :expanded="collect($groups['Complementos'])->contains(fn($link)=>$link['current'])" class="grid">
+                        @foreach ($groups['Complementos'] as $link2)
+                            @if (in_array($userRole, $link2['roles']))
+                                <flux:navlist.item :icon="$link2['icon']" :href="$link2['url']" :current="$link2['current']"
+                                    wire:navigate>{{ $link2['name'] }}</flux:navlist.item>
+                            @endif
+                        @endforeach
+                    </flux:navlist.group>
+                @endif
+
+                @if($complementosLinks2->isNotEmpty())
+                    <flux:navlist.group expandable :heading="'Inventarios'" :expanded="collect($groups['Inventarios'])->contains(fn($link)=>$link['current'])" class="grid">
+                        @foreach ($groups['Inventarios'] as $link3)
+                            @if (in_array($userRole, $link3['roles']))
+                                <flux:navlist.item :icon="$link3['icon']" :href="$link3['url']" :current="$link3['current']"
+                                    wire:navigate>{{ $link3['name'] }}</flux:navlist.item>
+                            @endif
+                        @endforeach
+                    </flux:navlist.group>
+                @endif  
+
             </flux:navlist>
 
             <flux:spacer />
@@ -136,10 +181,12 @@
                     target="_blank">
                     {{ __('Repository') }}
                 </flux:navlist.item>
-
-                <flux:navlist.item icon="users" :href="route('admin.users.index')" :current="request()->routeIs('admin.users.*')">
+                
+            @if ($userRole === 'admin')
+                <flux:navlist.item icon="users" :href="route('admin.users.index')" :current="request()->routeIs('admin.users.*')" wire:navigate>
                     {{ __('Usuarios') }}
                 </flux:navlist.item>
+            @endif
             </flux:navlist>
 
             <!-- Desktop User Menu -->

@@ -27,15 +27,51 @@ class DatabaseSeeder extends Seeder
             ProductsSeeder::class,
         ]);
 
+        Role::factory()->create([
+            'id' => 1,
+            'name' => 'admin',
+            'description' => 'administrar todos los modulos del software'
+        ]);
+        
+        Role::factory()->create([
+            'id' => 2,
+            'name' => 'inventory',
+            'description' => 'administrar todos los inventarios'
+        ]);
+
+        Role::factory()->create([
+            'id' => 3,
+            'name' => 'maintenance',
+            'description' => 'administrar el mantenimiento de maquinaria'
+        ]);
+        
         User::factory()->create([
             'card' => '10000000',
             'name' => 'admin',
-            'last_name' => 'user',
+            'last_name' => 'user1',
             'email' => 'admin@soluciontextil.com',
-            'password' => bcrypt('12345')
+            'password' => bcrypt('12345'),
+            'role_id' => 1,
         ]);
 
-        Role::factory(15)->create();
+        User::factory()->create([
+            'card' => '10000001',
+            'name' => 'inventory',
+            'last_name' => 'user2',
+            'email' => 'inventory@soluciontextil.com',
+            'password' => bcrypt('12345'),
+            'role_id' => 2,
+        ]);
+
+        User::factory()->create([
+            'card' => '10000002',
+            'name' => 'maintenance',
+            'last_name' => 'user3',
+            'email' => 'maintenance@soluciontextil.com',
+            'password' => bcrypt('12345'),
+            'role_id' => 3,
+        ]);
+
         State::factory(15)->create();
         Brand::factory(15)->create();
         MachineType::factory(15)->create();

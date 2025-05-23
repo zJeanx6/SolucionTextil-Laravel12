@@ -7,12 +7,8 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/pruebas', function () {
-    return view('pruebas');
-});
-
 Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'role:admin'])
     ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
