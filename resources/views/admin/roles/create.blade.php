@@ -7,7 +7,7 @@
             <flux:breadcrumbs.item :href="route('admin.roles.index')"> Roles </flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.roles.create')"> Crear </flux:breadcrumbs.item>
 
-            <flux:button size="xs" variant="primary" :href="route('admin.roles.index')"> Volver </flux:button>
+            <flux:button size="sm" variant="primary" :href="route('admin.roles.index')"> Volver </flux:button>
         </flux:breadcrumbs>
     </div>
 

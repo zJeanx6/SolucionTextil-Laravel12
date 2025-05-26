@@ -30,10 +30,9 @@
                                 <form action="{{ route('admin.roles.destroy', $role) }}" method="POST">
                                     @csrf @method('DELETE')
                                     <flux:button.group>
-                                        <flux:button size="sm" variant="primary"
-                                            :href="route('admin.roles.edit', $role)" >Editar </flux:button>
-                                        <flux:button size="sm" variant="danger" onclick="confirmDelete(this)">
-                                            Eliminar </flux:button>
+                                        <flux:button icon="pencil-square" size="sm" variant="primary"
+                                            :href="route('admin.roles.edit', $role)" />
+                                        <flux:button icon="trash" size="sm" variant="danger" onclick="confirmDelete(this)" />
                                     </flux:button.group>
                                 </form>
                             </div>
@@ -43,8 +42,5 @@
             </tbody>
         </table>
     </div>
-
-    {{-- Paginación --}}
-    <div class="mx-4 mt-4 mb-4">{{ $roles->links() }}</div>
 
 </x-layouts.app>

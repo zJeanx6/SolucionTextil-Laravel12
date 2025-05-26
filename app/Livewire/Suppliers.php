@@ -131,7 +131,7 @@ class Suppliers extends Component
             ->when($this->searchByRepresentative, function ($query) {
                 $query->where('representative_name', 'like', '%' . $this->searchByRepresentative . '%');
             })
-            ->paginate(10);
+            ->paginate(12);
 
         return view('livewire.supplier', [
             'suppliers' => $suppliers,

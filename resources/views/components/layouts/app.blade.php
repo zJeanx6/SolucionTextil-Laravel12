@@ -25,7 +25,7 @@
                 'roles' => ['admin', 'maintenance'],
             ],
         ],
-        'Inventarios' => [
+        'Inventario' => [
             [
                 'name' => 'Elementos',
                 'icon' => 'home',
@@ -55,7 +55,14 @@
                 'roles' => ['admin'],
             ],
         ],
-        'Complementos' => [
+        'Complemento' => [
+            [
+                'name' => 'Roles',
+                'icon' => 'user-plus',
+                'url' => route('admin.roles.index'),
+                'current' => request()->routeIs('admin.roles.*'),
+                'roles' => ['admin'],
+            ],
             [
                 'name' => 'Tallas',
                 'icon' => 'swatch',
@@ -75,13 +82,6 @@
                 'icon' => 'cpu-chip',
                 'url' => route('admin.states.index'),
                 'current' => request()->routeIs('admin.states.*'),
-                'roles' => ['admin'],
-            ],
-            [
-                'name' => 'Roles',
-                'icon' => 'user-plus',
-                'url' => route('admin.roles.index'),
-                'current' => request()->routeIs('admin.roles.*'),
                 'roles' => ['admin'],
             ],
             [
@@ -108,8 +108,8 @@
         ],
     ];
 
-    $complementosLinks = collect($groups['Complementos'])->filter(fn($link) => in_array($userRole, $link['roles']));
-    $complementosLinks2 = collect($groups['Inventarios'])->filter(fn($link) => in_array($userRole, $link['roles']));
+    $ComplementoLinks = collect($groups['Complemento'])->filter(fn($link) => in_array($userRole, $link['roles']));
+    $ComplementoLinks2 = collect($groups['Inventario'])->filter(fn($link) => in_array($userRole, $link['roles']));
 
 @endphp
 
@@ -150,9 +150,9 @@
                     @endforeach
                 </flux:navlist.group>
 
-                @if($complementosLinks->isNotEmpty())
-                    <flux:navlist.group expandable :heading="'Complementos'" :expanded="collect($groups['Complementos'])->contains(fn($link)=>$link['current'])" class="grid">
-                        @foreach ($groups['Complementos'] as $link2)
+                @if($ComplementoLinks->isNotEmpty())
+                    <flux:navlist.group expandable :heading="'Complemento'" :expanded="collect($groups['Complemento'])->contains(fn($link)=>$link['current'])" class="grid">
+                        @foreach ($groups['Complemento'] as $link2)
                             @if (in_array($userRole, $link2['roles']))
                                 <flux:navlist.item :icon="$link2['icon']" :href="$link2['url']" :current="$link2['current']"
                                     wire:navigate>{{ $link2['name'] }}</flux:navlist.item>
@@ -161,9 +161,9 @@
                     </flux:navlist.group>
                 @endif
 
-                @if($complementosLinks2->isNotEmpty())
-                    <flux:navlist.group expandable :heading="'Inventarios'" :expanded="collect($groups['Inventarios'])->contains(fn($link)=>$link['current'])" class="grid">
-                        @foreach ($groups['Inventarios'] as $link3)
+                @if($ComplementoLinks2->isNotEmpty())
+                    <flux:navlist.group expandable :heading="'Inventario'" :expanded="collect($groups['Inventario'])->contains(fn($link)=>$link['current'])" class="grid">
+                        @foreach ($groups['Inventario'] as $link3)
                             @if (in_array($userRole, $link3['roles']))
                                 <flux:navlist.item :icon="$link3['icon']" :href="$link3['url']" :current="$link3['current']"
                                     wire:navigate>{{ $link3['name'] }}</flux:navlist.item>
@@ -176,17 +176,12 @@
 
             <flux:spacer />
 
-            <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit"
-                    target="_blank">
-                    {{ __('Repository') }}
-                </flux:navlist.item>
-                
-            @if ($userRole === 'admin')
-                <flux:navlist.item icon="users" :href="route('admin.users.index')" :current="request()->routeIs('admin.users.*')" wire:navigate>
-                    {{ __('Usuarios') }}
-                </flux:navlist.item>
-            @endif
+            <flux:navlist variant="outline">                
+                @if ($userRole === 'admin')
+                    <flux:navlist.item icon="users" :href="route('admin.users.index')" :current="request()->routeIs('admin.users.*')" wire:navigate>
+                        {{ __('Usuarios') }}
+                    </flux:navlist.item>
+                @endif
             </flux:navlist>
 
             <!-- Desktop User Menu -->

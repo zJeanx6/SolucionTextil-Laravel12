@@ -185,7 +185,7 @@ public function update()
                 $query->where('machine_type_id', $this->modelSelected);
             })
             ->where('serial', 'like', '%' . $this->search . '%')
-            ->paginate(10);
+            ->paginate(12);
 
         return view('livewire.machines', [
             'machines' => $machines,

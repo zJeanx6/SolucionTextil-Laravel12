@@ -6,9 +6,9 @@
             <flux:breadcrumbs.item :href="route('dashboard')"> Dashboard </flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.colors.index')"> Colores </flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.colors.create')"> Crear </flux:breadcrumbs.item>
-
-            <flux:button size="xs" variant="primary" :href="route('admin.colors.index')"> Volver </flux:button>
         </flux:breadcrumbs>
+
+        <flux:button size="sm" variant="primary" :href="route('admin.colors.index')"> Volver </flux:button>
     </div>
 
     {{-- Formulario/Tarjeta para crear color. --}}
@@ -27,7 +27,7 @@
             </div>
 
             <div class="flex justify-end">
-                <flux:button variant="primary" type="submit">Guardar</flux:button>
+                <flux:button size="sm" variant="primary" type="submit"> Guardar </flux:button>
             </div>
         </form>
     </div>

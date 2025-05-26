@@ -93,7 +93,7 @@ class TypeMaintenance extends Component
     {
         $maintenanceTypes = MaintenanceType::where('name', 'like', '%' . $this->search . '%')
             ->orWhere('description', 'like', '%' . $this->search . '%')
-            ->paginate(10);
+            ->paginate(12);
         return view('livewire.type-maintenance', [
             'maintenanceTypes' => $maintenanceTypes,
             'view' => $this->view,]);

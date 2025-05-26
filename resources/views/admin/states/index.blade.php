@@ -22,7 +22,7 @@
             </thead>
             <tbody>
                 @foreach ($states as $state)
-                    <tr wire:key="estado-{{ $estado->id }}" class="table-content">
+                    <tr wire:key="estado-{{ $state->id }}" class="table-content">
                         <td class="column-item">{{ $state->name }}</td>
                         <td class="column-item">{{ $state->description }}</td>
                         <td class="column-item">
@@ -30,10 +30,9 @@
                                 <form action="{{ route('admin.states.destroy', $state) }}" method="POST">
                                     @csrf @method('DELETE')
                                     <flux:button.group>
-                                        <flux:button state="sm" variant="primary"
-                                            :href="route('admin.states.edit', $state)"> Editar </flux:button>
-                                        <flux:button state="sm" variant="danger" onclick="confirmDelete(this)">
-                                            Eliminar </flux:button>
+                                        <flux:button icon="pencil-square" size="sm" variant="primary"
+                                            :href="route('admin.states.edit', $state)" />
+                                        <flux:button icon="trash" size="sm" variant="danger" onclick="confirmDelete(this)" />
                                     </flux:button.group>
                                 </form>
                             </div>

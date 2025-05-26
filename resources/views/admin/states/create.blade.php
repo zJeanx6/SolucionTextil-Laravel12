@@ -5,10 +5,10 @@
         <flux:breadcrumbs>
             <flux:breadcrumbs.item :href="route('dashboard')"> Dashboard </flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.states.index')"> Estados </flux:breadcrumbs.item>
-            <flux:breadcrumbs.item :href="route('admin.states.create')"> rear </flux:breadcrumbs.item>
-
-            <flux:button size="xs" variant="primary" :href="route('admin.states.index')"> Volver </flux:button>
+            <flux:breadcrumbs.item :href="route('admin.states.create')"> Crear </flux:breadcrumbs.item>
         </flux:breadcrumbs>
+
+        <flux:button size="sm" variant="primary" :href="route('admin.states.index')"> Volver </flux:button>
     </div>
 
     {{-- Formulario/Tarjeta para crear estado. --}}
@@ -36,5 +36,5 @@
             </div>
         </form>
     </div>
-    
+
 </x-layouts.app>

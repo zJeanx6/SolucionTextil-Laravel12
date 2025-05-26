@@ -30,10 +30,10 @@
                                 <form action="{{ route('admin.colors.destroy', $color) }}" method="POST">
                                     @csrf @method('DELETE')
                                     <flux:button.group>
-                                        <flux:button size="sm" variant="primary"
-                                            :href="route('admin.colors.edit', $color)"> Editar </flux:button>
-                                        <flux:button size="sm" variant="danger" onclick="confirmDelete(this)">
-                                            Eliminar </flux:button>
+                                        <flux:button icon="pencil-square" size="sm" variant="primary"
+                                            :href="route('admin.colors.edit', $color)" />
+                                        <flux:button icon="trash" size="sm" variant="danger"
+                                            onclick="confirmDelete(this)" />
                                     </flux:button.group>
                                 </form>
                             </div>

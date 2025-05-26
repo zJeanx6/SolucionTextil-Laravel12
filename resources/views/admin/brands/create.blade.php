@@ -7,7 +7,7 @@
             <flux:breadcrumbs.item :href="route('admin.brands.index')"> Marcas </flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.brands.create')"> Crear </flux:breadcrumbs.item>
 
-            <flux:button size="xs" variant="primary" :href="route('admin.brands.index')"> Volver </flux:button>
+            <flux:button size="sm" variant="primary" :href="route('admin.brands.index')"> Volver </flux:button>
         </flux:breadcrumbs>
     </div>
 
@@ -22,7 +22,7 @@
             </div>
 
             <div class="flex justify-end">
-                <flux:button variant="primary" type="submit">Guardar</flux:button>
+                <flux:button size="sm" variant="primary" type="submit"> Guardar </flux:button>
             </div>
         </form>
     </div>

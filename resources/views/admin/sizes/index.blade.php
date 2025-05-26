@@ -7,7 +7,7 @@
             <flux:breadcrumbs.item :href="route('admin.sizes.index')"> Tallas </flux:breadcrumbs.item>
         </flux:breadcrumbs>
 
-        <flux:button size="xs" variant="primary" :href="route('admin.sizes.create')"> Nuevo </flux:button>
+        <flux:button size="sm" variant="primary" :href="route('admin.sizes.create')"> Nuevo </flux:button>
     </div>
 
     {{-- Tabla de contenido --}}
@@ -30,10 +30,10 @@
                                 <form action="{{ route('admin.sizes.destroy', $size) }}" method="POST">
                                     @csrf @method('DELETE')
                                     <flux:button.group>
-                                        <flux:button size="xs" variant="primary"
-                                            :href="route('admin.sizes.edit', $size)"> Editar </flux:button>
-                                        <flux:button size="xs" variant="danger" onclick="confirmDelete(this)">
-                                            Eliminar </flux:button>
+                                        <flux:button icon="pencil-square" size="sm" variant="primary"
+                                            :href="route('admin.sizes.edit', $size)" />
+                                        <flux:button icon="trash" size="sm" variant="danger"
+                                            onclick="confirmDelete(this)" />
                                     </flux:button.group>
                                 </form>
                             </div>
@@ -43,5 +43,5 @@
             </tbody>
         </table>
     </div>
-    
+
 </x-layouts.app>

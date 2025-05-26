@@ -140,7 +140,7 @@ class ElementInventory extends Component
                 $q->where('color_id', $this->colorFilter)
             )
             ->orderBy($this->sortField, $this->sortDirection)
-            ->paginate(8);
+            ->paginate(12);
 
         return view('livewire.element-inventory', compact('elements'));
     }

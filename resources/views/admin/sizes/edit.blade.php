@@ -8,7 +8,7 @@
             <flux:breadcrumbs.item :href="route('admin.sizes.edit', $size)"> Editar </flux:breadcrumbs.item>
         </flux:breadcrumbs>
         
-        <flux:button size="xs" variant="primary" :href="route('admin.sizes.index')"> Volver </flux:button>
+        <flux:button size="sm" variant="primary" :href="route('admin.sizes.index')"> Volver </flux:button>
     </div>
 
     {{-- Formulario/Tarjeta para actualizar talla. --}}

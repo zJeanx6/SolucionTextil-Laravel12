@@ -8,7 +8,7 @@
             <flux:breadcrumbs.item :href="route('admin.states.edit', $state)"> Editar </flux:breadcrumbs.item>
         </flux:breadcrumbs>
 
-        <flux:button size="xs" variant="primary" :href="route('admin.states.index')"> Volver </flux:button>
+        <flux:button size="sm" variant="primary" :href="route('admin.states.index')"> Volver </flux:button>
     </div>
 
     {{-- Formulario/Tarjeta para actualizar estado. --}}
