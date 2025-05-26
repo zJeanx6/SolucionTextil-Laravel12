@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Role;
 use Illuminate\Http\Request;
+use App\Models\Role;
 
 class RoleController extends Controller
 {
@@ -30,12 +30,6 @@ class RoleController extends Controller
         ]);
         Role::create($data);
         return redirect()->route('admin.roles.index')->with('success', 'Rol creado correctamente.');
-    }
-
-    
-    public function show(Role $role)
-    {
-        //
     }
 
 

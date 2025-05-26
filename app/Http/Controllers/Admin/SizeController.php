@@ -3,21 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Size;
 use Illuminate\Http\Request;
+use App\Models\Size;
 
 class SizeController extends Controller
 {
+
     public function index()
     {
         $sizes = Size::all();
         return view('admin.sizes.index', compact('sizes'));
     }
 
+
     public function create()
     {
         return view('admin.sizes.create');
     }
+
 
     public function store(Request $request)
     {
@@ -30,10 +33,12 @@ class SizeController extends Controller
         return redirect()->route('admin.sizes.index')->with('success', 'Talla creada.');
     }
 
+
     public function edit(Size $size)
     {
         return view('admin.sizes.edit', compact('size'));
     }
+
 
     public function update(Request $request, Size $size)
     {
@@ -46,9 +51,11 @@ class SizeController extends Controller
         return redirect()->route('admin.sizes.index', $size)->with('success', 'Talla actualizada.');
     }
 
+
     public function destroy(Size $size)
     {
         $size->delete();
         return redirect()->route('admin.sizes.index')->with('success', 'Talla eliminada.');
     }
+    
 }

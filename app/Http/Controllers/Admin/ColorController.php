@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class ColorController extends Controller
 {
+
     public function index()
     {
         $colors = Color::orderBy('id', 'desc')->paginate(12);
@@ -34,12 +35,6 @@ class ColorController extends Controller
     }
 
 
-    public function show(string $id)
-    {
-        //
-    }
-
-
     public function edit(Color $color)
     {
         return view('admin.colors.edit', compact('color'));
@@ -63,4 +58,5 @@ class ColorController extends Controller
         $color->delete();
         return redirect()->route('admin.colors.index')->with('success', 'Color eliminado correctamente.');
     }
+    
 }

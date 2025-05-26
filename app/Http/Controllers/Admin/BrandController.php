@@ -33,12 +33,6 @@ class BrandController extends Controller
     }
 
 
-    public function show(string $id)
-    {
-        //
-    }
-
-
     public function edit(Brand $brand)
     {
         return view('admin.brands.edit', compact('brand'));
@@ -61,5 +55,5 @@ class BrandController extends Controller
         $brand->delete();
         return redirect()->route('admin.brands.index')->with('success', 'Marca eliminada correctamente.');
     }
-
+    
 }
