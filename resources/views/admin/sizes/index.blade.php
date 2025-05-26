@@ -15,9 +15,9 @@
         <table class="table">
             <thead class="head-table">
                 <tr>
-                    <th class="head-table-item">Nombre</th>
-                    <th class="head-table-item">Abreviación/Talla</th>
-                    <th class="head-table-item">Acciones</th>
+                    <th class="head-table-item"> Nombre </th>
+                    <th class="head-table-item"> Abreviación/Talla </th>
+                    <th class="head-table-item"> Acciones </th>
                 </tr>
             </thead>
             <tbody>
@@ -43,4 +43,5 @@
             </tbody>
         </table>
     </div>
+    
 </x-layouts.app>
