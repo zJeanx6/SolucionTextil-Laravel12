@@ -142,7 +142,7 @@
                     <div class="w-full lg:w-1/2 flex flex-col gap-4">
 
                         {{-- tipo / categoría --}}
-                        <flux:select wire:model.live="elementCreate.element_type_id">
+                        <flux:select wire:model.live="change_type_id">
                             <flux:select.option value=""> Tipo de Elemento </flux:select.option>
                             @foreach ($elementTypes as $type)
                                 <flux:select.option value="{{ $type->id }}">{{ $type->id }} {{ $type->name }}
@@ -227,7 +227,7 @@
                     {{-- COLUMNA IZQUIERDA --}}
                     <div class="w-full lg:w-1/2 flex flex-col gap-4">
                         {{-- Tipo / Categoría --}}
-                        <flux:select wire:model.live="elementEdit.element_type_id">
+                        <flux:select label="Tipo de {{ $elementEdit->name }}" wire:model.live="elementEdit.element_type_id" disabled>
                             <flux:select.option value=""> Tipo de Elemento </flux:select.option>
                             @foreach ($elementTypes as $type)
                                 <flux:select.option value="{{ $type->id }}">
