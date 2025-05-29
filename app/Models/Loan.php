@@ -11,15 +11,19 @@ class Loan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'document',
-        'name',
-        'file',
         'card_id',
+        'instructor_id',
+        'file',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'card_id', 'card');
+    }
+
+    public function instructor()
+    {
+        return $this->belongsTo(User::class, 'instructor_id', 'card');
     }
     
     public function details()

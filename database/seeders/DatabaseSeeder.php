@@ -22,8 +22,9 @@ class DatabaseSeeder extends Seeder
             ColorSeeder::class,         // 1º  ← Colores
             ElementTypeSeeder::class,   // 2º  ← Tipos Elementos
             ElementSeeder::class,       // 3º  ← Elementos
-            SizesSeeder::class,         // 4º  ← Tallas
-            ProductTypesSeeder::class,  // 5º  ← Tipos Productos
+            RollSeeder::class,          // 4º  ← Rollos
+            SizesSeeder::class,         // 5º  ← Tallas
+            ProductTypesSeeder::class,  // 6º  ← Tipos Productos
             ProductsSeeder::class,
         ]);
 

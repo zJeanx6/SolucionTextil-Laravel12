@@ -18,8 +18,6 @@ class Element extends Model
         'name',
         'stock',
         'image',
-        'broad',
-        'long',
         'color_id',
         'element_type_id',
     ];

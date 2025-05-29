@@ -11,24 +11,23 @@ return new class extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('document');
-            $table->string('name');
-            $table->unsignedInteger('file');
-
-
             //ForeignsKeys
             $table->unsignedBigInteger('card_id')->nullable();
+            $table->unsignedBigInteger('instructor_id')->nullable();
+
+            $table->unsignedInteger('file');
 
             //ConfigLaravel
             $table->timestamps();
 
             //Config ForeignsKeys
             $table->foreign('card_id')->references('card')->on('users')->onDelete('set null');
+            $table->foreign('instructor_id')->references('card')->on('users')->onDelete('set null');
         });
 
         Schema::create('loan_details', function (Blueprint $table) {
             $table->id();
-            $table->integer('amount');
+            $table->decimal('amount', 6, 2)->default(0);
 
             //ForeignsKeys
             $table->unsignedBigInteger('loan_id')->nullable();

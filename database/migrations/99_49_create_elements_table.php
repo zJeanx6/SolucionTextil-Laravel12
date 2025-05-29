@@ -16,15 +16,14 @@ return new class extends Migration
         Schema::create('elements', function (Blueprint $table) {
             $table->unsignedInteger('code')->primary();
             $table->string('name', 50);
-            $table->unsignedInteger('stock');
+            $table->decimal('stock', 6, 2)->default(0);
             $table->string('image')->nullable();
-            $table->decimal('broad', 5, 2)->nullable();
-            $table->decimal('long', 5, 2)->nullable();
-            $table->timestamps();
-
+            
             //Foreign Keys
             $table->unsignedBigInteger('color_id')->nullable();
             $table->unsignedBigInteger('element_type_id')->nullable();
+            
+            $table->timestamps();
 
             //Config ForeignsKeys
             $table->foreign('color_id')->references('id')->on('colors')->onDelete('set null');
