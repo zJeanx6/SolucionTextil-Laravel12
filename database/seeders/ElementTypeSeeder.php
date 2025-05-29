@@ -71,8 +71,7 @@ class ElementTypeSeeder extends Seeder
             ['id' => 3109, 'name' => 'Escuadra metálica 60 cm'],
             ['id' => 3110, 'name' => 'Jaboncillo / tiza de sastre'],
             ['id' => 3111, 'name' => 'Marcador borrable para tela'],
-            ['id' => 3112, 'name' => 'Canasta plástica / caja organizadora'],
-
+            
             /*
             |--------------------------------------------------------------
             | G-04  “Consumible mínimo”    →  ID 4100 - 4999
@@ -88,6 +87,7 @@ class ElementTypeSeeder extends Seeder
             ['id' => 4107, 'name' => 'Dedal metálico / silicona'],
             ['id' => 4108, 'name' => 'Percha plástica para muestras'],
             ['id' => 4109, 'name' => 'Gancho “J” para rollos de tela'],
+            ['id' => 4110, 'name' => 'Canasta plástica / caja organizadora'],
         ];
 
         /*
