@@ -18,6 +18,18 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        State::factory()->create([
+            'id' => 1,
+            'name' => 'Activo',
+            'description' => 'Estado activo de un registro'
+        ]);
+        
+        State::factory()->create([
+            'id' => 2,
+            'name' => 'Inactivo',
+            'description' => 'Estado inactivo de un registro'
+        ]);
+
         $this->call([
             ColorSeeder::class,         // 1º  ← Colores
             ElementTypeSeeder::class,   // 2º  ← Tipos Elementos

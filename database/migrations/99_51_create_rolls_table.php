@@ -13,8 +13,12 @@ return new class extends Migration
             $table->decimal('broad', 6, 2)->default(0);
             $table->decimal('long', 6, 2)->default(0);
             $table->unsignedInteger('element_code')->nullable();
-            $table->foreign('element_code')->references('code')->on('elements')->onDelete('set null');
+            $table->unsignedBigInteger('state_id')->nullable();
             $table->timestamps();
+
+            // Foreign Keys
+            $table->foreign('element_code')->references('code')->on('elements')->onDelete('set null');
+            $table->foreign('state_id')->references('id')->on('states')->onDelete('set null');
         });
     }
 

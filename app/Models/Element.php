@@ -41,4 +41,10 @@ class Element extends Model
     {
         return $this->hasMany(ShoppingDetail::class, 'element_code', 'code');
     }
+    
+    public function rolls()
+    {
+        return $this->hasMany(Roll::class, 'element_code', 'code');
+    }
+
 }

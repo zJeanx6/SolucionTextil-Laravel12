@@ -17,6 +17,7 @@ class Roll extends Model
         'code',
         'broad',
         'long',
+        'state_id',
         'element_code',
     ];
 

@@ -192,6 +192,7 @@ class ElementCreateForm extends Form
                     'broad'        => $this->broad,
                     'long'         => $this->long,
                     'element_code' => $element->code,
+                    'state_id'     => 1, // Activo por defecto
                 ]);
             }
         } else {
