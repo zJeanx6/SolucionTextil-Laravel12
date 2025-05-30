@@ -20,7 +20,7 @@ class ElementEditForm extends Form
     #[Rule('required|string|max:255')]
     public $name;
 
-    #[Rule('required|integer|min:0')]
+    #[Rule('required|numeric|min:0')]
     public $stock;
 
     #[Rule('nullable|numeric|min:0.01')]
