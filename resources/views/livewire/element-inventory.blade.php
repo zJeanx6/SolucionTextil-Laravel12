@@ -143,109 +143,18 @@
                         <flux:select wire:model.live="change_type_id">
                             <flux:select.option value="">Tipo de Elemento</flux:select.option>
                             @foreach ($elementTypes as $type)
-                                <flux:select.option value="{{ $type->id }}">{{ $type->id }} {{ $type->name }}</flux:select.option>
-                            @endforeach
-                        </flux:select>
-
-                        {{-- Imagen --}}
-                        <div class="relative w-full h-60 bg-gray-100 rounded-md flex items-center justify-center dark:bg-[#2f2f2f]">
-                            @if ($elementCreate->photo)
-                                <img src="{{ $elementCreate->photo->temporaryUrl() }}" class="absolute inset-0 object-cover w-full h-full rounded-md" />
-                                <button wire:click="$set('elementCreate.photo', null)"
-                                    class="absolute top-1 right-1 w-6 h-6 rounded-full bg-white/70 hover:bg-red-500 flex items-center justify-center text-xs font-bold">
-                                    &times;
-                                </button>
-                            @else
-                                <div class="mb-4">
-                                    <div x-data="{ uploading: false, progress: 0 }" x-on:livewire-upload-start="uploading = true"
-                                        x-on:livewire-upload-finish="uploading = false"
-                                        x-on:livewire-upload-cancel="uploading = false"
-                                        x-on:livewire-upload-error="uploading = false"
-                                        x-on:livewire-upload-progress="progress = $event.detail.progress">
-                                        <label class="flex flex-col items-center justify-center cursor-pointer w-full h-full">
-                                            <span wire:loading.class="hidden" class="text-sm text-gray-500">Cargar imagen</span>
-                                            <input type="file" class="hidden" wire:model="elementCreate.photo" accept="image/*">
-                                        </label>
-                                        <div x-show="uploading">
-                                            <progress max="100" x-bind:value="progress"></progress>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                        @error('elementCreate.photo') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-
-                        {{-- Para metraje: inputs extra --}}
-                        @if ($elementCreate->isMetrajeType())
-                            <div class="flex gap-2">
-                                <flux:input type="number" step="0.01" wire:model="elementCreate.broad" label="Ancho (m)" />
-                                <flux:input type="number" step="0.01" wire:model="elementCreate.long" label="Largo (m)" />
-                            </div>
-                            <flux:input type="number" min="1" max="20" wire:model.live="elementCreate.roll_count" label="Cantidad de rollos" />
-                        @endif
-                    </div>
-
-                    {{-- DIVISOR --}}
-                    <div class="hidden lg:block w-px bg-gray-300"></div>
-
-                    {{-- DERECHA: código, nombre, color (si aplica), stock (si aplica), rollos (si metraje) --}}
-                    <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                        <flux:input type="number" wire:model="elementCreate.code" label="Código" />
-                        <flux:input type="text" wire:model.live="elementCreate.name" label="Nombre" />
-                        @if (in_array('color_id', $elementCreate->visibleFields))
-                            <flux:select label="Color" wire:model="elementCreate.color_id">
-                                <flux:select.option value="" disabled>Selecciona color</flux:select.option>
-                                @foreach ($colors as $color)
-                                    <flux:select.option value="{{ $color->id }}">{{ $color->name }}</flux:select.option>
-                                @endforeach
-                            </flux:select>
-                        @endif
-                        @if (in_array('stock', $elementCreate->visibleFields))
-                            <flux:input type="number" wire:model="elementCreate.stock" label="Stock" />
-                        @endif
-
-                        {{-- Para metraje: códigos de rollos --}}
-                        @if ($elementCreate->isMetrajeType() && $elementCreate->roll_count)
-                            <div class="mt-2">
-                                <div class="text-sm font-medium mb-1">Códigos de rollos:</div>
-                                @for ($i = 0; $i < $elementCreate->roll_count; $i++)
-                                    <flux:input type="number" wire:model="elementCreate.roll_codes.{{ $i }}" label="Código rollo #{{ $i+1 }}" />
-                                @endfor
-                            </div>
-                        @endif
-
-                        <div class="flex justify-end">
-                            <flux:button size="sm" variant="primary" wire:click="save">Guardar</flux:button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-    {{-- Estado del componente: Vista Editar Elemento. --}}
-        @elseif ($view === 'edit')
-
-            <div class="card p-6">
-                <div class="flex flex-col lg:flex-row gap-6">
-                    {{-- COLUMNA IZQUIERDA --}}
-                    <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                        {{-- Tipo / Categoría --}}
-                        <flux:select label="Tipo de {{ $elementEdit->name }}" wire:model.live="elementEdit.element_type_id" disabled>
-                            <flux:select.option value=""> Tipo de Elemento </flux:select.option>
-                            @foreach ($elementTypes as $type)
-                                <flux:select.option value="{{ $type->id }}">
-                                    {{ $type->id }} — {{ $type->name }}
+                                <flux:select.option value="{{ $type->id }}">{{ $type->id }} {{ $type->name }}
                                 </flux:select.option>
                             @endforeach
                         </flux:select>
 
-                        {{-- Recuadro de imagen --}}
+                        {{-- Imagen --}}
                         <div
                             class="relative w-full h-60 bg-gray-100 rounded-md flex items-center justify-center dark:bg-[#2f2f2f]">
-                            @if ($elementEdit->photo)
-                                <img src="{{ $elementEdit->photo->temporaryUrl() }}"
+                            @if ($elementCreate->photo)
+                                <img src="{{ $elementCreate->photo->temporaryUrl() }}"
                                     class="absolute inset-0 object-cover w-full h-full rounded-md" />
-                                <button wire:click="$set('elementEdit.photo', null)"
+                                <button wire:click="$set('elementCreate.photo', null)"
                                     class="absolute top-1 right-1 w-6 h-6 rounded-full bg-white/70 hover:bg-red-500 flex items-center justify-center text-xs font-bold">
                                     &times;
                                 </button>
@@ -260,7 +169,7 @@
                                             class="flex flex-col items-center justify-center cursor-pointer w-full h-full">
                                             <span wire:loading.class="hidden" class="text-sm text-gray-500">Cargar
                                                 imagen</span>
-                                            <input type="file" class="hidden" wire:model="elementEdit.photo"
+                                            <input type="file" class="hidden" wire:model="elementCreate.photo"
                                                 accept="image/*">
                                         </label>
                                         <div x-show="uploading">
@@ -270,45 +179,195 @@
                                 </div>
                             @endif
                         </div>
-                        @error('elementEdit.photo')
+                        @error('elementCreate.photo')
                             <span class="text-red-500 text-xs">{{ $message }}</span>
                         @enderror
+
+                        {{-- Para metraje: inputs extra --}}
+                        @if ($elementCreate->isMetrajeType())
+                            <div class="flex gap-2">
+                                <flux:input type="number" step="0.01" wire:model="elementCreate.broad"
+                                    label="Ancho (m)" />
+                                <flux:input type="number" step="0.01" wire:model="elementCreate.long"
+                                    label="Largo (m)" />
+                            </div>
+                            <flux:input type="number" min="1" max="20"
+                                wire:model.live="elementCreate.roll_count" label="Cantidad de rollos" />
+                        @endif
                     </div>
 
-                    {{-- Divisor --}}
+                    {{-- DIVISOR --}}
                     <div class="hidden lg:block w-px bg-gray-300"></div>
 
-                    {{-- COLUMNA DERECHA --}}
+                    {{-- DERECHA: código, nombre, color (si aplica), stock (si aplica), rollos (si metraje) --}}
                     <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                        <flux:input type="number" wire:model="elementEdit.code" label="Código" disabled />
-                        <flux:input type="text" wire:model="elementEdit.name" label="Nombre" />
-                        @if (in_array('broad', $elementEdit->visibleFields))
-                            <flux:input type="number" step="0.01" wire:model="elementEdit.broad"
-                                label="Ancho (m)" />
-                        @endif
-                        @if (in_array('long', $elementEdit->visibleFields))
-                            <flux:input type="number" step="0.01" wire:model="elementEdit.long" label="Largo (m)" />
-                        @endif
-                        @if (in_array('color_id', $elementEdit->visibleFields))
-                            <flux:select label="Color" wire:model="elementEdit.color_id">
-                                <flux:select.option value="" disabled> Selecciona color </flux:select.option>
+                        <flux:input type="number" wire:model="elementCreate.code" label="Código" />
+                        <flux:input type="text" wire:model.live="elementCreate.name" label="Nombre" />
+                        @if (in_array('color_id', $elementCreate->visibleFields))
+                            <flux:select label="Color" wire:model="elementCreate.color_id">
+                                <flux:select.option value="" disabled>Selecciona color</flux:select.option>
                                 @foreach ($colors as $color)
                                     <flux:select.option value="{{ $color->id }}">{{ $color->name }}
                                     </flux:select.option>
                                 @endforeach
                             </flux:select>
                         @endif
-                        <flux:input type="number" wire:model="elementEdit.stock" label="Stock" />
-                        <div class="flex justify-end gap-2">
-                            <flux:button size="sm" variant="primary" wire:click="update">Actualizar</flux:button>
+                        @if (in_array('stock', $elementCreate->visibleFields))
+                            <flux:input type="number" wire:model="elementCreate.stock" label="Stock" />
+                        @endif
+
+                        {{-- Para metraje: códigos de rollos --}}
+                        @if ($elementCreate->isMetrajeType() && $elementCreate->roll_count)
+                            <div class="mt-2">
+                                <div class="text-sm font-medium mb-1">Códigos de rollos:</div>
+                                @for ($i = 0; $i < $elementCreate->roll_count; $i++)
+                                    <flux:input type="number" wire:model="elementCreate.roll_codes.{{ $i }}"
+                                        label="Código rollo #{{ $i + 1 }}" />
+                                @endfor
+                            </div>
+                        @endif
+
+                        <div class="flex justify-end">
+                            <flux:button size="sm" variant="primary" wire:click="save">Guardar</flux:button>
                         </div>
                     </div>
                 </div>
             </div>
 
+    {{-- Estado del componente: Vista Editar Elemento. --}}
+        @elseif ($view === 'edit')
+        
+            {{-- =====================================  CARD #1  ===================================== --}}
+            <div class="card p-6">
+                <div class="flex flex-col lg:flex-row gap-6">
+                    {{-- ---------------------------- COLUMNA IZQUIERDA ---------------------------- --}}
+                    <div class="w-full lg:w-1/2 flex flex-col gap-4">
+                        {{-- Tipo / categoría --}}
+                        <flux:select wire:model.live="elementEdit.element_type_id" disabled>
+                            <flux:select.option value=""> Tipo de Elemento </flux:select.option>
+                            @foreach ($elementTypes as $type)
+                                <flux:select.option value="{{ $type->id }}">
+                                    {{ $type->id }} — {{ $type->name }}
+                                </flux:select.option>
+                            @endforeach
+                        </flux:select>
+
+                        {{-- Recuadro de imagen --}}
+                        <div
+                            class="relative w-full h-60 bg-gray-100 rounded-md flex items-center justify-center dark:bg-[#2f2f2f]">
+                            {{-- 1) Foto temporal nueva --}}
+                            @if ($elementEdit->photo)
+                                <label class="absolute inset-0 w-full h-full cursor-pointer">
+                                    <img src="{{ $elementEdit->photo->temporaryUrl() }}"
+                                        class="object-cover w-full h-full rounded-md" />
+                                    <input type="file" class="hidden" wire:model="elementEdit.photo"
+                                        accept="image/*">
+                                </label>
+                                <button wire:click="$set('elementEdit.photo', null)"
+                                    class="absolute top-1 right-1 w-6 h-6 rounded-full bg-white/70 hover:bg-red-500 flex items-center justify-center text-xs font-bold z-10">
+                                    &times;
+                                </button>
+
+                                {{-- 2) Foto guardada --}}
+                            @elseif ($elementEdit->image_path)
+                                <label class="absolute inset-0 w-full h-full cursor-pointer">
+                                    <img src="{{ asset('storage/' . $elementEdit->image_path) }}"
+                                        class="object-cover w-full h-full rounded-md" />
+                                    <input type="file" class="hidden" wire:model="elementEdit.photo"
+                                        accept="image/*">
+                                </label>
+                                <button wire:click="$set('elementEdit.image_path', null); $set('elementEdit.photo', null);"
+                                    class="absolute top-1 right-1 w-6 h-6 rounded-full bg-white/70 hover:bg-red-500 flex items-center justify-center text-xs font-bold z-10">
+                                    &times;
+                                </button>
+                                <span
+                                    class="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-white bg-black/50 rounded px-2 py-0.5">
+                                    Haz clic para cambiar
+                                </span>
+
+                                {{-- 3) Sin imagen --}}
+                            @else
+                                <label class="flex flex-col items-center justify-center cursor-pointer w-full h-full">
+                                    <span class="text-sm text-gray-500">Cargar imagen</span>
+                                    <input type="file" class="hidden" wire:model="elementEdit.photo"
+                                        accept="image/*">
+                                </label>
+                            @endif
+                        </div>
+                        @error('elementEdit.photo')
+                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- ---------------------------- COLUMNA DERECHA ---------------------------- --}}
+                    <div class="w-full lg:w-1/2 flex flex-col gap-4">
+                        <flux:input type="number" wire:model="elementEdit.code" label="Código" disabled />
+                        <flux:input type="text" wire:model="elementEdit.name" label="Nombre" />
+
+                        @if (in_array('color_id', $elementEdit->visibleFields))
+                            <flux:select label="Color" wire:model="elementEdit.color_id">
+                                <flux:select.option value="" disabled>Selecciona color</flux:select.option>
+                                @foreach ($colors as $color)
+                                    <flux:select.option value="{{ $color->id }}">{{ $color->name }}
+                                    </flux:select.option>
+                                @endforeach
+                            </flux:select>
+                        @endif
+
+                        @if (in_array('stock', $elementEdit->visibleFields))
+                            <flux:input type="number" wire:model="elementEdit.stock" label="Stock" />
+                        @endif
+
+                        @if (in_array('broad', $elementEdit->visibleFields))
+                            <flux:input type="number" step="0.01" wire:model="elementEdit.broad"
+                                label="Ancho (m)" />
+                        @endif
+
+                        @if (in_array('long', $elementEdit->visibleFields))
+                            <flux:input type="number" step="0.01" wire:model="elementEdit.long" label="Largo (m)" />
+                        @endif
+
+                        <div class="flex justify-end">
+                            <flux:button variant="primary" wire:click="update">Actualizar</flux:button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- =====================================  CARD #2  ===================================== --}}
+            @if ($elementEdit->isMetrajeType())
+                <div class="card p-6 mt-6">
+                    <h3 class="font-semibold text-xl text-gray-800 dark:text-gray-200 mb-4">Rollos asociados</h3>
+
+                    {{-- Grid 2 columnas en desktop --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        @forelse ($elementEdit->rolls as $roll)
+                            <div class="flex flex-col gap-2 border border-gray-200 dark:border-gray-700 rounded-md p-4">
+                                <div class="font-medium text-gray-700 dark:text-gray-300">
+                                    Código:
+                                    <span class="text-blue-500 dark:text-blue-400">{{ $roll->code }}</span>
+                                </div>
+
+                                {{-- Grid interna para ancho / largo --}}
+                                <div class="grid grid-cols-2 gap-4">
+                                    <flux:input type="number" label="Ancho (m)" :disabled="true"
+                                        value="{{ number_format($roll->broad, 2) }}"
+                                        input-class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200" />
+
+                                    <flux:input type="number" step="0.01"
+                                        wire:model="elementEdit.rollLongs.{{ $roll->code }}" label="Largo (m)"
+                                        input-class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200" />
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-gray-500 italic">No hay rollos asociados a este elemento.</div>
+                        @endforelse
+                    </div>
+                </div>
+            @endif
+                
     {{-- Estado del componente: Vista Ver Elemento. --}}
         @elseif ($view === 'show')
-        
             <!-- Vista de detalle -->
             <div class="card p-6">
                 <div class="flex flex-col lg:flex-row gap-6">
