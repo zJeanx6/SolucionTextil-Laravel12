@@ -367,13 +367,11 @@
             @endif
                 
     {{-- Estado del componente: Vista Ver Elemento. --}}
-        @elseif ($view === 'show')
-            <!-- Vista de detalle -->
+        @elseif($view === 'show')
             <div class="card p-6">
                 <div class="flex flex-col lg:flex-row gap-6">
-                    {{-- COLUMNA IZQUIERDA --}}
+                    {{-- ---------------------------- COLUMNA IZQUIERDA ---------------------------- --}}
                     <div class="w-full lg:w-1/2 flex flex-col gap-4">
-
                         {{-- Tipo / Categoría --}}
                         <flux:select wire:model.live="elementShow.element_type_id" disabled>
                             <flux:select.option value=""> Tipo de Elemento </flux:select.option>
@@ -396,37 +394,128 @@
                         </div>
                     </div>
 
-                    {{-- divisor --}}
-                    <div class="hidden lg:block w-px bg-gray-300"></div>
+                    {{-- ---------------------------- DIVISOR ---------------------------- --}}
+                    <div class="hidden lg:block w-px bg-gray-300 dark:bg-gray-600"></div>
 
-                    {{-- COLUMNA DERECHA --}}
+                    {{-- ---------------------------- COLUMNA DERECHA ---------------------------- --}}
                     <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                        <flux:input type="number" wire:model="elementShow.code" label="Código" disabled />
-                        <flux:input type="text" wire:model="elementShow.name" label="Nombre" disabled />
+                        {{-- Código --}}
+                        <flux:input type="number"
+                                    wire:model="elementShow.code"
+                                    label="Código"
+                                    disabled />
 
-                        @if (in_array('broad', $elementShow->visibleFields))
-                            <flux:input type="number" step="0.01" wire:model="elementShow.broad" label="Ancho (m)"
-                                disabled />
-                        @endif
+                        {{-- Nombre --}}
+                        <flux:input type="text"
+                                    wire:model="elementShow.name"
+                                    label="Nombre"
+                                    disabled />
 
-                        @if (in_array('long', $elementShow->visibleFields))
-                            <flux:input type="number" step="0.01" wire:model="elementShow.long" label="Largo (m)"
-                                disabled />
-                        @endif
-
-                        @if (in_array('color_id', $elementShow->visibleFields))
-                            <flux:select label="Color" wire:model="elementShow.color_id" disabled>
+                        {{-- Color (solo si aplica) --}}
+                        @if(in_array('color_id', $elementShow->visibleFields))
+                            <flux:select label="Color"
+                                        wire:model="elementShow.color_id"
+                                        disabled>
                                 <flux:select.option value="" disabled> Selecciona color </flux:select.option>
                                 @foreach ($colors as $color)
-                                    <flux:select.option value="{{ $color->id }}">{{ $color->name }}
-                                    </flux:select.option>
+                                    <flux:select.option value="{{ $color->id }}">{{ $color->name }}</flux:select.option>
                                 @endforeach
                             </flux:select>
                         @endif
 
-                        <flux:input type="number" wire:model="elementShow.stock" label="Stock" disabled />
+                        {{-- Stock --}}
+                        <flux:input type="number"
+                                    wire:model="elementShow.stock"
+                                    label="Stock"
+                                    disabled />
                     </div>
                 </div>
             </div>
+
+            {{-- ================================ CARD #2: ROLLOS DISPONIBLES ================================ --}}
+            @if($elementShow->isMetrajeType())
+                <div class="card p-6 mt-6">
+                    <h3 class="font-semibold text-xl text-gray-800 dark:text-gray-200 mb-4">
+                        Rollos disponibles
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        @forelse ($elementShow->activeRolls as $roll)
+                            <div class="flex flex-col gap-2 border border-gray-200 dark:border-gray-700 rounded-md p-4">
+                                <div class="font-medium text-gray-700 dark:text-gray-300">
+                                    Código:
+                                    <span class="text-blue-500 dark:text-blue-400">{{ $roll->code }}</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <flux:input
+                                        type="number"
+                                        label="Ancho (m)"
+                                        :disabled="true"
+                                        value="{{ number_format($roll->broad, 2) }}"
+                                        input-class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                                    />
+                                    <flux:input
+                                        type="number"
+                                        step="0.01"
+                                        label="Largo (m)"
+                                        :disabled="true"
+                                        value="{{ number_format($roll->long, 2) }}"
+                                        input-class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                                    />
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-gray-500 italic">No hay rollos disponibles.</div>
+                        @endforelse
+                    </div>
+
+                    <div class="flex justify-end mt-4">
+                        <flux:button size="sm"
+                                    variant="outline"
+                                    wire:click="toggleInactive">
+                            {{ $elementShow->showInactive ? 'Ocultar agotados' : 'Ver agotados' }}
+                        </flux:button>
+                    </div>
+                </div>
+
+                {{-- =============================== CARD #3: ROLLOS AGOTADOS =============================== --}}
+                @if ($elementShow->showInactive)
+                    <div class="card p-6 mt-6">
+                        <h3 class="font-semibold text-xl text-gray-800 dark:text-gray-200 mb-4">
+                            Rollos agotados
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            @forelse ($elementShow->inactiveRolls as $roll)
+                                <div class="flex flex-col gap-2 border border-red-200 dark:border-red-700 rounded-md p-4 bg-red-50 dark:bg-red-900/20">
+                                    <div class="font-medium text-gray-700 dark:text-gray-300">
+                                        Código:
+                                        <span class="text-red-500 dark:text-red-400">{{ $roll->code }}</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <flux:input
+                                            type="number"
+                                            label="Ancho (m)"
+                                            :disabled="true"
+                                            value="{{ number_format($roll->broad, 2) }}"
+                                            input-class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                                        />
+                                        <flux:input
+                                            type="number"
+                                            step="0.01"
+                                            label="Largo (m)"
+                                            :disabled="true"
+                                            value="{{ number_format($roll->long, 2) }}"
+                                            input-class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                                        />
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-gray-500 italic">No hay rollos agotados.</div>
+                            @endforelse
+                        </div>
+                    </div>
+                @endif
+            @endif
         @endif
 </div>

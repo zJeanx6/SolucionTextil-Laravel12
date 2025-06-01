@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Forms;
 
-use Livewire\Attributes\Validate;
 use App\Models\Element;
+use App\Models\Roll;
 use Livewire\Form;
 
 class ElementShowForm extends Form
@@ -17,30 +17,48 @@ class ElementShowForm extends Form
     public $element_type_id;
     public $image_path;
 
-    public $visibleFields = [];
+    public $visibleFields   = [];
+    public $activeRolls     = [];
+    public $inactiveRolls   = [];
+    public $showInactive    = false;
 
     protected $groups = [
-        'G1' => ['range' => [101, 118], 'fields' => ['broad', 'long', 'color_id']],
-        'G2' => ['range' => [201, 211], 'fields' => ['color_id']],
-        'G3' => ['range' => [301, 311], 'fields' => []],
-        'G4' => ['range' => [401, 410], 'fields' => []],
+        // Rangos reales para cada tipo:
+        'G1' => ['range' => [1100, 1999], 'fields' => ['broad', 'long', 'color_id'], 'is_metraje' => true],
+        'G2' => ['range' => [2100, 2999], 'fields' => ['color_id','stock'],        'is_metraje' => false],
+        'G3' => ['range' => [3100, 3999], 'fields' => ['stock'],                     'is_metraje' => false],
+        'G4' => ['range' => [4100, 4999], 'fields' => ['stock'],                     'is_metraje' => false],
     ];
 
     public function show($code)
     {
-        $element = Element::where('code', $code)->firstOrFail();
+        $el = Element::where('code', $code)->firstOrFail();
 
-        $this->code            = $element->code;
-        $this->name            = $element->name;
-        $this->stock           = $element->stock;
-        $this->broad           = $element->broad;
-        $this->long            = $element->long;
-        $this->color_id        = $element->color_id;
-        $this->element_type_id = $element->element_type_id;
-        $this->image_path      = $element->image;
+        $this->code            = $el->code;
+        $this->name            = $el->name;
+        $this->stock           = $el->stock;
+        $this->broad           = $el->broad;
+        $this->long            = $el->long;
+        $this->color_id        = $el->color_id;
+        $this->element_type_id = $el->element_type_id;
+        $this->image_path      = $el->image;
 
-        // Aquí actualizamos los campos visibles según el tipo de elemento
         $this->updateVisibleFields();
+
+        if ($this->isMetrajeType()) {
+            // Rollos disponibles (state_id = 1)
+            $this->activeRolls = Roll::where('element_code', $this->code)
+                                     ->where('state_id', 1)
+                                     ->get();
+
+            // Rollos agotados (state_id = 2)
+            $this->inactiveRolls = Roll::where('element_code', $this->code)
+                                       ->where('state_id', 2)
+                                       ->get();
+        } else {
+            $this->activeRolls   = [];
+            $this->inactiveRolls = [];
+        }
     }
 
     protected function updateVisibleFields()
@@ -55,4 +73,19 @@ class ElementShowForm extends Form
         }
     }
 
+    public function isMetrajeType(): bool
+    {
+        foreach ($this->groups as $g) {
+            [$min, $max] = $g['range'];
+            if ($this->element_type_id >= $min && $this->element_type_id <= $max) {
+                return $g['is_metraje'];
+            }
+        }
+        return false;
+    }
+
+    public function toggleInactive()
+    {
+        $this->showInactive = ! $this->showInactive;
+    }
 }

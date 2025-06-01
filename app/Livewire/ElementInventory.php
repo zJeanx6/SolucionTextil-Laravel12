@@ -60,11 +60,16 @@ class ElementInventory extends Component
         $this->editId = '';
         $this->view   = 'index';
     }
-    
+
     public function show($code)
     {
         $this->elementShow->show($code);
         $this->view = 'show';
+    }
+
+    public function toggleInactive()
+    {
+        $this->elementShow->toggleInactive();
     }
 
     public function create(): void
@@ -123,21 +128,18 @@ class ElementInventory extends Component
         $elements = Element::query()
             ->when(
                 $this->search,
-                fn($q) =>
-                $q->where(function ($sub) {
+                fn($q) => $q->where(function ($sub) {
                     $sub->where('name', 'like', '%' . $this->search . '%')
                         ->orWhere('code', 'like', '%' . $this->search . '%');
                 })
             )
             ->when(
                 $this->elementTypeFilter,
-                fn($q) =>
-                $q->where('element_type_id', $this->elementTypeFilter)
+                fn($q) => $q->where('element_type_id', $this->elementTypeFilter)
             )
             ->when(
                 $this->colorFilter,
-                fn($q) =>
-                $q->where('color_id', $this->colorFilter)
+                fn($q) => $q->where('color_id', $this->colorFilter)
             )
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate(12);
@@ -165,9 +167,8 @@ class ElementInventory extends Component
         if ($this->sortField === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
         } else {
-            $this->sortField = $field;
+            $this->sortField     = $field;
             $this->sortDirection = 'asc';
         }
     }
-
 }
