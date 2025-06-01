@@ -117,7 +117,7 @@ class ElementEditForm extends Form
         }
 
         if (in_array('stock', $this->visibleFields)) {
-            $rules['stock'] = 'required|integer|min:0';
+            $rules['stock'] = 'required|numeric|min:0';
         }
 
         // G1: metraje (rollos)
