@@ -9,18 +9,7 @@ use Livewire\WithFileUploads;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Models\{
-    Element,
-    Roll,
-    Shopping,
-    ShoppingDetail,
-    Loan,
-    LoanDetail,
-    Supplier,
-    User,
-    RollMovement,
-    LoanReturn
-};
+use App\Models\{Element, Roll, Shopping, ShoppingDetail, Loan, LoanDetail, Supplier, User, RollMovement, LoanReturn};
 
 #[Lazy]
 class ElementsMov extends Component
@@ -300,24 +289,16 @@ class ElementsMov extends Component
 
         switch ($value) {
             case 'G1':
-                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [1100, 1999])
-                                                       ->orderBy('name')
-                                                       ->get();
+                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [1100, 1999])->orderBy('name')->get();
                 break;
             case 'G2':
-                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [2100, 2999])
-                                                       ->orderBy('name')
-                                                       ->get();
+                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [2100, 2999])->orderBy('name')->get();
                 break;
             case 'G3':
-                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [3100, 3999])
-                                                       ->orderBy('name')
-                                                       ->get();
+                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [3100, 3999])->orderBy('name')->get();
                 break;
             case 'G4':
-                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [4100, 4999])
-                                                       ->orderBy('name')
-                                                       ->get();
+                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [4100, 4999])->orderBy('name')->get();
                 break;
             default:
                 $this->elementsByIngresoGroup = collect([]);
@@ -442,24 +423,16 @@ class ElementsMov extends Component
 
         switch ($value) {
             case 'G1':
-                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [1100, 1999])
-                                                      ->orderBy('name')
-                                                      ->get();
+                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [1100, 1999])->orderBy('name')->get();
                 break;
             case 'G2':
-                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [2100, 2999])
-                                                      ->orderBy('name')
-                                                      ->get();
+                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [2100, 2999])->orderBy('name')->get();
                 break;
             case 'G3':
-                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [3100, 3999])
-                                                      ->orderBy('name')
-                                                      ->get();
+                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [3100, 3999])->orderBy('name')->get();
                 break;
             case 'G4':
-                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [4100, 4999])
-                                                      ->orderBy('name')
-                                                      ->get();
+                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [4100, 4999])->orderBy('name')->get();
                 break;
             default:
                 $this->elementsBySalidaGroup = collect([]);

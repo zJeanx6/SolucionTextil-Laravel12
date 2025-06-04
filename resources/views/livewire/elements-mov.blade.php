@@ -37,10 +37,6 @@
         <table class="table">
             <thead class="head-table">
                 <tr>
-                    <th class="head-table-item cursor-pointer" wire:click="sortBy('movement_id')">
-                        #ID
-                        @include('partials.sort-icon', ['field' => 'movement_id'])
-                    </th>
                     <th class="head-table-item cursor-pointer" wire:click="sortBy('date')">
                         Fecha
                         @include('partials.sort-icon', ['field' => 'date'])
@@ -66,7 +62,6 @@
             <tbody>
                 @forelse ($movements as $item)
                     <tr wire:key="element-mov-{{$item->movement_id}}" class="table-content">
-                        <td class="column-item">{{ $item->movement_id }}</td>
                         <td class="column-item">{{ \Carbon\Carbon::parse($item->date)->format('Y-m-d H:i') }}</td>
                         <td class="column-item">{{ $item->type }}</td>
                         <td class="column-item">{{ $item->party }}</td>
@@ -75,7 +70,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-3 py-4 border text-center text-gray-500 italic"> No se encontraron movimientos. </td>
+                        <td colspan="6" class="px-3 py-4 text-center text-gray-500 italic"> No se encontraron movimientos. </td>
                     </tr>
                 @endforelse
             </tbody>
