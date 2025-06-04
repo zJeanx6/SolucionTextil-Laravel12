@@ -57,6 +57,12 @@ class DatabaseSeeder extends Seeder
             'name' => 'maintenance',
             'description' => 'administrar el mantenimiento de maquinaria'
         ]);
+
+        Role::factory()->create([
+            'id' => 4,
+            'name' => 'instructor',
+            'description' => 'Quienes reciben los elementos de trabajo'
+        ]);
         
         User::factory()->create([
             'card' => '10000000',
@@ -83,6 +89,15 @@ class DatabaseSeeder extends Seeder
             'email' => 'maintenance@soluciontextil.com',
             'password' => bcrypt('12345'),
             'role_id' => 3,
+        ]);
+
+        User::factory()->create([
+            'card' => '10000003',
+            'name' => 'instructor',
+            'last_name' => 'user4',
+            'email' => 'instructor@soluciontextil.com',
+            'password' => bcrypt('12345'),
+            'role_id' => 4,
         ]);
 
         State::factory(15)->create();

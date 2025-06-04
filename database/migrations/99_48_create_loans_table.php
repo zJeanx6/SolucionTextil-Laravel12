@@ -37,6 +37,17 @@ return new class extends Migration
             $table->foreign('loan_id')->references('id')->on('loans')->onDelete('set null');
             $table->foreign('element_code')->references('code')->on('elements')->onDelete('set null');
         });
+
+        Schema::create('loan_returns', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('loan_detail_id')->nullable(); // FK → loan_details.id
+            $table->unsignedBigInteger('returned_by')->nullable();    // FK → users.card (quien recibe la devolución)
+            $table->timestamp('return_date')->useCurrent(); // Cuándo se devolvió
+            $table->timestamps();
+
+            $table->foreign('loan_detail_id')->references('id')->on('loan_details')->onDelete('set null');
+            $table->foreign('returned_by')->references('card')->on('users')->onDelete('set null');
+        });
     }
 
 
@@ -44,5 +55,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('loans');
         Schema::dropIfExists('loan_details');
+        Schema::dropIfExists('loan_returns');
     }
 };
