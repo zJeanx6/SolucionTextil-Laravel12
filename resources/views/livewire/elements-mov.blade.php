@@ -241,7 +241,7 @@
                             @elseif ($salidaGroup === 'G2' || $salidaGroup === 'G4')
                                 {{-- G-02 / G-04: Consumo de stock --}}
                                 {{-- 2.1. Seleccionar Elemento --}}
-                                <flux:select label="Elemento" wire:model.live="salidaItems.{{ $i }}.element_code">
+                                <flux:select class="mb-2" label="Elemento" wire:model.live="salidaItems.{{ $i }}.element_code">
                                     <flux:select.option value=""> Seleccione un elemento </flux:select.option>
                                     @foreach ($elementsBySalidaGroup as $el)
                                         <flux:select.option value="{{ $el->code }}">
@@ -255,7 +255,7 @@
                             @else
                                 {{-- G-03: Préstamo de herramienta --}}
                                 {{-- 2.1. Seleccionar Herramienta --}}
-                                <flux:select label="Herramienta"
+                                <flux:select class="mb-4" label="Herramienta"
                                     wire:model.live="salidaItems.{{ $i }}.element_code">
                                     <flux:select.option value=""> Seleccione herramienta </flux:select.option>
                                     @foreach ($elementsBySalidaGroup as $el)

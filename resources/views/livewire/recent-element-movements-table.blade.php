@@ -1,5 +1,5 @@
-<div class="overflow-hidden rounded-xl p-4">
-    <h2 class="text-xl font-semibold mb-4">Últimos Movimientos de Elementos</h2>
+<div class="overflow-hidden rounded-xl p-2">
+    <h2 class="text-xl font-semibold mb-2 text-center">Últimos Movimientos del los Inventarios</h2>
 
     <div class="div-table">
         <table class="table">
@@ -8,10 +8,10 @@
                     <th class="head-table-item">Fecha</th>
                     <th class="head-table-item">Tipo</th>
                     <th class="head-table-item">Elemento</th>
-                    <th class="head-table-item">Usuario</th>
+                    <th class="head-table-item">Encargado</th>
                     <th class="head-table-item">Cantidad</th>
                     <th class="head-table-item">Movimiento</th>
-                    <th class="head-table-item">Fecha Devolución</th>
+                    <th class="head-table-item">Devuelto</th>
                 </tr>
             </thead>
             <tbody>

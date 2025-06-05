@@ -418,6 +418,7 @@ class ElementsMov extends Component
     // ————— Cuando cambian “salidaGroup” —————
     public function updatedSalidaGroup($value): void
     {
+        $this->resetValidation();
         $this->salidaGroup           = $value;
         $this->elementsBySalidaGroup = collect([]);
 
