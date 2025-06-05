@@ -13,8 +13,11 @@ class MaintenanceDetail extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'description',
+        'maintenance_date', 
+        'next_maintenance_date',
         'maintenance_id',
-        'maintenance_type_id',
+        'maintenance_type_id'
     ];
 
     public function maintenance()

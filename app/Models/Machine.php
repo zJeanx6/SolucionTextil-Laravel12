@@ -22,6 +22,7 @@ class Machine extends Model
         'machine_type_id',
         'brand_id',
         'supplier_nit',
+        'last_maintenance',
     ];
 
     public function state()

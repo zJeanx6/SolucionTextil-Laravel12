@@ -34,6 +34,6 @@ class Maintenance extends Model
 
     public function details()
     {
-        return $this->hasMany(MaintenanceDetail::class, 'maintenance_id');
+        return $this->hasMany(MaintenanceDetail::class);
     }
 }

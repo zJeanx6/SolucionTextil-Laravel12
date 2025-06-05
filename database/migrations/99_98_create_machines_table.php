@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('machines', function (Blueprint $table) {
             $table->string('serial')->primary();
             $table->string('image')->nullable();
+            $table->date('last_maintenance')->nullable();
 
             //Foreings Keys
             $table->unsignedBigInteger('state_id')->nullable();
@@ -56,6 +57,9 @@ return new class extends Migration
 
         Schema::create('maintenance_details', function (Blueprint $table) {
             $table->id();
+            $table->text('description')->nullable();
+            $table->date('maintenance_date')->nullable();
+            $table->date('next_maintenance_date')->nullable();
 
             //ForeignsKeys
             $table->unsignedBigInteger('maintenance_id')->nullable();
