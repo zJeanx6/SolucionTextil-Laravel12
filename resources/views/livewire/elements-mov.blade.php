@@ -2,32 +2,32 @@
     {{-- Migaja de pan --}}
     <div class="breadcrumbs mb-4">
         <flux:breadcrumbs>
-            <flux:breadcrumbs.item :href="route('dashboard')"> Dashboard </flux:breadcrumbs.item>
-            <flux:breadcrumbs.item :href="route('admin.elements.movements')"> Movimientos de Elementos </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item :href="route('dashboard')" icon="home"/>
+            <flux:breadcrumbs.item :href="route('admin.elements.movements')"> Movimiento de Elementos </flux:breadcrumbs.item>
         </flux:breadcrumbs>
-
-        <div class="flex gap-2">
-            <flux:button size="sm" variant="primary" icon="plus" wire:click="openIngresoModal"> Registrar Ingreso </flux:button>
-            <flux:button size="sm" variant="primary" icon="minus" wire:click="openSalidaModal"> Registrar Salida </flux:button>
-            <flux:button size="sm" variant="primary" icon="arrow-uturn-left" wire:click="openReturnModal"> Devolver Herramienta </flux:button>
-        </div>
+        
+        <flux:dropdown>
+            <flux:button size="sm" variant="filled" icon:trailing="chevron-down"> Acciones </flux:button>
+            <flux:menu>
+                <flux:menu.group heading="Generar Moivimiento">
+                    <flux:menu.item wire:click="openIngresoModal"> Registrar Ingreso </flux:menu.item>
+                    <flux:menu.item wire:click="openSalidaModal"> Registrar Salida </flux:menu.item>
+                    <flux:menu.item wire:click="openReturnModal"> Devolver Herramienta </flux:menu.item>
+                </flux:menu.group>
+                <flux:menu.group heading="Filtrar Movimientos">
+                    <flux:menu.item wire:click="$set('typeFilter', 'Prestamo')"> Filtrar por Préstamos </flux:menu.item>
+                    <flux:menu.item wire:click="$set('typeFilter', 'Compra')"> Filtrar por Compras </flux:menu.item>
+                    <flux:menu.item wire:click="$set('typeFilter', '')"> Limpiar Filtro </flux:menu.item>
+                </flux:menu.group>
+            </flux:menu>
+        </flux:dropdown>
     </div>
 
     {{-- ————————————————— Barra de búsqueda + filtro de tipo ————————————————— --}}
-    <div class="card mb-4 p-4">
-        <div class="flex flex-col md:flex-row md:items-center md:gap-6">
-            {{-- Input de búsqueda libre --}}
-            <div class="flex-1 mb-4 md:mb-0">
+    <div class="card mb-4">
+        <div class="flex gap-4">
+            <div class="w-full">
                 <flux:input type="text" placeholder="Buscar por ID, tipo, instructor/proveedor o usuario..." wire:model.live="search" />
-            </div>
-
-            {{-- Filtro por tipo de movimiento --}}
-            <div class="w-1/3">
-                <flux:select wire:model.live="typeFilter" class="border rounded px-2 py-1 w-full">
-                    <flux:select.option value=""> Todos los movimientos </flux:select.option>
-                    <flux:select.option value="Prestamo"> Préstamos </flux:select.option>
-                    <flux:select.option value="Compra"> Compras </flux:select.option>
-                </flux:select>
             </div>
         </div>
     </div>
@@ -77,7 +77,7 @@
         </table>
 
         {{-- Paginación --}}
-        <div class="mt-4 px-4">{{ $movements->links() }}</div>
+        <div class="mx-4 mt-4 mb-4">{{ $movements->links(data: ['scrollTo' => false]) }}</div>
     </div>
 
     {{-- ——————————————— MODAL «Registrar Ingreso» ——————————————— --}}

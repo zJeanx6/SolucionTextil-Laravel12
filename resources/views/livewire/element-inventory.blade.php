@@ -7,7 +7,7 @@
             </flux:breadcrumbs>
 
             @if ($view === 'index')
-                <flux:button size="sm" variant="primary" wire:click="create"> Nuevo </flux:button>
+                <flux:button size="sm" variant="filled" wire:click="create"> Nuevo </flux:button>
             @else
                 <flux:button size="sm" variant="primary" wire:click="index"> Volver </flux:button>
             @endif
@@ -115,9 +115,9 @@
                                 <td class="column-item">
                                     <div class="two-actions">
                                         <flux:button.group>
-                                            <flux:button icon="document-magnifying-glass" size="sm" variant="primary"
+                                            <flux:button icon="document-magnifying-glass" size="sm" variant="filled"
                                                 wire:click="show({{ $element->code }})" />
-                                            <flux:button icon="pencil-square" size="sm" variant="primary"
+                                            <flux:button icon="pencil-square" size="sm" variant="filled"
                                                 wire:click="edit({{ $element->code }})" />
                                             <flux:button icon="trash" size="sm" variant="danger"
                                                 wire:click="delete({{ $element->code }})" />
