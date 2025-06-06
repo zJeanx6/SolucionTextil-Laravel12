@@ -1,36 +1,223 @@
 <?php
 
 namespace Database\Seeders;
+
 use App\Models\Supplier;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class supplierSeeder extends Seeder
+class SupplierSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+    use WithoutModelEvents;
+
     public function run(): void
     {
-        Supplier::create([
-            'nit' => '900123456-1',
-            'name' => 'Proveedor Uno',
-            'person_type' => 'Natural',
-            'email' => 'proveedoruno@gmail.com',
-            'phone' => '3001234567',
-            'representative_name' => 'Juan Perez',
-            'representative_email' => 'juan@gmail.com',
-            'representative_phone' => '3001234567',
-        ]);
-        Supplier::create([
-            'nit' => '900987654-2',
-            'name' => 'Proveedor Dos',
-            'person_type' => 'Jurídica',
-            'email' => 'proveedordos@gmail.com',
-            'phone' => '3009876543',
-            'representative_name' => 'Maria Lopez',
-            'representative_email' => 'mario@gmail.com',
-            'representative_phone' => '3009876543',
-        ]);
+        $suppliers = [
+            // Proveedores PERSONA NATURAL
+            [
+                'nit'                   => '9000000001',
+                'person_type'           => 'Natural',
+                'name'                  => 'María García',
+                'email'                 => 'maria.garcia@example.com',
+                'phone'                 => 3001234001,
+                'representative_name'   => null,
+                'representative_email'  => null,
+                'representative_phone'  => null,
+            ],
+            [
+                'nit'                   => '9000000002',
+                'person_type'           => 'Natural',
+                'name'                  => 'Juan Pérez',
+                'email'                 => 'juan.perez@example.com',
+                'phone'                 => 3001234002,
+                'representative_name'   => null,
+                'representative_email'  => null,
+                'representative_phone'  => null,
+            ],
+            [
+                'nit'                   => '9000000003',
+                'person_type'           => 'Natural',
+                'name'                  => 'Laura Rodríguez',
+                'email'                 => 'laura.rodriguez@example.com',
+                'phone'                 => 3001234003,
+                'representative_name'   => null,
+                'representative_email'  => null,
+                'representative_phone'  => null,
+            ],
+            [
+                'nit'                   => '9000000004',
+                'person_type'           => 'Natural',
+                'name'                  => 'Carlos López',
+                'email'                 => 'carlos.lopez@example.com',
+                'phone'                 => 3001234004,
+                'representative_name'   => null,
+                'representative_email'  => null,
+                'representative_phone'  => null,
+            ],
+            [
+                'nit'                   => '9000000005',
+                'person_type'           => 'Natural',
+                'name'                  => 'Ana Martínez',
+                'email'                 => 'ana.martinez@example.com',
+                'phone'                 => 3001234005,
+                'representative_name'   => null,
+                'representative_email'  => null,
+                'representative_phone'  => null,
+            ],
+            [
+                'nit'                   => '9000000006',
+                'person_type'           => 'Natural',
+                'name'                  => 'Luis Sánchez',
+                'email'                 => 'luis.sanchez@example.com',
+                'phone'                 => 3001234006,
+                'representative_name'   => null,
+                'representative_email'  => null,
+                'representative_phone'  => null,
+            ],
+            [
+                'nit'                   => '9000000007',
+                'person_type'           => 'Natural',
+                'name'                  => 'Sofía Gómez',
+                'email'                 => 'sofia.gomez@example.com',
+                'phone'                 => 3001234007,
+                'representative_name'   => null,
+                'representative_email'  => null,
+                'representative_phone'  => null,
+            ],
+            [
+                'nit'                   => '9000000008',
+                'person_type'           => 'Natural',
+                'name'                  => 'Miguel Torres',
+                'email'                 => 'miguel.torres@example.com',
+                'phone'                 => 3001234008,
+                'representative_name'   => null,
+                'representative_email'  => null,
+                'representative_phone'  => null,
+            ],
+            [
+                'nit'                   => '9000000009',
+                'person_type'           => 'Natural',
+                'name'                  => 'Valentina Ruiz',
+                'email'                 => 'valentina.ruiz@example.com',
+                'phone'                 => 3001234009,
+                'representative_name'   => null,
+                'representative_email'  => null,
+                'representative_phone'  => null,
+            ],
+            [
+                'nit'                   => '9000000010',
+                'person_type'           => 'Natural',
+                'name'                  => 'Diego Díaz',
+                'email'                 => 'diego.diaz@example.com',
+                'phone'                 => 3001234010,
+                'representative_name'   => null,
+                'representative_email'  => null,
+                'representative_phone'  => null,
+            ],
+
+            // Proveedores PERSONA JURÍDICA
+            [
+                'nit'                   => '8000000001',
+                'person_type'           => 'Juridica',
+                'name'                  => null,
+                'email'                 => null,
+                'phone'                 => null,
+                'representative_name'   => 'Carlos Sánchez',
+                'representative_email'  => 'contacto@empresa1.com',
+                'representative_phone'  => 3002234001,
+            ],
+            [
+                'nit'                   => '8000000002',
+                'person_type'           => 'Juridica',
+                'name'                  => null,
+                'email'                 => null,
+                'phone'                 => null,
+                'representative_name'   => 'Ana Martínez',
+                'representative_email'  => 'contacto@empresa2.com',
+                'representative_phone'  => 3002234002,
+            ],
+            [
+                'nit'                   => '8000000003',
+                'person_type'           => 'Juridica',
+                'name'                  => null,
+                'email'                 => null,
+                'phone'                 => null,
+                'representative_name'   => 'Luis Rodríguez',
+                'representative_email'  => 'contacto@empresa3.com',
+                'representative_phone'  => 3002234003,
+            ],
+            [
+                'nit'                   => '8000000004',
+                'person_type'           => 'Juridica',
+                'name'                  => null,
+                'email'                 => null,
+                'phone'                 => null,
+                'representative_name'   => 'Laura Gómez',
+                'representative_email'  => 'contacto@empresa4.com',
+                'representative_phone'  => 3002234004,
+            ],
+            [
+                'nit'                   => '8000000005',
+                'person_type'           => 'Juridica',
+                'name'                  => null,
+                'email'                 => null,
+                'phone'                 => null,
+                'representative_name'   => 'David Hernández',
+                'representative_email'  => 'contacto@empresa5.com',
+                'representative_phone'  => 3002234005,
+            ],
+            [
+                'nit'                   => '8000000006',
+                'person_type'           => 'Juridica',
+                'name'                  => null,
+                'email'                 => null,
+                'phone'                 => null,
+                'representative_name'   => 'Patricia López',
+                'representative_email'  => 'contacto@empresa6.com',
+                'representative_phone'  => 3002234006,
+            ],
+            [
+                'nit'                   => '8000000007',
+                'person_type'           => 'Juridica',
+                'name'                  => null,
+                'email'                 => null,
+                'phone'                 => null,
+                'representative_name'   => 'Jorge Ramírez',
+                'representative_email'  => 'contacto@empresa7.com',
+                'representative_phone'  => 3002234007,
+            ],
+            [
+                'nit'                   => '8000000008',
+                'person_type'           => 'Juridica',
+                'name'                  => null,
+                'email'                 => null,
+                'phone'                 => null,
+                'representative_name'   => 'Sofía Torres',
+                'representative_email'  => 'contacto@empresa8.com',
+                'representative_phone'  => 3002234008,
+            ],
+            [
+                'nit'                   => '8000000009',
+                'person_type'           => 'Juridica',
+                'name'                  => null,
+                'email'                 => null,
+                'phone'                 => null,
+                'representative_name'   => 'Miguel Álvarez',
+                'representative_email'  => 'contacto@empresa9.com',
+                'representative_phone'  => 3002234009,
+            ],
+            [
+                'nit'                   => '8000000010',
+                'person_type'           => 'Juridica',
+                'name'                  => null,
+                'email'                 => null,
+                'phone'                 => null,
+                'representative_name'   => 'Camila Díaz',
+                'representative_email'  => 'contacto@empresa10.com',
+                'representative_phone'  => 3002234010,
+            ],
+        ];
+
+        Supplier::insert($suppliers);
     }
 }
