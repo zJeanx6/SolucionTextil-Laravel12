@@ -1,4 +1,5 @@
 <div>
+    {{-- migaja de pan --}}
     <div class="breadcrumbs">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item :href="route('dashboard')">Dashboard</flux:breadcrumbs.item>
@@ -11,144 +12,149 @@
             <flux:button size="sm" variant="primary" wire:click="index">Volver</flux:button>
         @endif        
     </div>
+    {{-- vista del listado de los proveedores --}}
     @if ($view === 'index')
-    <div class="flex gap-4 mb-4">
-        <div class="w-1/2">
-            <flux:input label="Busqueda por nit" type="text" wire:model.live="searchByNit" class="hover-input" name="searchByNit" placeholder="Buscar por nit..." />
+        <div class="card mb-6">
+            {{-- Barra de busqueda --}}
+            <div class="w-full">
+                <flux:input label="Barra de Busqueda" type="text" wire:model.live="search" class="hover-input" name="searchByNit" placeholder="Busca algo..." />
+            </div>
         </div>
-        <div class="w-1/2">
-            <flux:input label="Busqueda por representante" type="text" wire:model.live="searchByRepresentative" class="hover-input" name="searchByRepresentative" placeholder="Buscar por representante..." />
+        
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="table">
+                <thead
+                    class="head-table">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-center dark:text-white">NIT</th>
+                        <th scope="col" class="px-6 py-3 text-center dark:text-white">NOMBRE</th>
+                        <th scope="col" class="px-6 py-3 text-center dark:text-white">REPRESENTANTE</th>
+                        <th scope="col" class="px-6 py-3 text-center dark:text-white">ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($suppliers as $supplier)
+                    <tr
+                        class="table-content">
+                        <th scope="row" class="px-6 py-4 text-center font-medium whitespace-nowrap">
+                            {{ $supplier->nit }}</th>
+                        <td class="px-6 py-4 text-center uppercase">{{ $supplier->name }}</td>
+                        <td class="px-6 py-4 text-center uppercase">{{ $supplier->representative_name }}</td>
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex justify-center">
+                                <flux:button.group>
+                                    <flux:button icon="document-magnifying-glass" size="sm" variant="primary"
+                                        wire:click="show({{ json_encode($supplier->nit) }})"></flux:button>
+                                    <flux:button icon="pencil-square" size="sm" variant="primary"
+                                        wire:click="edit({{ json_encode($supplier->nit) }})"></flux:button>
+                                    <flux:button icon="trash" size="sm" variant="danger"
+                                        wire:click="delete({{ $supplier->nit }})"></flux:button>
+                                </flux:button.group>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-    </div>
-    
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table class="table">
-            <thead
-                class="head-table">
-                <tr>
-                    <th scope="col" class="px-6 py-3 text-center dark:text-white">NIT</th>
-                    <th scope="col" class="px-6 py-3 text-center dark:text-white">NOMBRE</th>
-                    <th scope="col" class="px-6 py-3 text-center dark:text-white">REPRESENTANTE</th>
-                    <th scope="col" class="px-6 py-3 text-center dark:text-white">ACCIONES</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($suppliers as $supplier)
-                <tr
-                    class="table-content">
-                    <th scope="row" class="px-6 py-4 text-center font-medium whitespace-nowrap">
-                        {{ $supplier->nit }}</th>
-                    <td class="px-6 py-4 text-center uppercase">{{ $supplier->name }}</td>
-                    <td class="px-6 py-4 text-center uppercase">{{ $supplier->representative_name }}</td>
-                    <td class="px-6 py-4 text-center">
-                        <div class="flex justify-center">
-                        <flux:button size="sm" variant="primary"
-                            wire:click="edit({{ $supplier->nit }})">Editar</flux:button>
-                        <flux:button size="sm" variant="danger"
-                            wire:click="delete({{ $supplier->nit }})">Eliminar</flux:button>
-                        </div>
-                    </td>
-            </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-    <div class="mx-4 mt-4 mb-4">{{ $suppliers->links() }}</div>
+        <div class="mx-4 mt-4 mb-4">{{ $suppliers->links() }}</div>
 
-
+    {{-- Vista para crear proveedor --}}
     @elseif ($view === 'create')
-        <div class="card">
-            <form wire:submit.prevent="save">
-                @csrf
-                <div class="mb-4">
-                    <flux:input class="hover-input" label="Nit" wire:model="nit" placeholder="Escribe el nit del proveedor">Nit</flux:input>
+    <div class="card p-6">
+        <form wire:submit.prevent="save">
+            @csrf
+            <div class="flex flex-col gap-6">
+                <div class="w-full flex flex-col gap-4">
+                    <flux:input class="hover-input" label="Nit" wire:model="nit" placeholder="Escribe el nit del proveedor"></flux:input>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de persona</label>
+                        <flux:select wire:model.live="person_type">
+                        <flux:select.option value="">Seleccione</flux:select.option>
+                        <flux:select.option value="Natural">Natural</flux:select.option>
+                        <flux:select.option value="Juridica">Jurídica</flux:select.option>
+                    </flux:select>
+                    </div>
+
+                    <flux:input class="hover-input" label="Nombre" wire:model="name" placeholder="Escribe el nombre del proveedor"></flux:input>
+                    <flux:input class="hover-input" label="Email" wire:model="email" placeholder="Escribe el email del proveedor"></flux:input>
+                    <flux:input class="hover-input" label="Teléfono" wire:model="phone" placeholder="Escribe el teléfono del proveedor"></flux:input>
+
+                    @if($showJuridica)
+                        <flux:input class="hover-input" label="Nombre del representante" wire:model="representative_name" placeholder="Escribe el nombre del representante"></flux:input>
+                        <flux:input class="hover-input" label="Correo del representante" wire:model="representative_email" placeholder="Escribe el correo del representante"></flux:input>
+                        <flux:input class="hover-input" label="Teléfono del representante" wire:model="representative_phone" placeholder="Escribe el teléfono del representante"></flux:input>
+                    @endif
+
+                    <div class="flex justify-end gap-2 mt-2">
+                        <flux:button wire:click="save" variant="primary" type="submit">
+                            Crear
+                        </flux:button>
+                    </div>
                 </div>
-        
-                <div class="mb-4">
-                    <label>Tipo de persona</label>
-                        <select class="hover-input w-full px-3 py-2 border border-gray-300 rounded-md" wire:model="person_type">
-                            <option value="">Seleccione</option>
-                            <option value="Natural">Natural</option>
-                            <option value="Juridica">Jurídica</option>
-                        </select>
-                </div>
-        
-                <div class="mb-4">
-                    <flux:input class="hover-input" label="Nombre"  wire:model="name" placeholder="Escribe el nombre de este proveedor"></flux:input>
-                </div>
-        
-                <div class="mb-4">
-                    <flux:input class="hover-input" label="Email"  wire:model="email" placeholder="Escribe el email del nuevo proveedor"></flux:input>
-                </div>
-        
-                <div class="mb-4">
-                    <flux:input class="hover-input" label="Teléfono" wire:model="phone" placeholder="Escribe el teléfono del nuevo proveedor"></flux:input>
+            </div>
+        </form>
+    </div>
+
+
+    {{-- Vista para editar el proveedor --}}
+    @elseif ($view === 'edit')
+    <div class="card p-6">
+        <div class="flex flex-col gap-6">
+            <div class="w-full flex flex-col gap-4">
+                <flux:input class="hover-input" label="Nit" wire:model="nit" placeholder="Escribe el nit del proveedor"></flux:input>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de persona</label>
+                    <flux:select wire:model.live="person_type">
+                        <flux:select.option value="">Seleccione</flux:select.option>
+                        <flux:select.option value="Natural">Natural</flux:select.option>
+                        <flux:select.option value="Juridica">Jurídica</flux:select.option>
+                    </flux:select>
                 </div>
 
-                <div class="mb-4">
-                    <flux:input class="hover-input" label="Nombre del representante" wire:model="representative_name"  placeholder="Escribe el nombre del representante"></flux:input>
-                </div>
+                <flux:input class="hover-input" label="Nombre" wire:model="name" placeholder="Escribe el nombre del proveedor"></flux:input>
+                <flux:input class="hover-input" label="Email" wire:model="email" placeholder="Escribe el email del proveedor"></flux:input>
+                <flux:input class="hover-input" label="Teléfono" wire:model="phone" placeholder="Escribe el teléfono del proveedor"></flux:input>
 
-                <div class="mb-4">
+                @if($showJuridica)
+                    <flux:input class="hover-input" label="Nombre del representante" wire:model="representative_name" placeholder="Escribe el nombre del representante"></flux:input>
                     <flux:input class="hover-input" label="Correo del representante" wire:model="representative_email" placeholder="Escribe el correo del representante"></flux:input>
-                </div>
+                    <flux:input class="hover-input" label="Teléfono del representante" wire:model="representative_phone" placeholder="Escribe el teléfono del representante"></flux:input>
+                @endif
 
-                <div class="mb-4">
-                    <flux:input class="hover-input" label="Telefono del representante" wire:model="representative_phone"  placeholder="Escribe el telefono del representante"></flux:input>
-                </div>
-
-                <div class="flex justify-end">
-                    <flux:button wire:click="save" variant="primary" type="submit">
-                        Crear
+                <div class="flex justify-end gap-2 mt-2">
+                    <flux:button wire:click="update" variant="primary" type="button">
+                        Actualizar
                     </flux:button>
                 </div>
+            </div>
         </div>
+    </div>
 
+    {{-- Vista para ver el proveedor --}}
+    @elseif ($view === 'show')
+    <div class="card p-6">
+        <div class="flex flex-col gap-6">
+            <div class="w-full flex flex-col gap-4">
+                <flux:input class="hover-input" label="Nit" wire:model="nit" placeholder="Escribe el nit del proveedor" readonly></flux:input>
 
-    @elseif ($view === 'edit')
-        <div class="card">
-            <div class="mb-4">
-                <flux:input class="hover-input" label="Nit" wire:model="nit" placeholder="Escribe el nit del proveedor">Nit</flux:input>
-            </div>
-    
-            <div class="mb-4">
-                <label>Tipo de persona</label>
-                    <select class="hover-input w-full px-3 py-2 border border-gray-300 rounded-md" wire:model="person_type">
-                        <option value="">Seleccione</option>
-                        <option value="Natural">Natural</option>
-                        <option value="Juridica">Jurídica</option>
-                    </select>
-            </div>
-    
-            <div class="mb-4">
-                <flux:input class="hover-input" label="Nombre"  wire:model="name" placeholder="Escribe el nombre de este proveedor"></flux:input>
-            </div>
-    
-            <div class="mb-4">
-                <flux:input class="hover-input" label="Email"  wire:model="email" placeholder="Escribe el email del nuevo proveedor"></flux:input>
-            </div>
-    
-            <div class="mb-4">
-                <flux:input class="hover-input" label="Teléfono" wire:model="phone" placeholder="Escribe el teléfono del nuevo proveedor"></flux:input>
-            </div>
+                <flux:input label="Tipo de persona" value="{{ $person_type ?: 'No especificado' }}" readonly class="hover-input"></flux:input>
 
-            <div class="mb-4">
-                <flux:input class="hover-input" label="Nombre del representante" wire:model="representative_name"  placeholder="Escribe el nombre del representante"></flux:input>
-            </div>
+                <flux:input class="hover-input" label="Nombre" wire:model="name" placeholder="Escribe el nombre del proveedor" readonly></flux:input>
+                <flux:input class="hover-input" label="Email" wire:model="email" placeholder="Escribe el email del proveedor" readonly></flux:input>
+                <flux:input class="hover-input" label="Teléfono" wire:model="phone" placeholder="Escribe el teléfono del proveedor" readonly></flux:input>
 
-            <div class="mb-4">
-                <flux:input class="hover-input" label="Correo del representante" wire:model="representative_email" placeholder="Escribe el correo del representante"></flux:input>
+                @if($person_type === 'Juridica')
+                    <flux:input class="hover-input" label="Nombre del representante" wire:model="representative_name" placeholder="Escribe el nombre del representante" readonly></flux:input>
+                    <flux:input class="hover-input" label="Correo del representante" wire:model="representative_email" placeholder="Escribe el correo del representante" readonly></flux:input>
+                    <flux:input class="hover-input" label="Teléfono del representante" wire:model="representative_phone" placeholder="Escribe el teléfono del representante" readonly></flux:input>
+                @endif
             </div>
+        </div>
+    </div>
 
-            <div class="mb-4">
-                <flux:input class="hover-input" label="Telefono del representante" wire:model="representative_phone"  placeholder="Escribe el telefono del representante"></flux:input>
-            </div>
-            
-            <div class="flex justify-end">
-                <flux:button wire:click="update" variant="primary" type="submit">
-                    Actualizar
-                </flux:button>
-            </div>
-    @endif
+@endif
     
 </div>
