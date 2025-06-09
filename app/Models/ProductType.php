@@ -13,8 +13,7 @@ class ProductType extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'name',
-        'description',
+        'name'
     ];
 
     public function products()
