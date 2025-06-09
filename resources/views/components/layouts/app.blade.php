@@ -48,6 +48,13 @@
                 'roles' => ['admin', 'inventory'],
             ],
             [
+                'name' => 'Products Mov.',
+                'icon' => 'home',
+                'url' => route('admin.products.movements'),
+                'current' => request()->routeIs('admin.products.movements'),
+                'roles' => ['admin', 'inventory'],
+            ],
+            [
                 'name' => 'Maquinas',
                 'icon' => 'home',
                 'url' => route('admin.machines.index'),

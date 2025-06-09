@@ -33,6 +33,7 @@ Route::middleware('role:admin,inventory')->group(function () {
     Route::get('productos', [InventoryController::class, 'products'])->name('products.index');
     Route::get('elementos', [InventoryController::class, 'elements'])->name('elements.index');
     Route::get('elementos/movimiento', [InventoryController::class, 'elementsMovements'])->name('elements.movements');
+    Route::get('productos/movimiento', [InventoryController::class, 'productsMovements'])->name('products.movements');
     Route::view('dashboard-inventory', 'dashboard-inventory')->name('dashboard-inventory');
 });
 

@@ -28,6 +28,7 @@ return new class extends Migration
             //ForeignsKeys
             $table->unsignedBigInteger('exit_id')->nullable();
             $table->unsignedInteger('product_code')->nullable();
+            $table->timestamps();
 
             //Config ForeignsKeys
             $table->foreign('exit_id')->references('id')->on('exits')->onDelete('set null');

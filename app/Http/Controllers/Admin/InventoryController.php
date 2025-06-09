@@ -16,10 +16,15 @@ class InventoryController extends Controller
     {
         return view('admin.elements.movements');
     }
-
+    
     public function products()
     {
         return view('admin.products.index');
+    }
+
+    public function productsMovements()
+    {
+        return view('admin.products.movements');
     }
 
     public function machines()
