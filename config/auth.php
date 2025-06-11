@@ -60,6 +60,7 @@ return [
     */
 
     'providers' => [
+        Maatwebsite\Excel\ExcelServiceProvider::class,
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
