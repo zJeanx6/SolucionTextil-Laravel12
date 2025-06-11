@@ -1,18 +1,18 @@
 <x-layouts.app :title="__('Dashboard Inventory')">
-        {{-- Migaja de pan --}}
+    {{-- Migaja de pan --}}
     <div class="breadcrumbs mb-4">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item :href="route('admin.dashboard-inventory')"> Inicio </flux:breadcrumbs>
-            <flux:breadcrumbs.item :href="route('admin.dashboard-inventory')"> Resumen General Inventarios</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item :href="route('admin.dashboard-inventory')"> Resumen General Inventarios </flux:breadcrumbs.item>
         </flux:breadcrumbs>
         
         <flux:dropdown>
             <flux:button size="sm" variant="filled" icon:trailing="chevron-down"> Acciones </flux:button>
             <flux:menu>
-                <flux:menu.group heading="Reportes">
-                    <flux:menu.item> Registrar Ingreso </flux:menu.item>
-                    <flux:menu.item> Registrar Salida </flux:menu.item>
-                    <flux:menu.item> Devolver Herramienta </flux:menu.item>
+                <flux:menu.group heading="Generar Reportes">
+                    <flux:modal.trigger name="exportar-movimientos">
+                        <flux:menu.item>Reporte Excel</flux:menu.item>
+                    </flux:modal.trigger>
                 </flux:menu.group>
                 <flux:menu.group heading="Ingresar a">
                     <flux:menu.item :href="route('admin.elements.index')" wire:navigate> Inventario Elementos </flux:menu.item>
@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="flex flex-col flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 mb-4">
-                @livewire('recent-element-movements-table')
+            @livewire('recent-element-movements-table')
         </div>
     </div>
 </x-layouts.app>
