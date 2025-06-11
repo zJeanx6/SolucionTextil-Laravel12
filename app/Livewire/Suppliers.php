@@ -131,7 +131,6 @@ class Suppliers extends Component
     public function update()
     {
         $rules=[
-            'nit' => 'required|min:3|max:50',
             'name' => 'required|min:3|max:50',
             'person_type' => 'required|min:3|max:50',
             'email' => 'required|min:3|max:50',

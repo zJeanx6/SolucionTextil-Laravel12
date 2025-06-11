@@ -103,7 +103,7 @@
     <div class="card p-6">
         <div class="flex flex-col gap-6">
             <div class="w-full flex flex-col gap-4">
-                <flux:input class="hover-input" label="Nit" wire:model="nit" placeholder="Escribe el nit del proveedor"></flux:input>
+                <flux:input class="hover-input" label="Nit" wire:model="nit" readonly></flux:input>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de persona</label>
@@ -114,14 +114,14 @@
                     </flux:select>
                 </div>
 
-                <flux:input class="hover-input" label="Nombre" wire:model="name" placeholder="Escribe el nombre del proveedor"></flux:input>
-                <flux:input class="hover-input" label="Email" wire:model="email" placeholder="Escribe el email del proveedor"></flux:input>
-                <flux:input class="hover-input" label="Teléfono" wire:model="phone" placeholder="Escribe el teléfono del proveedor"></flux:input>
+                <flux:input class="hover-input" label="Nombre" wire:model="name" placeholder="Escribe el nombre de la persona"></flux:input>
+                <flux:input class="hover-input" label="Email" wire:model="email" placeholder="Escribe el email de la persona"></flux:input>
+                <flux:input class="hover-input" label="Teléfono" wire:model="phone" placeholder="Escribe el teléfono de la persona"></flux:input>
 
                 @if($showJuridica)
-                    <flux:input class="hover-input" label="Nombre del representante" wire:model="representative_name" placeholder="Escribe el nombre del representante"></flux:input>
-                    <flux:input class="hover-input" label="Correo del representante" wire:model="representative_email" placeholder="Escribe el correo del representante"></flux:input>
-                    <flux:input class="hover-input" label="Teléfono del representante" wire:model="representative_phone" placeholder="Escribe el teléfono del representante"></flux:input>
+                    <flux:input class="hover-input" label="Nombre de la empresa" wire:model="representative_name" placeholder="Escribe el nombre de la empresa"></flux:input>
+                    <flux:input class="hover-input" label="Correo de la empresa" wire:model="representative_email" placeholder="Escribe el correo de la empresa"></flux:input>
+                    <flux:input class="hover-input" label="Teléfono de la empresa" wire:model="representative_phone" placeholder="Escribe el teléfono de la empresa"></flux:input>
                 @endif
 
                 <div class="flex justify-end gap-2 mt-2">
@@ -142,9 +142,9 @@
 
                 <flux:input label="Tipo de persona" value="{{ $person_type ?: 'No especificado' }}" readonly class="hover-input"></flux:input>
 
-                <flux:input class="hover-input" label="Nombre" wire:model="name" placeholder="Escribe el nombre del proveedor" readonly></flux:input>
-                <flux:input class="hover-input" label="Email" wire:model="email" placeholder="Escribe el email del proveedor" readonly></flux:input>
-                <flux:input class="hover-input" label="Teléfono" wire:model="phone" placeholder="Escribe el teléfono del proveedor" readonly></flux:input>
+                <flux:input class="hover-input" label="Nombre" wire:model="name"  readonly></flux:input>
+                <flux:input class="hover-input" label="Email" wire:model="email"  readonly></flux:input>
+                <flux:input class="hover-input" label="Teléfono" wire:model="phone" readonly></flux:input>
 
                 @if($person_type === 'Juridica')
                     <flux:input class="hover-input" label="Nombre del representante" wire:model="representative_name" placeholder="Escribe el nombre del representante" readonly></flux:input>
