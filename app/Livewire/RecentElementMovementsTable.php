@@ -11,7 +11,7 @@ use Livewire\Attributes\On;
 #[Lazy]
 class RecentElementMovementsTable extends Component
 {
-    public $movements;
+    public $movements = [];
     public $startDate;
     public $endDate;
     public $tipo = '';
@@ -25,13 +25,10 @@ class RecentElementMovementsTable extends Component
         $this->cargarMovimientos();
     }
 
-    public function placeholder()
-    {
-        return view('livewire.placeholders.skeleton');
-    }
-
     public function updated($propertyName)
     {
+        // cada vez que cambia startDate, endDate o tipo,
+        // recarga la tabla (sigue limitada a 20)
         $this->cargarMovimientos();
     }
 
@@ -46,29 +43,33 @@ class RecentElementMovementsTable extends Component
         $this->modalExportar = false;
     }
 
-    public function cargarMovimientos()
+    /**
+     * Arma la query base para todos los movimientos, aplicando filtros
+     * pero SIN límite. Úsala tanto para la tabla (añadiendo limit(20))
+     * como para la exportación (sin límite).
+     */
+    private function buildMovementsQuery()
     {
-        // 1) Préstamos (solo herramienta G-03 → Prestado/a|Devuelto/a; resto G-01,2,4 → Para consumo)
+        // 1) Préstamos
         $loans = DB::table('loans')
-            ->join('loan_details',  'loans.id',              '=', 'loan_details.loan_id')
-            ->join('elements',      'loan_details.element_code','=', 'elements.code')
-            ->join('users as u_instr','loans.instructor_id', '=', 'u_instr.card')
-            ->leftJoin('loan_returns','loan_details.id',      '=', 'loan_returns.loan_detail_id')
+            ->join('loan_details',   'loans.id',           '=', 'loan_details.loan_id')
+            ->join('elements',       'loan_details.element_code', '=', 'elements.code')
+            ->join('users as u_instr','loans.instructor_id','=', 'u_instr.card')
+            ->join('users as u_user', 'loans.card_id',     '=', 'u_user.card')
+            ->leftJoin('loan_returns','loan_details.id',   '=', 'loan_returns.loan_detail_id')
             ->selectRaw("
                 loans.created_at AS date,
                 'Prestamo' AS type,
                 elements.name AS element_name,
+                CONCAT(u_user.name, ' ', u_user.last_name) AS user_name,
                 CONCAT(u_instr.name, ' ', u_instr.last_name) AS instructor_name,
                 loan_details.amount AS amount,
-                CASE WHEN loan_returns.id IS NOT NULL THEN loan_returns.return_date ELSE NULL END AS return_date,
-
-                -- Movement type: Herramienta G-03 = Prestado/a|Devuelto/a, resto G-01,2,4 = Para consumo
+                loan_returns.return_date AS return_date,
                 CASE
                   WHEN elements.element_type_id BETWEEN 3100 AND 3999 THEN
                     CASE WHEN loan_returns.id IS NOT NULL THEN 'Devuelto/a' ELSE 'Prestado/a' END
                   ELSE 'Para consumo'
                 END AS movement_type,
-
                 elements.element_type_id AS element_type_id
             ");
 
@@ -82,20 +83,21 @@ class RecentElementMovementsTable extends Component
             $loans->whereRaw("'Prestamo' = ?", [$this->tipo]);
         }
 
-        // 2) Compras (G-01,2,4 siempre Para consumo)
+        // 2) Compras
         $shoppings = DB::table('shoppings')
             ->join('shopping_details','shoppings.id',             '=', 'shopping_details.shopping_id')
-            ->join('elements',         'shopping_details.element_code','=', 'elements.code')
-            ->join('users as u_user',  'shoppings.card_id',       '=', 'u_user.card')
-            ->join('suppliers',        'shoppings.supplier_nit',  '=', 'suppliers.nit')
+            ->join('elements',       'shopping_details.element_code', '=', 'elements.code')
+            ->join('users as u_user','shoppings.card_id',        '=', 'u_user.card')
+            ->join('suppliers',      'shoppings.supplier_nit',   '=', 'suppliers.nit')
             ->selectRaw("
                 shoppings.created_at AS date,
                 'Compra' AS type,
                 elements.name AS element_name,
+                CONCAT(u_user.name, ' ', u_user.last_name) AS user_name,
                 suppliers.name AS instructor_name,
                 shopping_details.amount AS amount,
                 NULL AS return_date,
-                'Para consumo' AS movement_type,
+                'Compra de elemento' AS movement_type,
                 elements.element_type_id AS element_type_id
             ");
 
@@ -111,13 +113,14 @@ class RecentElementMovementsTable extends Component
 
         // 3) Entradas de productos
         $tickets = DB::table('ticket_details')
-            ->join('tickets',  'ticket_details.ticket_id',    '=', 'tickets.id')
-            ->join('products', 'ticket_details.product_code', '=', 'products.code')
-            ->join('users as u','tickets.card_id',              '=', 'u.card')
+            ->join('tickets',       'ticket_details.ticket_id',    '=', 'tickets.id')
+            ->join('products',      'ticket_details.product_code', '=', 'products.code')
+            ->join('users as u_user','tickets.card_id',           '=', 'u_user.card')
             ->selectRaw("
                 tickets.created_at AS date,
                 'Entrada' AS type,
                 products.name AS element_name,
+                CONCAT(u_user.name, ' ', u_user.last_name) AS user_name,
                 'N/A' AS instructor_name,
                 ticket_details.amount AS amount,
                 NULL AS return_date,
@@ -137,13 +140,14 @@ class RecentElementMovementsTable extends Component
 
         // 4) Salidas de productos
         $exits = DB::table('exit_details')
-            ->join('exits',    'exit_details.exit_id',     '=', 'exits.id')
-            ->join('products','exit_details.product_code', '=', 'products.code')
-            ->join('users as u','exits.card_id',            '=', 'u.card')
+            ->join('exits',        'exit_details.exit_id',     '=', 'exits.id')
+            ->join('products',     'exit_details.product_code', '=', 'products.code')
+            ->join('users as u_user','exits.card_id',           '=', 'u_user.card')
             ->selectRaw("
                 exits.created_at AS date,
                 'Salida' AS type,
                 products.name AS element_name,
+                CONCAT(u_user.name, ' ', u_user.last_name) AS user_name,
                 'N/A' AS instructor_name,
                 exit_details.amount AS amount,
                 NULL AS return_date,
@@ -161,20 +165,38 @@ class RecentElementMovementsTable extends Component
             $exits->whereRaw("'Salida' = ?", [$this->tipo]);
         }
 
-        // Unión y últimos 20 movimientos
-        $this->movements = $loans
+        // Unión de todas sin límite
+        return $loans
             ->unionAll($shoppings)
             ->unionAll($tickets)
             ->unionAll($exits)
-            ->orderBy('date','desc')
+            ->orderBy('date', 'desc');
+    }
+
+    /**
+     * Carga la tabla con los últimos 20 movimientos.
+     */
+    public function cargarMovimientos()
+    {
+        $this->movements = $this
+            ->buildMovementsQuery()
             ->limit(20)
             ->get();
     }
 
+    /**
+     * Exporta todos los movimientos que cumplen filtros,
+     * sin límite de registros.
+     */
     public function exportMovements()
     {
         $this->cerrarModalExportar();
-        return new ElementMovementsExport(collect($this->movements));
+
+        $allMovements = $this
+            ->buildMovementsQuery()
+            ->get();
+
+        return new ElementMovementsExport($allMovements);
     }
 
     public function render()
