@@ -11,5 +11,10 @@ class MachineController extends Controller
     {
         return view('admin.machines.index');
     }
+
+    public function makemaintenance()
+    {
+        return view('admin.maintenance.makemaintenance' );
+    }
     
 }

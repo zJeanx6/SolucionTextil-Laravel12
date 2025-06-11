@@ -39,5 +39,6 @@ Route::middleware('role:admin,inventory')->group(function () {
 
 // Grupo para admin y maintenance con acceso solo a maintenance
 Route::middleware('role:admin,maintenance')->group(function () {
-        Route::view('dashboard-maintenance', 'dashboard-maintenance')->name('dashboard-maintenance');
+    Route::view('dashboard-maintenance', 'dashboard-maintenance')->name('dashboard-maintenance');
+    Route::get('mantenimiento', [MachineController::class, 'makemaintenance'])->name('maintenance.makemaintenance');
 });

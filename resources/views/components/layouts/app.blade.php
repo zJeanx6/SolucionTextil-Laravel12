@@ -62,6 +62,13 @@
                 'roles' => ['admin'],
             ],
             [
+                'name' => 'Mantenimientos',
+                'icon' => 'home',
+                'url' => route('admin.maintenance.makemaintenance'),
+                'current' => request()->routeIs('admin.maintenance.makemaintenance'),
+                'roles' => ['admin'],
+            ],
+            [
                 'name' => 'Proveedores',
                 'icon' => 'users',
                 'url' => route('admin.suppliers.index'),
