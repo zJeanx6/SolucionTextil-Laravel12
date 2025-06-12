@@ -9,12 +9,14 @@ use Livewire\WithFileUploads;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Models\{Element, Roll, Shopping, ShoppingDetail, Loan, LoanDetail, Supplier, User, RollMovement, LoanReturn};
+use App\Models\{Element, Roll, Shopping, ShoppingDetail, Loan, LoanDetail, Supplier, User, RollMovement, LoanReturn, ElementMovement};
 
-#[Lazy]
+// #[Lazy]
 class ElementsMov extends Component
 {
     use WithPagination, WithFileUploads;
+
+    public $page = 1;
 
     // ————— Propiedades para los modales —————
     public bool $showIngresoModal  = false;
@@ -77,8 +79,8 @@ class ElementsMov extends Component
     public function mount(): void
     {
         // Cargar proveedores e instructores
-        $this->suppliers   = Supplier::orderBy('name')->get();
-        $this->instructors = User::where('role_id', 4)->orderBy('name')->get();
+        $this->suppliers   = [];
+        $this->instructors = [];
 
         // Inicializar colecciones
         $this->elementsByIngresoGroup  = collect([]);
@@ -92,87 +94,31 @@ class ElementsMov extends Component
 
     public function render()
     {
-        //
-        // 1) Query para “Préstamos”
-        //
-        $loans = DB::table('loans')
-            ->join('users as u_user', 'loans.card_id', '=', 'u_user.card')
-            ->join('users as u_instructor', 'loans.instructor_id', '=', 'u_instructor.card')
-            ->selectRaw("
-                loans.id AS movement_id,
-                loans.created_at AS date,
-                'Prestamo' AS type,
-                CONCAT(u_instructor.name, ' ', u_instructor.last_name) AS party,
-                CONCAT(u_user.name, ' ', u_user.last_name) AS user,
-                loans.file AS file
-            ");
+        $query = ElementMovement::select(['type', 'party', 'user', 'file', 'created_at']);
 
-        //
-        // 2) Query para “Compras”
-        //
-        $shoppings = DB::table('shoppings')
-            ->join('users as u_user', 'shoppings.card_id', '=', 'u_user.card')
-            ->join('suppliers', 'shoppings.supplier_nit', '=', 'suppliers.nit')
-            ->selectRaw("
-                shoppings.id AS movement_id,
-                shoppings.created_at AS date,
-                'Compra' AS type,
-                suppliers.name AS party,
-                CONCAT(u_user.name, ' ', u_user.last_name) AS user,
-                NULL AS file
-            ");
-
-        //
-        // 3) UNION ALL
-        //
-        $unionQuery = $loans->unionAll($shoppings);
-
-        //
-        // 4) Subconsulta para paginar
-        //
-        $combined = DB::table(DB::raw("({$unionQuery->toSql()}) AS combined"))
-            ->mergeBindings($unionQuery);
-
-        //
-        // 5) Filtrar por tipo
-        //
-        if ($this->typeFilter === 'Prestamo') {
-            $combined->where('type', 'Prestamo');
-        } elseif ($this->typeFilter === 'Compra') {
-            $combined->where('type', 'Compra');
+        // 1. Filtro por tipo
+        if ($this->typeFilter === 'Prestamo' || $this->typeFilter === 'Compra') {
+            $query->where('type', $this->typeFilter);
         }
 
-        //
-        // 6) Búsqueda libre
-        //
+        // 2. Búsqueda SOLO por ficha o party
         if (strlen($this->search) > 0) {
             $s = strtolower($this->search);
-            $combined->where(function($q) use ($s) {
-                $q->whereRaw("CAST(movement_id AS CHAR) LIKE ?", ["%{$s}%"])
-                  ->orWhereRaw("LOWER(type) LIKE ?", ["%{$s}%"])
-                  ->orWhereRaw("LOWER(party) LIKE ?", ["%{$s}%"])
-                  ->orWhereRaw("LOWER(user) LIKE ?", ["%{$s}%"])
-                  ->orWhereRaw("CAST(file AS CHAR) LIKE ?", ["%{$s}%"]);
+            $query->where(function ($q) use ($s) {
+                $q->whereRaw("LOWER(party) LIKE ?", ["%{$s}%"])
+                ->orWhereRaw("CAST(file AS CHAR) LIKE ?", ["%{$s}%"]);
             });
         }
 
-        //
-        // 7) Ordenamiento dinámico
-        //
-        $allowed = ['movement_id','date','type','party','user','file'];
-        if (! in_array($this->sortField, $allowed)) {
-            $this->sortField = 'date';
-        }
-        $combined->orderBy($this->sortField, $this->sortDirection);
+        // 3. Ordenamiento solo por columnas permitidas
+        $allowed = ['created_at', 'type', 'party', 'user', 'file'];
+        $sortField = in_array($this->sortField, $allowed) ? $this->sortField : 'created_at';
+        $query->orderBy($sortField, $this->sortDirection);
 
-        //
-        // 8) Paginación
-        //
-        $movements = $combined->paginate(12);
+        // 4. Paginación
+        $movements = $query->paginate(12);
 
-        //
-        // 9) Obtener préstamos de herramientas pendientes de devolución
-        //
+        // 5. Préstamos pendientes (igual)
         $pendingReturns = DB::table('loan_details')
             ->join('loans', 'loan_details.loan_id', '=', 'loans.id')
             ->join('elements', 'loan_details.element_code', '=', 'elements.code')
@@ -221,6 +167,9 @@ class ElementsMov extends Component
     // ————— Abrir/Cerrar modales —————
     public function openIngresoModal(): void
     {
+        if (empty($this->suppliers)) {
+            $this->suppliers = Supplier::orderBy('name')->get();
+        }
         $this->ingresoGroup           = '';
         $this->elementsByIngresoGroup = collect([]);
         $this->ingresoSupplierNit     = null;
@@ -245,11 +194,15 @@ class ElementsMov extends Component
 
     public function closeIngresoModal(): void
     {
+        $this->suppliers = [];
         $this->showIngresoModal = false;
     }
 
     public function openSalidaModal(): void
     {
+        if (empty($this->instructors)) {
+            $this->instructors = User::where('role_id', 4)->orderBy('name')->get();
+        }
         $this->salidaGroup           = '';
         $this->elementsBySalidaGroup = collect([]);
         $this->salidaInstructorId    = null;
@@ -268,6 +221,7 @@ class ElementsMov extends Component
 
     public function closeSalidaModal(): void
     {
+        $this->instructors = [];
         $this->showSalidaModal = false;
     }
 
@@ -408,6 +362,16 @@ class ElementsMov extends Component
                     ]);
                 }
             }
+
+            // Nuevo: Crear registro en movements (COMPRA)
+            ElementMovement::create([
+                'type'              => 'Compra',
+                'movementable_id'   => $shopping->id,
+                'movementable_type' => Shopping::class,
+                'party'             => optional(collect($this->suppliers)->firstWhere('nit', $this->ingresoSupplierNit))->name,
+                'user'              => Auth::user()->name . ' ' . Auth::user()->last_name,
+                'file'              => null, // Puedes poner aquí algún dato de ficha si lo tienes
+            ]);
         });
 
         // 6) Notificación por evento
@@ -600,6 +564,18 @@ class ElementsMov extends Component
                     ]);
                 }
             }
+
+            // Nuevo: Crear registro en movements (PRESTAMO)
+            $instructor = collect($this->instructors)->firstWhere('card', $this->salidaInstructorId);
+            $instructorName = $instructor ? $instructor->name . ' ' . $instructor->last_name : '';
+            ElementMovement::create([
+                'type'              => 'Prestamo',
+                'movementable_id'   => $loan->id,
+                'movementable_type' => Loan::class,
+                'party'             => $instructorName,
+                'user'              => Auth::user()->name . ' ' . Auth::user()->last_name,
+                'file'              => $loan->file,
+            ]);
         });
 
         // 5) Notificación por evento

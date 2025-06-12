@@ -5,7 +5,7 @@
             <flux:breadcrumbs.item :href="route('dashboard')" icon="home"/>
             <flux:breadcrumbs.item :href="route('admin.elements.movements')"> Movimiento de Elementos </flux:breadcrumbs.item>
         </flux:breadcrumbs>
-        
+
         <flux:dropdown>
             <flux:button size="sm" variant="filled" icon:trailing="chevron-down"> Acciones </flux:button>
             <flux:menu>
@@ -27,7 +27,7 @@
     <div class="card mb-4">
         <div class="flex gap-4">
             <div class="w-full">
-                <flux:input type="text" placeholder="Buscar por ID, tipo, instructor/proveedor o usuario..." wire:model.live="search" />
+                <flux:input type="text" placeholder="Buscar por Ficha o instructor/proveedor..." wire:model.debounce.500ms="search" />
             </div>
         </div>
     </div>
@@ -62,11 +62,18 @@
             <tbody>
                 @forelse ($movements as $item)
                     <tr wire:key="element-mov-{{$item->movement_id}}" class="table-content">
-                        <td class="column-item">{{ \Carbon\Carbon::parse($item->date)->format('Y-m-d H:i') }}</td>
+                        <td class="column-item">{{ $item->created_at->format('Y-m-d H:i') }}</td>
                         <td class="column-item">{{ $item->type }}</td>
                         <td class="column-item">{{ $item->party }}</td>
                         <td class="column-item">{{ $item->user }}</td>
-                        <td class="column-item">{{ $item->file }}</td>
+                        <td class="column-item">
+                            @if ($item->type === 'Compra')
+                                {{ $item->file ? $item->file : 'No aplica' }}
+                            @else
+                                {{ $item->file }}
+                            @endif
+                        </td>
+
                     </tr>
                 @empty
                     <tr>
@@ -153,14 +160,16 @@
 
                         {{-- Botón para agregar línea --}}
                         <div class="flex justify-end">
-                            <flux:button size="sm" variant="primary" wire:click="addIngresoLine"> + Agregar línea </flux:button>
+                            <flux:button size="sm" variant="filled" wire:click="addIngresoLine"> + Agregar línea </flux:button>
                         </div>
                     </div>
                 @endif
 
                 {{-- 3. Seleccionar Proveedor --}}
                 <flux:select label="Proveedor" wire:model.live="ingresoSupplierNit">
-                    <flux:select.option value=""> Seleccione un proveedor </flux:select.option>
+                    <flux:select.option value=""> 
+                        {{ empty($suppliers) ? 'Cargando proveedores...' : 'Seleccione un proveedor' }}
+                    </flux:select.option>
                     @foreach ($suppliers as $sp)
                         <flux:select.option value="{{ $sp->nit }}">
                             {{ $sp->name }}
@@ -170,8 +179,8 @@
 
                 {{-- 4. Botones de acción --}}
                 <div class="flex justify-end gap-2 pt-4">
-                    <flux:button size="sm" variant="primary" wire:click="closeIngresoModal"> Cancelar </flux:button>
-                    <flux:button size="sm" variant="primary" wire:click="saveIngreso"> Guardar Ingreso </flux:button>
+                    <flux:button size="sm" variant="filled" wire:click="closeIngresoModal"> Cancelar </flux:button>
+                    <flux:button size="sm" variant="filled" wire:click="saveIngreso"> Guardar Ingreso </flux:button>
                 </div>
             @endif
         </div>
@@ -273,14 +282,14 @@
 
                     {{-- Botón para agregar nueva línea --}}
                     <div class="flex justify-end">
-                        <flux:button size="sm" variant="primary" wire:click="addSalidaLine"> + Agregar línea </flux:button>
+                        <flux:button size="sm" variant="filled" wire:click="addSalidaLine"> + Agregar línea </flux:button>
                     </div>
                 </div>
 
                 {{-- 3. Seleccionar Instructor --}}
                 <flux:select label="Instructor" wire:model.live="salidaInstructorId">
                     <flux:select.option value="">
-                        Seleccione Instructor
+                        {{ empty($instructors) ? 'Cargando instructores...' : 'Seleccione Instructor' }}
                     </flux:select.option>
                     @foreach ($instructors as $inst)
                         <flux:select.option value="{{ $inst->card }}">
@@ -294,8 +303,8 @@
 
                 {{-- 5. Botones de acción --}}
                 <div class="flex justify-end gap-2 pt-4">
-                    <flux:button size="sm" variant="primary" wire:click="closeSalidaModal"> Cancelar </flux:button>
-                    <flux:button size="sm" variant="primary" wire:click="saveSalida"> Guardar Salida </flux:button>
+                    <flux:button size="sm" variant="filled" wire:click="closeSalidaModal"> Cancelar </flux:button>
+                    <flux:button size="sm" variant="filled" wire:click="saveSalida"> Guardar Salida </flux:button>
                 </div>
             @endif
         </div>
@@ -333,7 +342,7 @@
                                     <td class="column-item">{{ $detail->instr_name }} {{ $detail->instr_last }}</td>
                                     <td class="column-item">{{ $detail->file ?? '—' }}</td>
                                     <td class="column-item">
-                                        <flux:button size="xs" variant="primary" wire:click="returnTool({{ $detail->detail_id }})"> Devolver </flux:button>
+                                        <flux:button size="xs" variant="filled" wire:click="returnTool({{ $detail->detail_id }})"> Devolver </flux:button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -343,7 +352,7 @@
             @endif
 
             <div class="flex justify-end mt-4">
-                <flux:button size="sm" variant="primary" wire:click="closeReturnModal"> Cerrar </flux:button>
+                <flux:button size="sm" variant="filled" wire:click="closeReturnModal"> Cerrar </flux:button>
             </div>
         </div>
     </flux:modal>
