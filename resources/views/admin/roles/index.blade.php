@@ -6,8 +6,6 @@
             <flux:breadcrumbs.item :href="route('dashboard')"> Dashboard </flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.roles.index')"> Roles </flux:breadcrumbs.item>
         </flux:breadcrumbs>
-
-        <flux:button size="sm" variant="primary" :href="route('admin.roles.create')"> Nuevo </flux:button>
     </div>
 
     {{-- Tabla de contenido --}}

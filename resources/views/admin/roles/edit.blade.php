@@ -1,4 +1,4 @@
-<x-layouts.app :title= "'Editar Rol">
+<x-layouts.app :title="'Editar Rol'">
     
     {{-- Migaja de pan --}}
     <div class="breadcrumbs"> 
@@ -6,9 +6,8 @@
             <flux:breadcrumbs.item :href="route('dashboard')"> Dashboard </flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.roles.index')"> Roles </flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.roles.edit', $role)"> Editar </flux:breadcrumbs.item>
-
-            <flux:button size="sm" variant="primary" :href="route('admin.roles.index')"> Volver </flux:button>
         </flux:breadcrumbs>
+        <flux:button size="sm" variant="primary" :href="route('admin.roles.index')"> Volver </flux:button>
     </div>
 
     {{-- Formulario/Tarjeta para actualizar rol. --}}
