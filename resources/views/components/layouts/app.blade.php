@@ -148,6 +148,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <title>{{ $title ?? 'Laravel' }}</title>
+        <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
 
         <!-- Preconexión para la fuente de letras -->
         <link rel="preconnect" href="https://fonts.bunny.net">

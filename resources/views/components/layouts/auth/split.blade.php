@@ -2,6 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 
 <head>
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     @php $title = 'Inicio de sesión' @endphp
     @include('partials.head')
 </head>

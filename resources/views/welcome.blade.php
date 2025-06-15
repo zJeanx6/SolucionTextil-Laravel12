@@ -1,4 +1,4 @@
-<x-layouts.dashboard :title="'Inicio - Solucion Textil'">
+<x-layouts.dashboard :title="'Inicio'">
      <style>
         /* Contenedor principal responsivo */
         .carrusel-container {
