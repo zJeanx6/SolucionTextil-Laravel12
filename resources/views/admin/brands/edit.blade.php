@@ -3,7 +3,7 @@
     {{-- Migaja de pan --}}
     <div class="breadcrumbs">
         <flux:breadcrumbs>
-            <flux:breadcrumbs.item :href="route('dashboard')"> Dashboard </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item :href="route('dashboard')" icon="home"/>
             <flux:breadcrumbs.item :href="route('admin.brands.index')"> Marcas </flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.brands.index', $brand)"> Editar </flux:breadcrumbs.item>
 

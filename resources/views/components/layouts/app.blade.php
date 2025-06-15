@@ -4,132 +4,135 @@
     $groups = [
         'Platform' => [
             [
-                'name' => 'Dashboard',
-                'icon' => 'home',
+                'name' => 'Inicio',
+                'icon' => 'home',  // home
                 'url' => route('dashboard'),
                 'current' => request()->routeIs('dashboard'),
-                'roles' => ['admin'],
+                'roles' => ['administrador'],
             ],
             [
-                'name' => 'Resumen',
-                'icon' => 'home',
+                'name' => 'Visión General',
+                'icon' => 'chart-pie',  // chart-pie
                 'url' => route('admin.dashboard-inventory'),
                 'current' => request()->routeIs('admin.dashboard-inventory'),
-                'roles' => ['admin', 'inventory'],
+                'roles' => ['administrador', 'inventario'],
             ],
             [
-                'name' => 'Control',
-                'icon' => 'home',
+                'name' => 'Mantenimiento',
+                'icon' => 'wrench',  // wrench
                 'url' => route('admin.dashboard-maintenance'),
                 'current' => request()->routeIs('admin.dashboard-maintenance'),
-                'roles' => ['admin', 'maintenance'],
+                'roles' => ['administrador', 'mantenimiento'],
             ],
         ],
         'Inventario' => [
             [
                 'name' => 'Elementos',
-                'icon' => 'home',
+                'icon' => 'archive-box',  // box (tiene sentido para artículos)
                 'url' => route('admin.elements.index'),
                 'current' => request()->routeIs('admin.elements.index'),
-                'roles' => ['admin', 'inventory'],
+                'roles' => ['administrador', 'inventario'],
             ],
             [
-                'name' => 'Elementos Mov.',
-                'icon' => 'home',
+                'name' => 'Mov. de Elementos',
+                'icon' => 'arrow-right',  // arrow-right
                 'url' => route('admin.elements.movements'),
                 'current' => request()->routeIs('admin.elements.movements'),
-                'roles' => ['admin', 'inventory'],
+                'roles' => ['administrador', 'inventario'],
             ],
             [
                 'name' => 'Productos',
-                'icon' => 'home',
+                'icon' => 'shopping-bag',  // shopping-bag
                 'url' => route('admin.products.index'),
                 'current' => request()->routeIs('admin.products.index'),
-                'roles' => ['admin', 'inventory'],
+                'roles' => ['administrador', 'inventario'],
             ],
             [
-                'name' => 'Products Mov.',
-                'icon' => 'home',
+                'name' => 'Mov. de Productos',
+                'icon' => 'arrow-right',  // arrow-right
                 'url' => route('admin.products.movements'),
                 'current' => request()->routeIs('admin.products.movements'),
-                'roles' => ['admin', 'inventory'],
+                'roles' => ['administrador', 'inventario'],
             ],
             [
-                'name' => 'Maquinas',
-                'icon' => 'home',
+                'name' => 'Máquinas',
+                'icon' => 'cpu-chip',  // cpu-chip
                 'url' => route('admin.machines.index'),
                 'current' => request()->routeIs('admin.machines.index'),
-                'roles' => ['admin'],
+                'roles' => ['administrador', 'mantenimiento'],
             ],
             [
-                'name' => 'Mantenimientos',
-                'icon' => 'home',
+                'name' => ' Ctrl. Mantenimiento',
+                'icon' => 'clipboard-document-list',  // clipboard-document-list
                 'url' => route('admin.maintenance.makemaintenance'),
                 'current' => request()->routeIs('admin.maintenance.makemaintenance'),
-                'roles' => ['admin'],
-            ],
-            [
-                'name' => 'Proveedores',
-                'icon' => 'users',
-                'url' => route('admin.suppliers.index'),
-                'current' => request()->routeIs('admin.suppliers.index'),
-                'roles' => ['admin'],
+                'roles' => ['administrador', 'mantenimiento'],
             ],
         ],
-        'Complemento' => [
+        'Utilidades' => [
             [
-                'name' => 'Roles',
-                'icon' => 'user-plus',
+                'name' => 'Gestión de Roles',
+                'icon' => 'user-group',  // user-group
                 'url' => route('admin.roles.index'),
                 'current' => request()->routeIs('admin.roles.*'),
-                'roles' => ['admin'],
+                'roles' => ['administrador'],
             ],
             [
-                'name' => 'Tallas',
-                'icon' => 'swatch',
+                'name' => 'Tamaño',
+                'icon' => 'hashtag',  // hashtag
                 'url' => route('admin.sizes.index'),
                 'current' => request()->routeIs('admin.sizes.*'),
-                'roles' => ['admin'],
+                'roles' => ['administrador'],
             ],
             [
                 'name' => 'Colores',
-                'icon' => 'swatch',
+                'icon' => 'swatch',  // swatch
                 'url' => route('admin.colors.index'),
                 'current' => request()->routeIs('admin.colors.*'),
-                'roles' => ['admin'],
+                'roles' => ['administrador'],
             ],
             [
-                'name' => 'Estados',
-                'icon' => 'cpu-chip',
+                'name' => 'Estado de Estados',
+                'icon' => 'chart-bar-square',  // status-online
                 'url' => route('admin.states.index'),
                 'current' => request()->routeIs('admin.states.*'),
-                'roles' => ['admin'],
+                'roles' => ['administrador'],
             ],
             [
                 'name' => 'Marcas',
-                'icon' => 'globe-americas',
+                'icon' => 'tag',  // tag
                 'url' => route('admin.brands.index'),
                 'current' => request()->routeIs('admin.brands.*'),
-                'roles' => ['admin'],
+                'roles' => ['administrador'],
             ],
             [
-                'name' => 'Tipos/Categorias',
-                'icon' => 'swatch',
+                'name' => 'Categorías',
+                'icon' => 'view-columns',  // view-columns
                 'url' => route('admin.types.index'),
                 'current' => request()->routeIs('admin.types.index'),
-                'roles' => ['admin'],
+                'roles' => ['administrador'],
             ],
             [
-                'name' => 'Tipos de Mantenimiento',
-                'icon' => 'swatch',
+                'name' => 'Mantenimientos',
+                'icon' => 'wrench-screwdriver',  // wrench-screwdriver
                 'url' => route('admin.maintenance.index'),
                 'current' => request()->routeIs('admin.maintenance.index'),
-                'roles' => ['admin'],
+                'roles' => ['administrador'],
+            ],
+            [
+                'name' => 'Proveedores',
+                'icon' => 'users',  // users
+                'url' => route('admin.suppliers.index'),
+                'current' => request()->routeIs('admin.suppliers.index'),
+                'roles' => ['administrador'],
             ],
         ],
     ];
 
-    $ComplementoLinks = collect($groups['Complemento'])->filter(fn($link) => in_array($userRole, $link['roles']));
+
+
+
+    $ComplementoLinks = collect($groups['Utilidades'])->filter(fn($link) => in_array($userRole, $link['roles']));
     $ComplementoLinks2 = collect($groups['Inventario'])->filter(fn($link) => in_array($userRole, $link['roles']));
 
 @endphp
@@ -156,9 +159,32 @@
         <flux:sidebar sticky stashable class="border-r border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-            <a href="{{ route('dashboard') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
-                <x-app-logo />
-            </a>
+            {{-- Validacion para click en icono del sidebar despues de un usuario estar autenticado. --}}
+            @php
+                $roleId = auth()->check() ? auth()->user()->role_id : null;
+            @endphp
+
+            @if ($roleId === 4)
+                <a href="{{ route('home') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                    <x-app-logo />
+                </a>
+            @elseif ($roleId === 1)
+                <a href="{{ route('dashboard') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                    <x-app-logo />
+                </a>
+            @elseif ($roleId === 2)
+                <a href="{{ route('admin.dashboard-inventory') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                    <x-app-logo />
+                </a>
+            @elseif ($roleId === 3)
+                <a href="{{ route('admin.dashboard-maintenance') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                    <x-app-logo />
+                </a>
+            @else
+                <a href="{{ route('home') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                    <x-app-logo />
+                </a>
+            @endif
 
             <flux:navlist variant="outline">
 
@@ -172,8 +198,8 @@
                 </flux:navlist.group>
 
                 @if($ComplementoLinks->isNotEmpty())
-                    <flux:navlist.group expandable :heading="'Complemento'" :expanded="collect($groups['Complemento'])->contains(fn($link)=>$link['current'])" class="grid">
-                        @foreach ($groups['Complemento'] as $link2)
+                    <flux:navlist.group expandable :heading="'Utilidades'" :expanded="collect($groups['Utilidades'])->contains(fn($link)=>$link['current'])" class="grid">
+                        @foreach ($groups['Utilidades'] as $link2)
                             @if (in_array($userRole, $link2['roles']))
                                 <flux:navlist.item :icon="$link2['icon']" :href="$link2['url']" :current="$link2['current']"
                                     wire:navigate>{{ $link2['name'] }}</flux:navlist.item>
@@ -198,7 +224,7 @@
             <flux:spacer />
 
             <flux:navlist variant="outline">                
-                @if ($userRole === 'admin')
+                @if ($userRole === 'administrador')
                     <flux:navlist.item icon="users" :href="route('admin.users.index')" :current="request()->routeIs('admin.users.*')" wire:navigate>
                         {{ __('Usuarios') }}
                     </flux:navlist.item>
