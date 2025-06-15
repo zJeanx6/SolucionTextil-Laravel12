@@ -2,8 +2,8 @@
     {{-- Migaja de pan --}}
         <div class="breadcrumbs">
             <flux:breadcrumbs>
-                <flux:breadcrumbs.item :href="route('dashboard')">Dashboard</flux:breadcrumbs.item>
-                <flux:breadcrumbs.item :href="route('admin.machine.index')">Maquinas</flux:breadcrumbs.item>
+                <flux:breadcrumbs.item :href="route('dashboard')" icon="home"/>
+                <flux:breadcrumbs.item :href="route('admin.machines.index')">Maquinas</flux:breadcrumbs.item>
             </flux:breadcrumbs>
 
             @if ($view === 'index')
