@@ -1,127 +1,132 @@
 @php
+    // Obtiene el rol del usuario autenticado
     $userRole = auth()->user()->role->name;
 
+    // Definición de los grupos de enlaces del menú
     $groups = [
-        'Platform' => [
+        'Menú de Navegación' => [
+            // Sección de enlaces para la Menú de Navegación
             [
                 'name' => 'Inicio',
-                'icon' => 'home',  // home
+                'icon' => 'home',
                 'url' => route('dashboard'),
                 'current' => request()->routeIs('dashboard'),
-                'roles' => ['administrador'],
+                'roles' => ['administrador'],  // Solo visible para administradores
             ],
             [
                 'name' => 'Visión General',
-                'icon' => 'chart-pie',  // chart-pie
+                'icon' => 'chart-pie',
                 'url' => route('admin.dashboard-inventory'),
                 'current' => request()->routeIs('admin.dashboard-inventory'),
-                'roles' => ['administrador', 'inventario'],
+                'roles' => ['administrador', 'inventario'],  // Visible para administradores y personal de inventario
             ],
             [
                 'name' => 'Mantenimiento',
-                'icon' => 'wrench',  // wrench
+                'icon' => 'wrench',
                 'url' => route('admin.dashboard-maintenance'),
                 'current' => request()->routeIs('admin.dashboard-maintenance'),
-                'roles' => ['administrador', 'mantenimiento'],
+                'roles' => ['administrador', 'mantenimiento'],  // Visible para administradores y personal de mantenimiento
             ],
         ],
         'Inventario' => [
+            // Sección de enlaces relacionada al inventario
             [
                 'name' => 'Elementos',
-                'icon' => 'archive-box',  // box (tiene sentido para artículos)
+                'icon' => 'archive-box',
                 'url' => route('admin.elements.index'),
                 'current' => request()->routeIs('admin.elements.index'),
                 'roles' => ['administrador', 'inventario'],
             ],
             [
                 'name' => 'Mov. de Elementos',
-                'icon' => 'arrow-right',  // arrow-right
+                'icon' => 'arrow-right',
                 'url' => route('admin.elements.movements'),
                 'current' => request()->routeIs('admin.elements.movements'),
                 'roles' => ['administrador', 'inventario'],
             ],
             [
                 'name' => 'Productos',
-                'icon' => 'shopping-bag',  // shopping-bag
+                'icon' => 'shopping-bag',
                 'url' => route('admin.products.index'),
                 'current' => request()->routeIs('admin.products.index'),
                 'roles' => ['administrador', 'inventario'],
             ],
             [
                 'name' => 'Mov. de Productos',
-                'icon' => 'arrow-right',  // arrow-right
+                'icon' => 'arrow-right',
                 'url' => route('admin.products.movements'),
                 'current' => request()->routeIs('admin.products.movements'),
                 'roles' => ['administrador', 'inventario'],
             ],
             [
                 'name' => 'Máquinas',
-                'icon' => 'cpu-chip',  // cpu-chip
+                'icon' => 'cpu-chip',
                 'url' => route('admin.machines.index'),
                 'current' => request()->routeIs('admin.machines.index'),
                 'roles' => ['administrador', 'mantenimiento'],
             ],
             [
                 'name' => ' Ctrl. Mantenimiento',
-                'icon' => 'clipboard-document-list',  // clipboard-document-list
+                'icon' => 'clipboard-document-list',
                 'url' => route('admin.maintenance.makemaintenance'),
                 'current' => request()->routeIs('admin.maintenance.makemaintenance'),
                 'roles' => ['administrador', 'mantenimiento'],
             ],
         ],
         'Utilidades' => [
+            // Sección de enlaces relacionados a utilidades y configuraciones generales
             [
                 'name' => 'Gestión de Roles',
-                'icon' => 'user-group',  // user-group
+                'icon' => 'user-group',
                 'url' => route('admin.roles.index'),
                 'current' => request()->routeIs('admin.roles.*'),
-                'roles' => ['administrador'],
+                'roles' => ['administrador'],  // Solo visible para administradores
             ],
             [
                 'name' => 'Tamaño',
-                'icon' => 'hashtag',  // hashtag
+                'icon' => 'hashtag',
                 'url' => route('admin.sizes.index'),
                 'current' => request()->routeIs('admin.sizes.*'),
                 'roles' => ['administrador'],
             ],
             [
                 'name' => 'Colores',
-                'icon' => 'swatch',  // swatch
+                'icon' => 'swatch',
                 'url' => route('admin.colors.index'),
                 'current' => request()->routeIs('admin.colors.*'),
                 'roles' => ['administrador'],
             ],
             [
                 'name' => 'Estado de Estados',
-                'icon' => 'chart-bar-square',  // status-online
+                'icon' => 'chart-bar-square',
                 'url' => route('admin.states.index'),
                 'current' => request()->routeIs('admin.states.*'),
                 'roles' => ['administrador'],
             ],
             [
                 'name' => 'Marcas',
-                'icon' => 'tag',  // tag
+                'icon' => 'tag',
                 'url' => route('admin.brands.index'),
                 'current' => request()->routeIs('admin.brands.*'),
                 'roles' => ['administrador'],
             ],
             [
                 'name' => 'Categorías',
-                'icon' => 'view-columns',  // view-columns
+                'icon' => 'view-columns',
                 'url' => route('admin.types.index'),
                 'current' => request()->routeIs('admin.types.index'),
                 'roles' => ['administrador'],
             ],
             [
                 'name' => 'Mantenimientos',
-                'icon' => 'wrench-screwdriver',  // wrench-screwdriver
+                'icon' => 'wrench-screwdriver',
                 'url' => route('admin.maintenance.index'),
                 'current' => request()->routeIs('admin.maintenance.index'),
                 'roles' => ['administrador'],
             ],
             [
                 'name' => 'Proveedores',
-                'icon' => 'users',  // users
+                'icon' => 'users',
                 'url' => route('admin.suppliers.index'),
                 'current' => request()->routeIs('admin.suppliers.index'),
                 'roles' => ['administrador'],
@@ -129,12 +134,10 @@
         ],
     ];
 
-
-
-
+    // Filtra los enlaces de 'Utilidades' según el rol del usuario
     $ComplementoLinks = collect($groups['Utilidades'])->filter(fn($link) => in_array($userRole, $link['roles']));
+    // Filtra los enlaces de 'Inventario' según el rol del usuario
     $ComplementoLinks2 = collect($groups['Inventario'])->filter(fn($link) => in_array($userRole, $link['roles']));
-
 @endphp
 
 <!DOCTYPE html>
@@ -146,9 +149,11 @@
 
         <title>{{ $title ?? 'Laravel' }}</title>
 
+        <!-- Preconexión para la fuente de letras -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
+        <!-- Estilo para notificaciones -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -156,14 +161,16 @@
     </head>
 
     <body class="min-h-screen bg-white dark:bg-zinc-800">
+        <!-- Sidebar con los enlaces de navegación -->
         <flux:sidebar sticky stashable class="border-r border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-            {{-- Validacion para click en icono del sidebar despues de un usuario estar autenticado. --}}
+            {{-- Validación para el icono del sidebar después de que el usuario se autentique --}}
             @php
                 $roleId = auth()->check() ? auth()->user()->role_id : null;
             @endphp
 
+            {{-- Verifica el rol del usuario y muestra el enlace adecuado en el logo --}}
             @if ($roleId === 4)
                 <a href="{{ route('home') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
                     <x-app-logo />
@@ -186,10 +193,12 @@
                 </a>
             @endif
 
+            <!-- Lista de navegación -->
             <flux:navlist variant="outline">
 
-                <flux:navlist.group :heading="'Platform'" class="grid">
-                    @foreach ($groups['Platform'] as $link)      
+                <!-- Sección 'Menú de Navegación' -->
+                <flux:navlist.group :heading="'Menú de Navegación'" class="grid">
+                    @foreach ($groups['Menú de Navegación'] as $link)      
                         @if (in_array($userRole, $link['roles']))              
                             <flux:navlist.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']"
                                 wire:navigate>{{ $link['name'] }}</flux:navlist.item>
@@ -197,6 +206,7 @@
                     @endforeach
                 </flux:navlist.group>
 
+                <!-- Sección 'Utilidades' -->
                 @if($ComplementoLinks->isNotEmpty())
                     <flux:navlist.group expandable :heading="'Utilidades'" :expanded="collect($groups['Utilidades'])->contains(fn($link)=>$link['current'])" class="grid">
                         @foreach ($groups['Utilidades'] as $link2)
@@ -208,6 +218,7 @@
                     </flux:navlist.group>
                 @endif
 
+                <!-- Sección 'Inventario' -->
                 @if($ComplementoLinks2->isNotEmpty())
                     <flux:navlist.group expandable :heading="'Inventario'" :expanded="collect($groups['Inventario'])->contains(fn($link)=>$link['current'])" class="grid">
                         @foreach ($groups['Inventario'] as $link3)
@@ -223,6 +234,7 @@
 
             <flux:spacer />
 
+            <!-- Sección para la gestión de usuarios -->
             <flux:navlist variant="outline">                
                 @if ($userRole === 'administrador')
                     <flux:navlist.item icon="users" :href="route('admin.users.index')" :current="request()->routeIs('admin.users.*')" wire:navigate>
@@ -231,12 +243,13 @@
                 @endif
             </flux:navlist>
 
-            <!-- Desktop User Menu -->
+            <!-- Menú de usuario en escritorio -->
             <flux:dropdown position="bottom" align="start">
                 <flux:profile :name="auth()->user()->name" :initials="auth()->user()->initials()"
                     icon-trailing="chevrons-up-down" />
 
                 <flux:menu class="w-[220px]">
+                    <!-- Información del perfil -->
                     <flux:menu.radio.group>
                         <div class="p-0 text-sm font-normal">
                             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
@@ -257,6 +270,7 @@
 
                     <flux:menu.separator />
 
+                    <!-- Opciones de configuración y logout -->
                     <flux:menu.radio.group>
                         <flux:menu.item :href="route('home')" icon="layout-grid" wire:navigate>{{ __('Home') }}</flux:menu.item>
                         <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
@@ -264,6 +278,7 @@
 
                     <flux:menu.separator />
 
+                    <!-- Cerrar sesión -->
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
                         <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
@@ -274,7 +289,7 @@
             </flux:dropdown>
         </flux:sidebar>
 
-        <!-- Mobile User Menu -->
+        <!-- Menú móvil de usuario -->
         <flux:header class="lg:hidden">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
@@ -284,6 +299,7 @@
                 <flux:profile :initials="auth()->user()->initials()" icon-trailing="chevron-down" />
 
                 <flux:menu>
+                    <!-- Información del perfil móvil -->
                     <flux:menu.radio.group>
                         <div class="p-0 text-sm font-normal">
                             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
@@ -304,6 +320,7 @@
 
                     <flux:menu.separator />
 
+                    <!-- Opciones móviles -->
                     <flux:menu.radio.group>
                         <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>
                             {{ __('Settings') }}
@@ -312,6 +329,7 @@
 
                     <flux:menu.separator />
 
+                    <!-- Cerrar sesión móvil -->
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
                         <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
@@ -322,6 +340,7 @@
             </flux:dropdown>
         </flux:header>
 
+        <!-- Contenido principal -->
         <flux:main>
             {{ $slot }}
         </flux:main>
@@ -330,11 +349,11 @@
         @livewireScripts
         @stack('js')
 
-        {{-- Importacion de notificaciones --}}
+        <!-- Importación de librerías de notificaciones -->
         <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        {{-- Notificaciones Controladores laravel --}}        
+        <!-- Notificaciones controladores Laravel -->
         <script data-navigate-once>
             @if (session('success'))
                 var isDarkMode = document.documentElement.classList.contains('dark');
@@ -372,7 +391,7 @@
             }
         </script>
 
-        {{-- Notificaciones Componentes livewire --}}
+        <!-- Notificaciones componentes Livewire -->
         <script data-navigate-once>
             Livewire.on('event-confirm', (id) => {
                 Swal.fire({
