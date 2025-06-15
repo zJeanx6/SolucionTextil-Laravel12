@@ -26,9 +26,4 @@ class InventoryController extends Controller
     {
         return view('admin.products.movements');
     }
-
-    public function machines()
-    {
-        return view('admin.machines.index');
-    }
 }

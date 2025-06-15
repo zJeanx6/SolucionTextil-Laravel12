@@ -8,7 +8,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified', 'role:admin'])
+    ->middleware(['auth', 'verified', 'role:administrador'])
     ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {

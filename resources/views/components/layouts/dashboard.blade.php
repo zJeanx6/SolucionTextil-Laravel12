@@ -1,5 +1,5 @@
 @php 
-    $userRole = auth()->check() ? auth()->user()->role->name : null;
+    $roleId = auth()->check() ? auth()->user()->role_id : null;
 
     $links = [
         [
@@ -33,9 +33,29 @@
         <flux:header container class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
-            <a href="{{ route('dashboard') }}" class="ml-2 mr-5 flex items-center space-x-2 lg:ml-0" wire:navigate>
-                <x-app-logo />
-            </a>
+            {{-- Validacion para click en icono del sidebar despues de un usuario estar autenticado. --}}
+            @if ($roleId === 4)
+                <a href="{{ route('home') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                    <x-app-logo />
+                </a>
+            @elseif ($roleId === 1)
+                <a href="{{ route('dashboard') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                    <x-app-logo />
+                </a>
+            @elseif ($roleId === 2)
+                <a href="{{ route('admin.dashboard-inventory') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                    <x-app-logo />
+                </a>
+            @elseif ($roleId === 3)
+                <a href="{{ route('admin.dashboard-maintenance') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                    <x-app-logo />
+                </a>
+            @else
+                <a href="{{ route('home') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                    <x-app-logo />
+                </a>
+            @endif
+
 
             <flux:navbar class="-mb-px max-lg:hidden">
                 @foreach ($links as $link)
@@ -50,61 +70,56 @@
             <!-- Desktop User Menu -->
             @auth
                 <flux:dropdown position="top" align="end">
-                <flux:profile
-                    class="cursor-pointer"
-                    :initials="auth()->user()->initials()"
-                />
-
-                <flux:menu>
-                    <flux:menu.radio.group>
-                        <div class="p-0 text-sm font-normal">
-                            <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                                <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                    <span
-                                        class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
-                                    >
-                                        {{ auth()->user()->initials() }}
+                    <flux:profile class="cursor-pointer" :initials="auth()->user()->initials()" />
+                    <flux:menu>
+                        <flux:menu.radio.group>
+                            <div class="p-0 text-sm font-normal">
+                                <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                                    <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
+                                        <span class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                                            {{ auth()->user()->initials() }}
+                                        </span>
                                     </span>
-                                </span>
 
-                                <div class="grid flex-1 text-left text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                    <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                    <div class="grid flex-1 text-left text-sm leading-tight">
+                                        <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
+                                        <span class="truncate text-xs">Rol: {{ auth()->user()->role->name }}</span>
+                                        <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </flux:menu.radio.group>
+                        </flux:menu.radio.group>
 
-                    <flux:menu.separator />
+                        <flux:menu.separator />
 
-                    <flux:menu.radio.group>
-                        @if($userRole === 'inventory')
-                            <flux:menu.item :href="route('admin.dashboard-inventory')" icon="home" wire:navigate>
-                                {{ __('Dashboard') }}
+                        <flux:menu.radio.group>
+                            @if($roleId === 1) {{-- Admin --}}
+                                <flux:menu.item :href="route('dashboard')" icon="home" wire:navigate>
+                                    {{ __('Dashboard') }}
+                                </flux:menu.item>
+                            @elseif($roleId === 2) {{-- Inventario --}}
+                                <flux:menu.item :href="route('admin.dashboard-inventory')" icon="home" wire:navigate>
+                                    {{ __('Dashboard') }}
+                                </flux:menu.item>
+                            @elseif($roleId === 3) {{-- Mantenimiento --}}
+                                <flux:menu.item :href="route('admin.dashboard-maintenance')" icon="home" wire:navigate>
+                                    {{ __('Dashboard') }}
+                                </flux:menu.item>
+                            @endif
+                            <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>
+                                {{ __('Settings') }}
                             </flux:menu.item>
-                        @elseif($userRole === 'maintenance')
-                            <flux:menu.item :href="route('admin.dashboard-maintenance')" icon="home" wire:navigate>
-                                {{ __('Dashboard') }}
-                            </flux:menu.item>
-                        @elseif($userRole === 'admin')
-                            <flux:menu.item :href="route('dashboard')" icon="home" wire:navigate>
-                                {{ __('Dashboard') }}
-                            </flux:menu.item>
-                        @endif
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>
-                            {{ __('Settings') }}
-                        </flux:menu.item>
-                    </flux:menu.radio.group>
+                        </flux:menu.radio.group>
 
-                    <flux:menu.separator />
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
-                        @csrf
-                        <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                            {{ __('Log Out') }}
-                        </flux:menu.item>
-                    </form>
+                        <flux:menu.separator />
 
-                </flux:menu>
+                        <form method="POST" action="{{ route('logout') }}" class="w-full">
+                            @csrf
+                            <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
+                                {{ __('Log Out') }}
+                            </flux:menu.item>
+                        </form>
+                    </flux:menu>
                 </flux:dropdown>
             @else
                 <flux:dropdown position="top" align="end">
@@ -114,9 +129,16 @@
                             <flux:menu.item :href="route('login')" wire:navigate>
                                 {{ __('Log In') }}
                             </flux:menu.item>
-                            <flux:menu.item :href="route('register')" wire:navigate>
-                                {{ __('Register') }}
-                            </flux:menu.item>
+                        </flux:menu.radio.group>
+
+                            <flux:menu.separator />
+
+                        <flux:menu.radio.group>
+                            <flux:radio.group x-data variant="segmented" x-model="$flux.appearance" size="sm">
+                                <flux:radio value="light" icon="sun" />
+                                <flux:radio value="dark" icon="moon" />
+                                <flux:radio value="system" icon="computer-desktop" />
+                            </flux:radio.group>
                         </flux:menu.radio.group>
                     </flux:menu>
                 </flux:dropdown>
@@ -144,17 +166,25 @@
                 </flux:navlist.group>
             </flux:navlist>
 
-            <flux:spacer />
+            {{-- <flux:spacer />
 
             <flux:navlist variant="outline">
                 <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
+                    {{ __('Repository') }}
                 </flux:navlist.item>
-
+                
                 <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits" target="_blank">
                 {{ __('Documentation') }}
                 </flux:navlist.item>
-            </flux:navlist>
+                
+                <flux:menu.separator />
+                
+                <flux:radio.group x-data variant="segmented" x-model="$flux.appearance" size="sm">
+                    <flux:radio value="light" icon="sun" />
+                    <flux:radio value="dark" icon="moon" />
+                    <flux:radio value="system" icon="computer-desktop" />
+                </flux:radio.group>
+            </flux:navlist> --}}
         </flux:sidebar>
 
         <flux:main>

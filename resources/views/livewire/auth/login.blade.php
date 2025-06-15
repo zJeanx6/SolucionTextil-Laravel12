@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
+use App\Models\User;
 
 new #[Layout('components.layouts.auth')] class extends Component {
     #[Validate('required|string|email')]
@@ -23,24 +24,54 @@ new #[Layout('components.layouts.auth')] class extends Component {
     /**
      * Handle an incoming authentication request.
      */
-    public function login(): void
+    public function login()
     {
         $this->validate();
-
+        
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             RateLimiter::hit($this->throttleKey());
+            
+            $user = User::where('email', $this->email)->first();
+
+            if (!$user) {
+                throw ValidationException::withMessages([
+                    'email' => __('El correo electrónico no está registrado.'),
+                ]);
+            }
 
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'password' => __('La contraseña es incorrecta.'),
             ]);
         }
+
+        $user = Auth::user();
+        if ($user->state_id !== 1) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => __('La cuenta está registrada, pero se encuentra desactivada. Por favor, contacte al administrador para más información.'),
+            ]);
+        }   
 
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        $this->redirectIntended(default: route('home', absolute: false), navigate: true);
+        switch ($user->role_id) {
+            case 1: // Admin
+                $this->redirect(route('dashboard'), navigate: true);
+                break;
+            case 2: // Inventario
+                $this->redirect(route('admin.dashboard-inventory'), navigate: true);
+                break;
+            case 3: // Mantenimiento
+                $this->redirect(route('admin.dashboard-maintenance'), navigate: true);
+                break;
+            default:
+                $this->redirect(route('home'), navigate: true);
+                break;
+        }
     }
 
     /**
@@ -117,10 +148,10 @@ new #[Layout('components.layouts.auth')] class extends Component {
         </div>
     </form>
 
-    @if (Route::has('register'))
+    {{-- @if (Route::has('register'))
         <div class="space-x-1 text-center text-sm text-zinc-600 dark:text-zinc-400">
             {{ __('Don\'t have an account?') }}
             <flux:link :href="route('register')" wire:navigate>{{ __('Sign up') }}</flux:link>
         </div>
-    @endif
+    @endif --}}
 </div>

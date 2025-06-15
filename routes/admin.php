@@ -15,7 +15,7 @@ use App\Livewire\ElementsMov;
 use Illuminate\Support\Facades\Route;
 
 // Grupo para admin con acceso total (recuerda que admin puede hacer todo)
-Route::middleware('role:admin')->group(function () {
+Route::middleware('role:administrador')->group(function () {
     Route::resource('sizes', SizeController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('states', StateController::class);
@@ -23,14 +23,12 @@ Route::middleware('role:admin')->group(function () {
     Route::resource('colores', ColorController::class)->parameter('colores', 'color')->names('colors');
     Route::resource('users', UsersController::class)->names('users');
     Route::resource('types', TypeController::class)->parameter('tipos', 'type')->names('types');
-    Route::get('maquinas', [InventoryController::class, 'machines'])->name('machines.index');
     Route::get('suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
-    Route::get('machines', [MachineController::class, 'index'])->name('machine.index');
     Route::get('maintenance', [TypeMaintenanceController::class, 'index'])->name('maintenance.index');
 });
 
 // Grupo para admin e inventory con acceso solo a productos y elementos
-Route::middleware('role:admin,inventory')->group(function () {
+Route::middleware('role:administrador,inventario')->group(function () {
     Route::get('productos', [InventoryController::class, 'products'])->name('products.index');
     Route::get('elementos', [InventoryController::class, 'elements'])->name('elements.index');
     // Route::get('elementos/movimiento', [InventoryController::class, 'elementsMovements'])->name('elements.movements');
@@ -40,7 +38,8 @@ Route::middleware('role:admin,inventory')->group(function () {
 });
 
 // Grupo para admin y maintenance con acceso solo a maintenance
-Route::middleware('role:admin,maintenance')->group(function () {
+Route::middleware('role:administrador,mantenimiento')->group(function () {
     Route::view('dashboard-maintenance', 'dashboard-maintenance')->name('dashboard-maintenance');
+    Route::get('maquinas', [MachineController::class, 'index'])->name('machines.index');
     Route::get('mantenimiento', [MachineController::class, 'makemaintenance'])->name('maintenance.makemaintenance');
 });

@@ -2,6 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 
 <head>
+    @php $title = 'Inicio de sesión' @endphp
     @include('partials.head')
 </head>
 
@@ -19,22 +20,23 @@
                 </span>
                 {{ config('app.name', 'Laravel') }}
             </a>
+            
             @php
-                [($message = 'Desarrollado por Aprendices SENA'), ($author = 'Jean Roa & Daniela Manrique')];
-                $author_url_1 = 'https://github.com/zJeanx6'; // URL del primer autor
-                $author_url_2 = 'https://github.com/DaielaM1805'; // URL del segundo autor
+                [($message = 'Gestiona de manera eficiente las salidas, entradas de productos textiles, compras, préstamos de herramientas y control de maquinaria con nuestro software especializado para empresas textiles.'), ($author = 'Jean Roa & Daniela Manrique')];
+                $author_url_1 = 'https://github.com/zJeanx6';
+                $author_url_2 = 'https://github.com/DaielaM1805';
             @endphp
 
             <div class="relative z-20 mt-auto">
                 <blockquote class="space-y-2">
                     <flux:heading size="lg" class="text-white">&ldquo;{{ trim($message) }}&rdquo;</flux:heading>
-                    <footer>
+                    {{-- <footer>
                         <flux:heading class="text-white"> <a href="{{ $author_url_1 }}" target="_blank"
                                 class="underline">{{ trim('Jean Roa') }}</a> &
                             <a href="{{ $author_url_2 }}" target="_blank"
                                 class="underline">{{ trim('Daniela Manrique') }}</a>
                         </flux:heading>
-                    </footer>
+                    </footer> --}}
                 </blockquote>
             </div>
         </div>
