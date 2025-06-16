@@ -426,7 +426,7 @@
                                         Términos de Servicio
                                     </span>
                                 </flux:modal.trigger>
-                                {{-- <a href="#" class="hover:text-white transition-colors">Cookies</a> --}}
+                                <a class="hover:text-white transition-colors">V1.0.1</a>
                             </div>
                         </div>
                     </div>
