@@ -13,9 +13,10 @@
         <div
             class="bg-muted relative hidden h-full flex-col p-10 text-white lg:flex dark:border-r dark:border-neutral-800">
             <div class="absolute inset-0 bg-neutral-900"
-                style="background-image: url('{{ asset('img/index/fondoPrincipal.jpg') }}'); background-size: cover; background-position: center;">
+                style="background-image: url('{{ asset('img/fondosection2.jpg') }}'); background-size: cover; background-position: center;">
+                <div class="absolute inset-0 bg-gradient-to-br from-black/30 via-black/40 to-black/50 dark:from-black/50 dark:via-black/60 dark:to-black/70"></div>
             </div>
-            <a href="{{ route('home') }}" class="relative z-20 flex items-center text-lg font-medium" wire:navigate>
+            <a href="{{ route('home') }}" class="relative z-20 flex items-center text-lg font-medium">
                 <span class="flex h-10 w-10 items-center justify-center rounded-md">
                     <x-app-logo-icon class="mr-2 h-7 fill-current text-white" />
                 </span>

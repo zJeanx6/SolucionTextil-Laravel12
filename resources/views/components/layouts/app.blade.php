@@ -273,7 +273,7 @@
 
                     <!-- Opciones de configuración y logout -->
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('home')" icon="layout-grid" wire:navigate>{{ __('Home') }}</flux:menu.item>
+                        <flux:menu.item :href="route('home')" icon="layout-grid">{{ __('Home') }}</flux:menu.item>
                         <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
                     </flux:menu.radio.group>
 
