@@ -4,7 +4,7 @@
     <div class="breadcrumbs">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item :href="route('dashboard')" icon="home"/>
-            <flux:breadcrumbs.item :href="route('admin.users.index')"> Usuarios </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item :href="route('admin.users.index')"> Gestión de Usuarios </flux:breadcrumbs.item>
         </flux:breadcrumbs>
 
         <flux:button size="sm" variant="primary" :href="route('admin.users.create')"> Nuevo </flux:button>

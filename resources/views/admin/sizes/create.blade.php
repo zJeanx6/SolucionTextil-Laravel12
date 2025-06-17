@@ -18,12 +18,12 @@
 
             <div class="mb-4">
                 <flux:input class="hover-input" label="Nombre" name="name"
-                    placeholder="Escribe el nombre de una nueva talla">Nuevo</flux:input>
+                    placeholder="Ingrese el nombre de la talla (p. ej. Extra Grande, Pequeño)">Nuevo</flux:input>
             </div>
 
             <div class="mb-4">
-                <flux:textarea class="dark:hover:bg-zinc-800" label="abbreviation" name="abbreviation"
-                    placeholder="Ingresa una abreviacion para esta nueva talla" />
+                <flux:input class="hover-input" label="abbreviation" name="abbreviation"
+                    placeholder="Ingrese la abreviatura de la talla (p. ej. S, M, L)" />
             </div>
             @error('description')
                 *{{ $message }}

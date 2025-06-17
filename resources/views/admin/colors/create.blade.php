@@ -18,7 +18,7 @@
 
             <div class="mb-4">
                 <flux:input class="hover-input" label="Codigo" name="code"
-                    placeholder="Escribe el codigo del color (opcional)"></flux:input>
+                    placeholder="Ingrese el código hexadecimal del color (p. ej. #FFFFFF)"></flux:input>
             </div>
 
             <div class="mb-4">

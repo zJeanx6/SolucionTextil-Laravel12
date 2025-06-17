@@ -16,7 +16,7 @@
             <thead class="head-table">
                 <tr>
                     <th class="head-table-item"> Nombre </th>
-                    <th class="head-table-item"> Abreviación/Talla </th>
+                    <th class="head-table-item"> Abreviación </th>
                     <th class="head-table-item"> Acciones </th>
                 </tr>
             </thead>
