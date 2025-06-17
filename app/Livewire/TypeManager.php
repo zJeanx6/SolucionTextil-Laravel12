@@ -13,8 +13,10 @@ class TypeManager extends Component
 {
     use WithPagination;
 
-    public $modelSelected = 'element_types';
+    // Arranca sin filtro   seleccionado
+    public $modelSelected = '';
     public $name;
+    public $elementGroup = '';
     public $view = 'index';
     public $editId = null;
     public $search = '';
@@ -28,7 +30,7 @@ class TypeManager extends Component
     // Persistir filtros
     protected $queryString = [
         'search'        => ['except' => ''],
-        'modelSelected' => ['except' => 'element_types']
+        'modelSelected' => ['except' => ''],
     ];
 
     public function mount(){
@@ -43,14 +45,6 @@ class TypeManager extends Component
         $this->resetPage(); // Resetea la paginación al cambiar el modelo seleccionado.
     }
 
-    public function hydrate(){
-        // Reinstanciar o refrescar datos no serializables si es necesario
-    }
-
-    public function dehydrate(){
-        // Limpiar propiedades pesadas antes de enviar la respuesta
-    }
-
     public function getCurrentModel(){
         return $this->models[$this->modelSelected];
     }
@@ -62,9 +56,23 @@ class TypeManager extends Component
     public function save()
     {
         $this->validate();
-        $model = $this->getCurrentModel();
-        $model::create(['name' => $this->name]);
-        $this->reset('name');
+        if ($this->modelSelected === 'element_types') {
+            $ranges = [
+                'G-01' => [1100, 1999],
+                'G-02' => [2100, 2999],
+                'G-03' => [3100, 3999],
+                'G-04' => [4100, 4999],
+            ];
+            [$min, $max] = $ranges[$this->elementGroup];
+            $last = ElementType::whereBetween('id', [$min, $max])->max('id');
+            $newId = $last ? min($last + 1, $max) : $min;
+            ElementType::create(['id' => $newId, 'name' => $this->name]);
+            $this->reset(['name', 'elementGroup']);
+        } else {
+            $model = $this->getCurrentModel();
+            $model::create(['name' => $this->name]);
+            $this->reset('name');
+        }
         $this->view = 'index';
         $this->dispatch('event-notify', 'Tipo creado.');
     }
@@ -114,7 +122,7 @@ class TypeManager extends Component
 
     public function render()
     {
-        if ($this->view !== 'index') {
+        if ($this->view !== 'index' || ! $this->modelSelected) {
             return view('livewire.type-manager', ['types' => collect()]);
         }
 
@@ -123,6 +131,7 @@ class TypeManager extends Component
             ->when($this->search, fn($q) => $q->where('name', 'like', "%{$this->search}%"))
             ->orderByDesc('id')
             ->paginate(12);
+
         return view('livewire.type-manager', compact('types'));
     }
 }

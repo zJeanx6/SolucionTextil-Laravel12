@@ -1,10 +1,9 @@
 <div>
     {{-- Migaja de pan --}}
-
         <div class="breadcrumbs">
             <flux:breadcrumbs>
                 <flux:breadcrumbs.item :href="route('dashboard')" icon="home"/>
-                <flux:breadcrumbs.item :href="route('admin.types.index')"> Tipos </flux:breadcrumbs.item>
+                <flux:breadcrumbs.item :href="route('admin.types.index')"> Gestión de Categorías </flux:breadcrumbs.item>
             </flux:breadcrumbs>
 
             @if ($view === 'index')
@@ -21,20 +20,26 @@
             <div class="card mb-4">
                 <div class="flex gap-4">
                     <div class="w-1/2">
-                        <flux:select label="Filtro" wire:model.live="modelSelected">
-                            <flux:select.option value="element_types"> Tipos de Elementos </flux:select.option>
-                            <flux:select.option value="product_types"> Tipos de Productos </flux:select.option>
-                            <flux:select.option value="machine_types"> Tipos de Máquinas </flux:select.option>
+                        <flux:select wire:model.live="modelSelected">
+                            <flux:select.option value="" disabled> Seleccione Categoría </flux:select.option>
+                            <flux:select.option value="element_types"> Elementos </flux:select.option>
+                            <flux:select.option value="product_types"> Productos </flux:select.option>
+                            <flux:select.option value="machine_types"> Máquinas </flux:select.option>
                         </flux:select>
                     </div>
                     <div class="w-1/2">
-                        <flux:input label="Barra de Búsqueda" type="text" wire:model.live="search" class="hover-input"
-                            name="search" placeholder="Buscar por nombre..." />
+                        <flux:input type="text" wire:model.live.debounce.500ms="search" 
+                            class="hover-input" name="search" placeholder="Buscar por nombre..." />
                     </div>
                 </div>
             </div>
 
-        {{-- Tabla de contenido para tipos/categorias. --}}
+        @if (! $modelSelected)
+            <div class="p-4 text-gray-600">
+                Por favor selecciona un filtro para ver la tabla.
+            </div>
+        @else
+            {{-- Tabla de contenido para tipos/categorias. --}}
             <div class="div-table">
                 <table class="table">
                     <thead class="head-table">
@@ -65,19 +70,29 @@
 
             {{-- Paginación --}}
             <div class="mx-4 mt-4 mb-4">{{ $types->links() }}</div>
+        @endif
 
-    {{-- Estado del componente: Vista Crear nuevo Tipo/Categoria. --}}
+    {{-- Estado del componente: Vista Crear nuevo Tipo/Categoría. --}}
         @elseif ($view === 'create')
 
             <div class="card">
-                <flux:select label="Selecciona un Tipo/Categoria a Crear" class="mb-4" wire:model="modelSelected">
-                    <flux:select.option value="element_types"> Tipos de Elementos </flux:select.option>
-                    <flux:select.option value="product_types"> Tipos de Productos </flux:select.option>
-                    <flux:select.option value="machine_types"> Tipos de Máquinas </flux:select.option>
+                <flux:select label="Vas a crear una categoria de..." class="mb-4" wire:model.live="modelSelected" disabled>
+                    <flux:select.option value="element_types"> Elementos </flux:select.option>
+                    <flux:select.option value="product_types"> Productos </flux:select.option>
+                    <flux:select.option value="machine_types"> Máquinas </flux:select.option>
                 </flux:select>
 
                 <flux:input type="text" wire:model="name" class="hover-input mb-4" label="Nombre" name="name"
                     placeholder="Nombre del tipo..." />
+                    
+                @if ($modelSelected === 'element_types')
+                    <flux:radio.group label="Seleccione el Grupo del Tipo de Elemento" wire:model="elementGroup" class="mb-4">
+                        <flux:radio name="elementGroup" value="G-01" label="G-01: Metraje consumible" description="p. ej. metrajes, telas, cintas…" />
+                        <flux:radio name="elementGroup" value="G-02" label="G-02: Accesorio consumible" description="p. ej. hilos, botones, etiquetas…" />
+                        <flux:radio name="elementGroup" value="G-03" label="G-03: Herramienta prestada" description="p. ej. tijeras, cortahilos, reglas…" />
+                        <flux:radio name="elementGroup" value="G-04" label="G-04: Consumible mínimo" description="p. ej. agujas, alfileres, dedales…" />
+                    </flux:radio.group>
+                @endif
 
                 <div class="flex justify-end">
                     <flux:button size="sm" wire:click="save" variant="primary" type="submit"> Guardar </flux:button>

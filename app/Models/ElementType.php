@@ -10,9 +10,11 @@ class ElementType extends Model
     /** @use HasFactory<\Database\Factories\ElementTypeFactory> */
     use HasFactory;
 
+    public $incrementing = false;
     public $timestamps = false;
 
     protected $fillable = [
+        'id',
         'name',
         'description',
     ];
