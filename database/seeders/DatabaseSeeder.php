@@ -3,16 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Role;
-use App\Models\Size;
-use App\Models\State;
 use App\Models\User;
-use App\Models\Brand;
-use App\Models\Color;
-use App\Models\ElementType;
-use App\Models\MachineType;
-use App\Models\Maintenance;
-use App\Models\ProductType;
-use App\Models\Supplier;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -41,9 +32,9 @@ class DatabaseSeeder extends Seeder
         Role::factory()->create(['id' => 3, 'name' => 'mantenimiento', 'description' => 'administrar el mantenimiento de maquinaria']);
         Role::factory()->create(['id' => 4, 'name' => 'instructor', 'description' => 'Quienes reciben los elementos de trabajo']);
     
-        User::factory()->create(['card' => '10000000', 'name' => 'administrador', 'last_name' => 'usuario', 'email' => 'admin@soluciontextil.com', 'phone' => 0, 'password' => bcrypt('12345'), 'role_id' => 1, 'state_id' => 1]);
-        User::factory()->create(['card' => '10000001', 'name' => 'inventario', 'last_name' => 'usuario', 'email' => 'inventario@soluciontextil.com', 'phone' => 0, 'password' => bcrypt('12345'), 'role_id' => 2, 'state_id' => 1]);
-        User::factory()->create(['card' => '10000002', 'name' => 'mantenimiento', 'last_name' => 'usuario', 'email' => 'mantenimiento@soluciontextil.com', 'phone' => 0, 'password' => bcrypt('12345'), 'role_id' => 3, 'state_id' => 1]);
-        User::factory()->create(['card' => '10000003', 'name' => 'instructor', 'last_name' => 'usuario', 'email' => 'instructor@soluciontextil.com', 'phone' => 0, 'password' => bcrypt('12345'), 'role_id' => 4, 'state_id' => 2]);
+        User::factory()->create(['card' => '10000000', 'name' => 'administrador', 'last_name' => 'usuario', 'email' => 'admin@soluciontextil.com', 'phone' => 0000000000, 'password' => bcrypt('12345'), 'role_id' => 1, 'state_id' => 1]);
+        User::factory()->create(['card' => '10000001', 'name' => 'inventario', 'last_name' => 'usuario', 'email' => 'inventario@soluciontextil.com', 'phone' => 0000000000, 'password' => bcrypt('12345'), 'role_id' => 2, 'state_id' => 1]);
+        User::factory()->create(['card' => '10000002', 'name' => 'mantenimiento', 'last_name' => 'usuario', 'email' => 'mantenimiento@soluciontextil.com', 'phone' => 0000000000, 'password' => bcrypt('12345'), 'role_id' => 3, 'state_id' => 1]);
+        User::factory()->create(['card' => '10000003', 'name' => 'instructor', 'last_name' => 'usuario', 'email' => 'instructor@soluciontextil.com', 'phone' => 0000000000, 'password' => bcrypt('12345'), 'role_id' => 4, 'state_id' => 2]);
     }
 } 
