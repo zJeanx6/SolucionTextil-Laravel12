@@ -16,15 +16,15 @@ use Illuminate\Support\Facades\Route;
 
 // Grupo para admin con acceso total (recuerda que admin puede hacer todo)
 Route::middleware('role:administrador')->group(function () {
-    Route::resource('sizes', SizeController::class);
-    Route::resource('roles', RoleController::class);
-    Route::resource('states', StateController::class);
+    Route::resource('tallas', SizeController::class)->parameter('tallas', 'size')->names('sizes');
+    Route::resource('roles', RoleController::class)->parameter('roles', 'role')->names('roles');
+    Route::resource('estados', StateController::class)->parameter('estados', 'state')->names('states');
     Route::resource('marcas', BrandController::class)->parameter('marcas', 'brand')->names('brands');
     Route::resource('colores', ColorController::class)->parameter('colores', 'color')->names('colors');
-    Route::resource('users', UsersController::class)->names('users');
-    Route::resource('types', TypeController::class)->parameter('tipos', 'type')->names('types');
-    Route::get('suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
-    Route::get('maintenance', [TypeMaintenanceController::class, 'index'])->name('maintenance.index');
+    Route::resource('usuarios', UsersController::class)->parameter('usuarios', 'user')->names('users');
+    Route::get('tipos', [TypeController::class, 'indexTypeCategories'])->name('types.index');
+    Route::get('suppliers', [TypeController::class, 'indexProviders'])->name('suppliers.index');
+    Route::get('maintenance', [TypeController::class, 'indexTypeMaintenance'])->name('maintenance.index');
 });
 
 // Grupo para admin e inventory con acceso solo a productos y elementos

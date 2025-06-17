@@ -76,13 +76,6 @@
         'Utilidades' => [
             // Sección de enlaces relacionados a utilidades y configuraciones generales
             [
-                'name' => 'Gestión de Roles',
-                'icon' => 'user-group',
-                'url' => route('admin.roles.index'),
-                'current' => request()->routeIs('admin.roles.*'),
-                'roles' => ['administrador'],  // Solo visible para administradores
-            ],
-            [
                 'name' => 'Tamaño',
                 'icon' => 'hashtag',
                 'url' => route('admin.sizes.index'),
@@ -94,13 +87,6 @@
                 'icon' => 'swatch',
                 'url' => route('admin.colors.index'),
                 'current' => request()->routeIs('admin.colors.*'),
-                'roles' => ['administrador'],
-            ],
-            [
-                'name' => 'Estado de Estados',
-                'icon' => 'chart-bar-square',
-                'url' => route('admin.states.index'),
-                'current' => request()->routeIs('admin.states.*'),
                 'roles' => ['administrador'],
             ],
             [
@@ -132,12 +118,37 @@
                 'roles' => ['administrador'],
             ],
         ],
+        'Admin' => [
+            [
+                'name'    => 'Usuarios',
+                'icon'    => 'users',
+                'url'     => route('admin.users.index'),
+                'current' => request()->routeIs('admin.users.*'),
+                'roles'   => ['administrador'],
+            ],
+            [
+                'name'    => 'Roles',
+                'icon'    => 'user-group',
+                'url'     => route('admin.roles.index'),
+                'current' => request()->routeIs('admin.roles.*'),
+                'roles'   => ['administrador'],
+            ],
+            [
+                'name'    => 'Estados',
+                'icon'    => 'chart-bar-square',
+                'url'     => route('admin.states.index'),
+                'current' => request()->routeIs('admin.states.*'),
+                'roles'   => ['administrador'],
+            ],
+        ],
     ];
 
     // Filtra los enlaces de 'Utilidades' según el rol del usuario
     $ComplementoLinks = collect($groups['Utilidades'])->filter(fn($link) => in_array($userRole, $link['roles']));
     // Filtra los enlaces de 'Inventario' según el rol del usuario
     $ComplementoLinks2 = collect($groups['Inventario'])->filter(fn($link) => in_array($userRole, $link['roles']));
+    // Filtra los enlaces de 'Admin' según el rol del usuario
+    $ComplementoLinks3 = collect($groups['Admin'])->filter(fn($link) => in_array($userRole, $link['roles']));
 @endphp
 
 <!DOCTYPE html>
@@ -236,13 +247,19 @@
             <flux:spacer />
 
             <!-- Sección para la gestión de usuarios -->
-            <flux:navlist variant="outline">                
-                @if ($userRole === 'administrador')
-                    <flux:navlist.item icon="users" :href="route('admin.users.index')" :current="request()->routeIs('admin.users.*')" wire:navigate>
-                        {{ __('Usuarios') }}
-                    </flux:navlist.item>
-                @endif
-            </flux:navlist>
+            <flux:navlist.group variant="outline">                
+                <!-- Sección 'Inventario' -->
+                @if($ComplementoLinks3->isNotEmpty())
+                    <flux:navlist.group expandable :heading="'Gestión de usuarios'" :expanded="collect($groups['Admin'])->contains(fn($link)=>$link['current'])" class="grid">
+                        @foreach ($groups['Admin'] as $link4)
+                            @if (in_array($userRole, $link4['roles']))
+                                <flux:navlist.item :icon="$link4['icon']" :href="$link4['url']" :current="$link4['current']"
+                                    wire:navigate>{{ $link4['name'] }}</flux:navlist.item>
+                            @endif
+                        @endforeach
+                    </flux:navlist.group>
+                @endif  
+            </flux:navlist.group>
 
             <!-- Menú de usuario en escritorio -->
             <flux:dropdown position="bottom" align="start">
