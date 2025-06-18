@@ -6,9 +6,8 @@
             <flux:breadcrumbs.item :href="route('dashboard')" icon="home"/>
             <flux:breadcrumbs.item :href="route('admin.brands.index')"> Marcas </flux:breadcrumbs.item>
             <flux:breadcrumbs.item :href="route('admin.brands.create')"> Crear </flux:breadcrumbs.item>
-
-            <flux:button size="sm" variant="primary" :href="route('admin.brands.index')"> Volver </flux:button>
         </flux:breadcrumbs>
+        <flux:button size="sm" variant="primary" :href="route('admin.brands.index')"> Volver </flux:button>
     </div>
 
     {{-- Formulario/Tarjeta para crear marcas. --}}
