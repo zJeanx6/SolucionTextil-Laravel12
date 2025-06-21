@@ -23,7 +23,7 @@
                 <div class="w-1/3">
                     <flux:select wire:model.live="productTypeFilter">
                         <flux:select.option value="">Filtro por Tipo</flux:select.option>
-                        @foreach ($this->productTypes as $type)
+                        @foreach ($productTypes as $type)
                             <flux:select.option value="{{ $type->id }}">{{ $type->name }}</flux:select.option>
                         @endforeach
                     </flux:select>
@@ -31,7 +31,7 @@
                 <div class="w-1/3">
                     <flux:select wire:model.live="colorFilter">
                         <flux:select.option value="">Filtro por Color</flux:select.option>
-                        @foreach ($this->colors as $color)
+                        @foreach ($colors as $color)
                             <flux:select.option value="{{ $color->id }}">{{ $color->name }}</flux:select.option>
                         @endforeach
                     </flux:select>
@@ -117,24 +117,24 @@
 
         <div class="mx-4 mt-4 mb-4">{{ $products->links(data: ['scrollTo' => false]) }}</div>
 
-    {{-- Crear producto --}}
+    {{-- CREAR PRODUCTO --}}
     @elseif ($view === 'create')
         <div class="card p-6">
             <div class="flex flex-col lg:flex-row gap-6">
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                    <flux:select wire:model.live="productCreate.product_type_id">
+                    <flux:select wire:model.live="product_type_id">
                         <flux:select.option value="">Tipo de Producto</flux:select.option>
                         @foreach ($productTypes as $type)
                             <flux:select.option value="{{ $type->id }}">{{ $type->name }}</flux:select.option>
                         @endforeach
                     </flux:select>
-                    <flux:select wire:model.live="productCreate.size_id">
+                    <flux:select wire:model.live="size_id">
                         <flux:select.option value="">Talla</flux:select.option>
                         @foreach ($sizes as $size)
                             <flux:select.option value="{{ $size->id }}">{{ $size->abbreviation ?? $size->name }}</flux:select.option>
                         @endforeach
                     </flux:select>
-                    <flux:select wire:model.live="productCreate.color_id">
+                    <flux:select wire:model.live="color_id">
                         <flux:select.option value="">Color</flux:select.option>
                         @foreach ($colors as $color)
                             <flux:select.option value="{{ $color->id }}">{{ $color->name }}</flux:select.option>
@@ -143,9 +143,9 @@
 
                     {{-- Imagen --}}
                     <div class="relative w-full h-60 bg-gray-100 rounded-md flex items-center justify-center dark:bg-[#2f2f2f]">
-                        @if ($productCreate->photo)
-                            <img src="{{ $productCreate->photo->temporaryUrl() }}" class="absolute inset-0 object-cover w-full h-full rounded-md" />
-                            <button wire:click="$set('productCreate.photo', null)"
+                        @if ($photo)
+                            <img src="{{ $photo->temporaryUrl() }}" class="absolute inset-0 object-cover w-full h-full rounded-md" />
+                            <button wire:click="$set('photo', null)"
                                 class="absolute top-1 right-1 w-6 h-6 rounded-full bg-white/70 hover:bg-red-500 flex items-center justify-center text-xs font-bold">
                                 &times;
                             </button>
@@ -156,18 +156,18 @@
                                     x-on:livewire-upload-cancel="uploading = false"
                                     x-on:livewire-upload-error="uploading = false"
                                     x-on:livewire-upload-progress="progress = $event.detail.progress">
-                                    <label class="flex flex-col items-center justify-center cursor-pointer w-full h-full">
-                                        <span wire:loading.class="hidden" class="text-sm text-gray-500">Cargar imagen</span>
-                                        <input type="file" class="hidden" wire:model="productCreate.photo" accept="image/*">
-                                    </label>
-                                    <div x-show="uploading">
-                                        <progress max="100" x-bind:value="progress"></progress>
+                                        <label class="flex flex-col items-center justify-center cursor-pointer w-full h-full">
+                                            <span wire:loading.class="hidden" class="text-sm text-gray-500">Cargar imagen</span>
+                                            <input type="file" class="hidden" wire:model="photo" accept="image/*">
+                                        </label>
+                                        <div x-show="uploading">
+                                            <progress max="100" x-bind:value="progress"></progress>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                         @endif
                     </div>
-                    @error('productCreate.photo')
+                    @error('photo')
                         <span class="text-red-500 text-xs">{{ $message }}</span>
                     @enderror
                 </div>
@@ -175,9 +175,9 @@
                 <div class="hidden lg:block w-px bg-gray-300"></div>
 
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                    <flux:input type="number" wire:model="productCreate.code" label="Código" />
-                    <flux:input type="text" wire:model.live="productCreate.name" label="Nombre" />
-                    <flux:input type="number" wire:model="productCreate.stock" label="Stock" />
+                    <flux:input type="number" wire:model="code" label="Código" />
+                    <flux:input type="text" wire:model.live="name" label="Nombre" />
+                    <flux:input type="number" wire:model="stock" label="Stock" />
                     <div class="flex justify-end">
                         <flux:button size="sm" variant="primary" wire:click="save">Guardar</flux:button>
                     </div>
@@ -185,24 +185,24 @@
             </div>
         </div>
 
-    {{-- Editar producto --}}
+    {{-- EDITAR PRODUCTO --}}
     @elseif ($view === 'edit')
         <div class="card p-6">
             <div class="flex flex-col lg:flex-row gap-6">
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                    <flux:select wire:model.live="productEdit.product_type_id">
+                    <flux:select wire:model.live="product_type_id">
                         <flux:select.option value="">Tipo de Producto</flux:select.option>
                         @foreach ($productTypes as $type)
                             <flux:select.option value="{{ $type->id }}">{{ $type->name }}</flux:select.option>
                         @endforeach
                     </flux:select>
-                    <flux:select wire:model.live="productEdit.size_id">
+                    <flux:select wire:model.live="size_id">
                         <flux:select.option value="">Talla</flux:select.option>
                         @foreach ($sizes as $size)
                             <flux:select.option value="{{ $size->id }}">{{ $size->abbreviation ?? $size->name }}</flux:select.option>
                         @endforeach
                     </flux:select>
-                    <flux:select wire:model.live="productEdit.color_id">
+                    <flux:select wire:model.live="color_id">
                         <flux:select.option value="">Color</flux:select.option>
                         @foreach ($colors as $color)
                             <flux:select.option value="{{ $color->id }}">{{ $color->name }}</flux:select.option>
@@ -211,21 +211,21 @@
 
                     {{-- Imagen --}}
                     <div class="relative w-full h-60 bg-gray-100 rounded-md flex items-center justify-center dark:bg-[#2f2f2f]">
-                        @if ($productEdit->photo)
+                        @if ($photo)
                             <label class="absolute inset-0 w-full h-full cursor-pointer">
-                                <img src="{{ $productEdit->photo->temporaryUrl() }}" class="object-cover w-full h-full rounded-md" />
-                                <input type="file" class="hidden" wire:model="productEdit.photo" accept="image/*">
+                                <img src="{{ $photo->temporaryUrl() }}" class="object-cover w-full h-full rounded-md" />
+                                <input type="file" class="hidden" wire:model="photo" accept="image/*">
                             </label>
-                            <button wire:click="$set('productEdit.photo', null)"
+                            <button wire:click="$set('photo', null)"
                                 class="absolute top-1 right-1 w-6 h-6 rounded-full bg-white/70 hover:bg-red-500 flex items-center justify-center text-xs font-bold z-10">
                                 &times;
                             </button>
-                        @elseif ($productEdit->image_path)
+                        @elseif ($image_path)
                             <label class="absolute inset-0 w-full h-full cursor-pointer">
-                                <img src="{{ asset('storage/' . $productEdit->image_path) }}" class="object-cover w-full h-full rounded-md" />
-                                <input type="file" class="hidden" wire:model="productEdit.photo" accept="image/*">
+                                <img src="{{ asset('storage/' . $image_path) }}" class="object-cover w-full h-full rounded-md" />
+                                <input type="file" class="hidden" wire:model="photo" accept="image/*">
                             </label>
-                            <button wire:click="$set('productEdit.image_path', null); $set('productEdit.photo', null);"
+                            <button wire:click="$set('image_path', null); $set('photo', null);"
                                 class="absolute top-1 right-1 w-6 h-6 rounded-full bg-white/70 hover:bg-red-500 flex items-center justify-center text-xs font-bold z-10">
                                 &times;
                             </button>
@@ -235,11 +235,11 @@
                         @else
                             <label class="flex flex-col items-center justify-center cursor-pointer w-full h-full">
                                 <span class="text-sm text-gray-500">Cargar imagen</span>
-                                <input type="file" class="hidden" wire:model="productEdit.photo" accept="image/*">
+                                <input type="file" class="hidden" wire:model="photo" accept="image/*">
                             </label>
                         @endif
                     </div>
-                    @error('productEdit.photo')
+                    @error('photo')
                         <span class="text-red-500 text-xs">{{ $message }}</span>
                     @enderror
                 </div>
@@ -247,9 +247,9 @@
                 <div class="hidden lg:block w-px bg-gray-300"></div>
 
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                    <flux:input type="number" wire:model="productEdit.code" label="Código" disabled />
-                    <flux:input type="text" wire:model="productEdit.name" label="Nombre" />
-                    <flux:input type="number" wire:model="productEdit.stock" label="Stock" />
+                    <flux:input type="number" wire:model="code" label="Código" disabled />
+                    <flux:input type="text" wire:model="name" label="Nombre" />
+                    <flux:input type="number" wire:model="stock" label="Stock" />
                     <div class="flex justify-end">
                         <flux:button variant="primary" wire:click="update">Actualizar</flux:button>
                     </div>
@@ -257,24 +257,24 @@
             </div>
         </div>
 
-    {{-- Ver producto --}}
+    {{-- VER PRODUCTO --}}
     @elseif ($view === 'show')
         <div class="card p-6">
             <div class="flex flex-col lg:flex-row gap-6">
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                    <flux:select wire:model.live="productShow.product_type_id" disabled>
+                    <flux:select wire:model.live="product_type_id" disabled>
                         <flux:select.option value="">Tipo de Producto</flux:select.option>
                         @foreach ($productTypes as $type)
                             <flux:select.option value="{{ $type->id }}">{{ $type->name }}</flux:select.option>
                         @endforeach
                     </flux:select>
-                    <flux:select wire:model.live="productShow.size_id" disabled>
+                    <flux:select wire:model.live="size_id" disabled>
                         <flux:select.option value="">Talla</flux:select.option>
                         @foreach ($sizes as $size)
                             <flux:select.option value="{{ $size->id }}">{{ $size->abbreviation ?? $size->name }}</flux:select.option>
                         @endforeach
                     </flux:select>
-                    <flux:select wire:model.live="productShow.color_id" disabled>
+                    <flux:select wire:model.live="color_id" disabled>
                         <flux:select.option value="">Color</flux:select.option>
                         @foreach ($colors as $color)
                             <flux:select.option value="{{ $color->id }}">{{ $color->name }}</flux:select.option>
@@ -282,8 +282,8 @@
                     </flux:select>
 
                     <div class="relative w-full h-60 bg-gray-100 rounded-md flex items-center justify-center dark:bg-[#2f2f2f]">
-                        @if ($productShow->image_path)
-                            <img src="{{ asset('storage/' . $productShow->image_path) }}" class="object-cover w-full h-full rounded-md" />
+                        @if ($image_path)
+                            <img src="{{ asset('storage/' . $image_path) }}" class="object-cover w-full h-full rounded-md" />
                         @else
                             <span class="text-sm text-gray-500">No hay imagen disponible</span>
                         @endif
@@ -293,9 +293,9 @@
                 <div class="hidden lg:block w-px bg-gray-300 dark:bg-gray-600"></div>
 
                 <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                    <flux:input type="number" wire:model="productShow.code" label="Código" disabled />
-                    <flux:input type="text" wire:model="productShow.name" label="Nombre" disabled />
-                    <flux:input type="number" wire:model="productShow.stock" label="Stock" disabled />
+                    <flux:input type="number" wire:model="code" label="Código" disabled />
+                    <flux:input type="text" wire:model="name" label="Nombre" disabled />
+                    <flux:input type="number" wire:model="stock" label="Stock" disabled />
                 </div>
             </div>
         </div>

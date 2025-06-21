@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Livewire\Forms\{ProductCreateForm, ProductEditForm, ProductShowForm};
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
@@ -27,24 +26,25 @@ class ProductInventory extends Component
     public $sortDirection = 'desc';
 
     public $productTypeFilter = '';
-    public $colorFilter       = '';
+    public $colorFilter = '';
 
     public $productTypes = [];
-    public $colors      = [];
-    public $sizes       = [];
+    public $colors = [];
+    public $sizes = [];
 
-    public ProductShowForm   $productShow;
-    public ProductCreateForm $productCreate;
-    public ProductEditForm   $productEdit;
+    // Propiedades para create/edit/show
+    public $code, $name, $stock, $photo, $image_path;
+    public $color_id = '', $size_id = '', $product_type_id = '';
 
-    public $change_type_id = '';
-    public $editing = null;
+    // Extra para editar
+    public $code_edit = '';
 
+    // --- Métodos de ciclo de vida ---
     public function mount(): void
     {
         $this->productTypes = ProductType::orderBy('name')->get();
-        $this->colors       = Color::orderBy('name')->get();
-        $this->sizes        = Size::orderBy('name')->get();
+        $this->colors = Color::orderBy('name')->get();
+        $this->sizes = Size::orderBy('name')->get();
 
         if ($this->editId) {
             $this->edit($this->editId);
@@ -58,43 +58,100 @@ class ProductInventory extends Component
 
     public function index()
     {
-        $this->reset('search', 'productTypeFilter', 'colorFilter');
-        $this->editId = '';
-        $this->view   = 'index';
+        $this->resetAll();
+        $this->view = 'index';
+    }
+
+    public function create()
+    {
+        $this->resetAll();
+        $this->view = 'create';
     }
 
     public function show($code)
     {
-        $this->productShow->show($code);
-        $this->view = 'show';
-    }
+        $this->resetAll();
+        $product = Product::where('code', $code)->firstOrFail();
 
-    public function create(): void
-    {
-        $this->reset('search', 'productTypeFilter', 'colorFilter');
-        $this->editId = '';
-        $this->productCreate->reset();
-        $this->view   = 'create';
+        $this->code = $product->code;
+        $this->name = $product->name;
+        $this->stock = $product->stock;
+        $this->color_id = $product->color_id;
+        $this->size_id = $product->size_id;
+        $this->product_type_id = $product->product_type_id;
+        $this->image_path = $product->image;
+
+        $this->view = 'show';
     }
 
     public function edit($code)
     {
-        $this->resetValidation();
-        $this->editId = $code;
-        $this->productEdit->edit($code);
+        $this->resetAll();
+        $product = Product::where('code', $code)->firstOrFail();
+
+        $this->code = $product->code;
+        $this->code_edit = $product->code;
+        $this->name = $product->name;
+        $this->stock = $product->stock;
+        $this->color_id = $product->color_id;
+        $this->size_id = $product->size_id;
+        $this->product_type_id = $product->product_type_id;
+        $this->image_path = $product->image;
+        $this->photo = null;
+
         $this->view = 'edit';
     }
 
     public function save()
     {
-        $this->productCreate->save();
+        $this->validate($this->rulesCreate(), $this->messages(), $this->attributes());
+        $path = $this->photo ? $this->photo->store('products', 'public') : null;
+
+        Product::create([
+            'code'            => $this->code,
+            'name'            => $this->name,
+            'stock'           => $this->stock,
+            'color_id'        => $this->color_id,
+            'size_id'         => $this->size_id,
+            'product_type_id' => $this->product_type_id,
+            'image'           => $path,
+        ]);
+
         $this->dispatch('event-notify', 'Producto creado.');
         $this->index();
     }
 
     public function update()
     {
-        $this->productEdit->update();
+        $this->validate($this->rulesEdit(), $this->messages(), $this->attributes());
+
+        $product = Product::where('code', $this->code)->firstOrFail();
+
+        // Nueva foto
+        if ($this->photo) {
+            if ($product->image && Storage::disk('public')->exists($product->image)) {
+                Storage::disk('public')->delete($product->image);
+            }
+            $product->image = $this->photo->store('products', 'public');
+        }
+
+        // Sin nueva foto, pero usuario quitó la actual
+        if (!$this->photo && is_null($this->image_path) && $product->image) {
+            if (Storage::disk('public')->exists($product->image)) {
+                Storage::disk('public')->delete($product->image);
+            }
+            $product->image = null;
+        }
+
+        $product->update([
+            'name'             => $this->name,
+            'stock'            => $this->stock,
+            'color_id'         => $this->color_id,
+            'size_id'          => $this->size_id,
+            'product_type_id'  => $this->product_type_id,
+            'image'            => $product->image,
+        ]);
+
         $this->dispatch('event-notify', 'Producto actualizado.');
         $this->index();
     }
@@ -115,6 +172,7 @@ class ProductInventory extends Component
         $this->dispatch('event-notify', 'Producto eliminado.');
     }
 
+    // --- Renderizado ---
     public function render()
     {
         $products = Product::query()
@@ -139,20 +197,19 @@ class ProductInventory extends Component
         return view('livewire.product-inventory', compact('products'));
     }
 
-    public function updatingSearch()
+    // --- Reseteos y helpers ---
+    public function resetAll()
     {
-        $this->resetPage();
+        $this->reset([
+            'search', 'productTypeFilter', 'colorFilter',
+            'code', 'name', 'stock', 'photo', 'image_path',
+            'color_id', 'size_id', 'product_type_id', 'code_edit'
+        ]);
     }
 
-    public function updatingProductTypeFilter()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingColorFilter()
-    {
-        $this->resetPage();
-    }
+    public function updatingSearch() { $this->resetPage(); }
+    public function updatingProductTypeFilter() { $this->resetPage(); }
+    public function updatingColorFilter() { $this->resetPage(); }
 
     public function sortBy($field)
     {
@@ -162,5 +219,61 @@ class ProductInventory extends Component
             $this->sortField     = $field;
             $this->sortDirection = 'asc';
         }
+    }
+
+    // --- Validaciones y mensajes ---
+    public function rulesCreate()
+    {
+        return [
+            'code'            => 'required|digits_between:5,10|unique:products,code',
+            'name'            => 'required|string|min:3|max:255',
+            'stock'           => 'required|integer|min:0',
+            'color_id'        => 'required|exists:colors,id',
+            'size_id'         => 'required|exists:sizes,id',
+            'product_type_id' => 'required|exists:product_types,id',
+            'photo'           => 'nullable|image|max:2048',
+        ];
+    }
+
+    public function rulesEdit()
+    {
+        return [
+            'code_edit'        => 'required|integer|exists:products,code',
+            'name'             => 'required|string|min:3|max:255',
+            'stock'            => 'required|integer|min:0',
+            'color_id'         => 'required|exists:colors,id',
+            'size_id'          => 'required|exists:sizes,id',
+            'product_type_id'  => 'required|exists:product_types,id',
+            'photo'            => 'nullable|image|max:2048',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'required' => 'El campo :attribute es obligatorio.',
+            'min'      => 'El campo :attribute debe tener al menos :min.',
+            'max'      => 'El campo :attribute no puede ser mayor a :max.',
+            'integer'  => 'El campo :attribute debe ser un número entero.',
+            'numeric'  => 'El campo :attribute debe ser un número.',
+            'image'    => 'El archivo debe ser una imagen.',
+            'unique'   => 'Ese código ya está registrado.',
+            'exists'   => 'El valor seleccionado no existe.',
+            'digits_between' => 'El código debe tener entre :min y :max dígitos.',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'code'            => 'código',
+            'code_edit'       => 'código',
+            'name'            => 'nombre',
+            'stock'           => 'stock',
+            'color_id'        => 'color',
+            'size_id'         => 'talla',
+            'product_type_id' => 'tipo de producto',
+            'photo'           => 'imagen',
+        ];
     }
 }
