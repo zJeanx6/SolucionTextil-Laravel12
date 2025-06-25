@@ -30,7 +30,7 @@ class Machine extends Model
         return $this->belongsTo(State::class);
     }
 
-    public function type()
+    public function machineType()
     {
         return $this->belongsTo(MachineType::class, 'machine_type_id');
     }

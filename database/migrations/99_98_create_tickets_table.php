@@ -28,6 +28,7 @@ return new class extends Migration
             //ForeignsKeys
             $table->unsignedBigInteger('ticket_id')->nullable();
             $table->unsignedInteger('product_code')->nullable();
+            $table->timestamps();
 
             //Config ForeignsKeys
             $table->foreign('ticket_id')->references('id')->on('tickets')->onDelete('set null');

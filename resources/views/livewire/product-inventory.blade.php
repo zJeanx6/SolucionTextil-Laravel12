@@ -71,7 +71,7 @@
                             <td class="column-item">{{ $product->code }}</td>
                             <td class="column-item">{{ $product->name }}</td>
                             <td class="column-item">{{ $product->stock }}</td>
-                            <td class="column-item">{{ $product->type->name ?? '-' }}</td>
+                            <td class="column-item">{{ $product->productType->name ?? '-' }}</td>
                             <td class="column-item">{{ $product->color->name ?? '-' }}</td>
                             <td class="column-item">{{ $product->size->abbreviation ?? $product->size->name ?? '-' }}</td>
                             <td class="column-item">

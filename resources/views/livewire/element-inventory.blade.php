@@ -81,7 +81,7 @@
                                 <td class="column-item">{{ $element->code }}</td>
                                 <td class="column-item">{{ $element->name }}</td>
                                 <td class="column-item">{{ $element->stock }}</td>
-                                <td class="column-item">{{ $element->type->name ?? '-' }}</td>
+                                <td class="column-item">{{ $element->elementType->name ?? '-' }}</td>
                                 <td class="column-item">
                                     @if ($element->image && Storage::disk('public')->exists($element->image))
                                         <!-- Disparador para abrir el modal de la imagen -->

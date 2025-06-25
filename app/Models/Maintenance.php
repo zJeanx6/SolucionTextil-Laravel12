@@ -27,6 +27,11 @@ class Maintenance extends Model
         return $this->belongsTo(User::class, 'card_id', 'card');
     }
 
+    public function type()
+    {
+        return $this->belongsTo(MaintenanceType::class, 'maintenance_type');
+    }
+
     public function state()
     {
         return $this->belongsTo(State::class);

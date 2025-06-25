@@ -27,7 +27,7 @@ class Element extends Model
         return $this->belongsTo(Color::class);
     }
 
-    public function type()
+    public function elementType()
     {
         return $this->belongsTo(ElementType::class, 'element_type_id');
     }

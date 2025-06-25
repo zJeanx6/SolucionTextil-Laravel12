@@ -10,8 +10,6 @@ class TicketDetail extends Model
     /** @use HasFactory<\Database\Factories\TicketDetailFactory> */
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $fillable = [
         'amount',
         'ticket_id',
