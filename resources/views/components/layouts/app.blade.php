@@ -127,6 +127,13 @@
                 'roles'   => ['administrador'],
             ],
             [
+                'name'    => 'Reportes',
+                'icon'    => 'users',
+                'url'     => route('admin.inventory.reports'),
+                'current' => request()->routeIs('admin.inventory.reports'),
+                'roles'   => ['administrador'],
+            ],
+            [
                 'name'    => 'Roles',
                 'icon'    => 'user-group',
                 'url'     => route('admin.roles.index'),
@@ -184,23 +191,23 @@
 
             {{-- Verifica el rol del usuario y muestra el enlace adecuado en el logo --}}
             @if ($roleId === 4)
-                <a href="{{ route('home') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                <a href="{{ route('home') }}" class="mr-5 flex items-center space-x-2">
                     <x-app-logo />
                 </a>
             @elseif ($roleId === 1)
-                <a href="{{ route('dashboard') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                <a href="{{ route('dashboard') }}" class="mr-5 flex items-center space-x-2">
                     <x-app-logo />
                 </a>
             @elseif ($roleId === 2)
-                <a href="{{ route('admin.dashboard-inventory') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                <a href="{{ route('admin.dashboard-inventory') }}" class="mr-5 flex items-center space-x-2">
                     <x-app-logo />
                 </a>
             @elseif ($roleId === 3)
-                <a href="{{ route('admin.dashboard-maintenance') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                <a href="{{ route('admin.dashboard-maintenance') }}" class="mr-5 flex items-center space-x-2">
                     <x-app-logo />
                 </a>
             @else
-                <a href="{{ route('home') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                <a href="{{ route('home') }}" class="mr-5 flex items-center space-x-2">
                     <x-app-logo />
                 </a>
             @endif
@@ -212,8 +219,7 @@
                 <flux:navlist.group :heading="'Menú de Navegación'" class="grid">
                     @foreach ($groups['Menú de Navegación'] as $link)      
                         @if (in_array($userRole, $link['roles']))              
-                            <flux:navlist.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']"
-                                wire:navigate>{{ $link['name'] }}</flux:navlist.item>
+                            <flux:navlist.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']">{{ $link['name'] }}</flux:navlist.item>
                         @endif
                     @endforeach
                 </flux:navlist.group>
@@ -370,6 +376,7 @@
         <!-- Importación de librerías de notificaciones -->
         <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
         <!-- Notificaciones controladores Laravel -->
         <script data-navigate-once>

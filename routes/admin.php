@@ -8,10 +8,9 @@ use App\Http\Controllers\Admin\StateController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\TypeController;
-use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\MachineController;
-use App\Http\Controllers\Admin\TypeMaintenanceController;
 use App\Livewire\ElementsMov;
+use App\Livewire\Reports\InventoryReport;
 use Illuminate\Support\Facades\Route;
 
 // Grupo para admin con acceso total (recuerda que admin puede hacer todo)
@@ -23,8 +22,9 @@ Route::middleware('role:administrador')->group(function () {
     Route::resource('colores', ColorController::class)->parameter('colores', 'color')->names('colors');
     Route::resource('usuarios', UsersController::class)->parameter('usuarios', 'user')->names('users');
     Route::get('tipos', [TypeController::class, 'indexTypeCategories'])->name('types.index');
-    Route::get('suppliers', [TypeController::class, 'indexProviders'])->name('suppliers.index');
-    Route::get('maintenance', [TypeController::class, 'indexTypeMaintenance'])->name('maintenance.index');
+    Route::get('proveedores', [TypeController::class, 'indexProviders'])->name('suppliers.index');
+    Route::get('mantenimientos', [TypeController::class, 'indexTypeMaintenance'])->name('maintenance.index');
+    Route::get('reportes',  InventoryReport::class)->name('inventory.reports');
 });
 
 // Grupo para admin e inventory con acceso solo a productos y elementos
