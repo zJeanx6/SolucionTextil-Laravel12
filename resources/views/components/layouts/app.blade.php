@@ -14,18 +14,11 @@
                 'roles' => ['administrador'],  // Solo visible para administradores
             ],
             [
-                'name' => 'Visión General',
+                'name' => 'Reportes de inventarios',
                 'icon' => 'chart-pie',
                 'url' => route('admin.dashboard-inventory'),
                 'current' => request()->routeIs('admin.dashboard-inventory'),
                 'roles' => ['administrador', 'inventario'],  // Visible para administradores y personal de inventario
-            ],
-            [
-                'name' => 'Mantenimiento',
-                'icon' => 'wrench',
-                'url' => route('admin.dashboard-maintenance'),
-                'current' => request()->routeIs('admin.dashboard-maintenance'),
-                'roles' => ['administrador', 'mantenimiento'],  // Visible para administradores y personal de mantenimiento
             ],
         ],
         'Inventario' => [
@@ -38,17 +31,26 @@
                 'roles' => ['administrador', 'inventario'],
             ],
             [
-                'name' => 'Mov. de Elementos',
-                'icon' => 'arrow-right',
-                'url' => route('admin.elements.movements'),
-                'current' => request()->routeIs('admin.elements.movements'),
-                'roles' => ['administrador', 'inventario'],
-            ],
-            [
                 'name' => 'Productos',
                 'icon' => 'shopping-bag',
                 'url' => route('admin.products.index'),
                 'current' => request()->routeIs('admin.products.index'),
+                'roles' => ['administrador', 'inventario'],
+            ],
+            [
+                'name' => 'Máquinas',
+                'icon' => 'cpu-chip',
+                'url' => route('admin.machines.index'),
+                'current' => request()->routeIs('admin.machines.index'),
+                'roles' => ['administrador', 'mantenimiento'],
+            ],
+        ],
+        'Movimientos' => [
+            [
+                'name' => 'Mov. de Elementos',
+                'icon' => 'arrow-right',
+                'url' => route('admin.elements.movements'),
+                'current' => request()->routeIs('admin.elements.movements'),
                 'roles' => ['administrador', 'inventario'],
             ],
             [
@@ -58,12 +60,14 @@
                 'current' => request()->routeIs('admin.products.movements'),
                 'roles' => ['administrador', 'inventario'],
             ],
-            [
-                'name' => 'Máquinas',
-                'icon' => 'cpu-chip',
-                'url' => route('admin.machines.index'),
-                'current' => request()->routeIs('admin.machines.index'),
-                'roles' => ['administrador', 'mantenimiento'],
+        ], 
+            'Mantenimiento' => [
+           [
+                'name' => 'Mantenimiento',
+                'icon' => 'wrench',
+                'url' => route('admin.dashboard-maintenance'),
+                'current' => request()->routeIs('admin.dashboard-maintenance'),
+                'roles' => ['administrador', 'mantenimiento'],  // Visible para administradores y personal de mantenimiento
             ],
             [
                 'name' => ' Ctrl. Mantenimiento',
@@ -224,18 +228,6 @@
                     @endforeach
                 </flux:navlist.group>
 
-                <!-- Sección 'Utilidades' -->
-                @if($ComplementoLinks->isNotEmpty())
-                    <flux:navlist.group expandable :heading="'Utilidades'" :expanded="collect($groups['Utilidades'])->contains(fn($link)=>$link['current'])" class="grid">
-                        @foreach ($groups['Utilidades'] as $link2)
-                            @if (in_array($userRole, $link2['roles']))
-                                <flux:navlist.item :icon="$link2['icon']" :href="$link2['url']" :current="$link2['current']"
-                                    wire:navigate>{{ $link2['name'] }}</flux:navlist.item>
-                            @endif
-                        @endforeach
-                    </flux:navlist.group>
-                @endif
-
                 <!-- Sección 'Inventario' -->
                 @if($ComplementoLinks2->isNotEmpty())
                     <flux:navlist.group expandable :heading="'Inventario'" :expanded="collect($groups['Inventario'])->contains(fn($link)=>$link['current'])" class="grid">
@@ -247,6 +239,42 @@
                         @endforeach
                     </flux:navlist.group>
                 @endif  
+
+                <!-- Sección 'Movimientos' -->
+                @if(collect($groups['Movimientos'])->filter(fn($link) => isset($link['roles']) && in_array($userRole, $link['roles']))->isNotEmpty())
+                    <flux:navlist.group expandable :heading="'Movimientos'" :expanded="collect($groups['Movimientos'])->contains(fn($link)=>$link['current'])" class="grid">
+                        @foreach ($groups['Movimientos'] as $link)
+                            @if (isset($link['roles']) && in_array($userRole, $link['roles']))
+                                <flux:navlist.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']"
+                                    wire:navigate>{{ $link['name'] }}</flux:navlist.item>
+                            @endif
+                        @endforeach
+                    </flux:navlist.group>
+                @endif
+
+                <!-- Sección 'Mantenimiento' -->
+                @if(collect($groups['Mantenimiento'])->filter(fn($link) => in_array($userRole, $link['roles']))->isNotEmpty())
+                    <flux:navlist.group expandable :heading="'Mantenimiento'" :expanded="collect($groups['Mantenimiento'])->contains(fn($link)=>$link['current'])" class="grid">
+                        @foreach ($groups['Mantenimiento'] as $link)
+                            @if (isset($link['roles']) && in_array($userRole, $link['roles']))
+                                <flux:navlist.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']"
+                                    wire:navigate>{{ $link['name'] }}</flux:navlist.item>
+                            @endif
+                        @endforeach
+                    </flux:navlist.group>
+                @endif
+
+                <!-- Sección 'Utilidades' -->
+                @if($ComplementoLinks->isNotEmpty())
+                    <flux:navlist.group expandable :heading="'Utilidades'" :expanded="collect($groups['Utilidades'])->contains(fn($link)=>$link['current'])" class="grid">
+                        @foreach ($groups['Utilidades'] as $link2)
+                            @if (isset($link['roles']) && in_array($userRole, $link['roles']))
+                                <flux:navlist.item :icon="$link2['icon']" :href="$link2['url']" :current="$link2['current']"
+                                    wire:navigate>{{ $link2['name'] }}</flux:navlist.item>
+                            @endif
+                        @endforeach
+                    </flux:navlist.group>
+                @endif
 
             </flux:navlist>
 

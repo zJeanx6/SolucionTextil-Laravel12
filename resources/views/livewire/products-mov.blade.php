@@ -8,7 +8,7 @@
             <flux:button size="sm" variant="filled" icon:trailing="chevron-down"> Acciones </flux:button>
             <flux:menu>
                 <flux:menu.group heading="Registrar Movimiento">
-                    <flux:menu.item wire:click="openIngresoModal">Registrar Ingreso</flux:menu.item>
+                    <flux:menu.item wire:click="openIngresoModal">Registrar Productos</flux:menu.item>
                     <flux:menu.item wire:click="openSalidaModal">Registrar Salida</flux:menu.item>
                 </flux:menu.group>
                 <flux:menu.group heading="Filtrar">

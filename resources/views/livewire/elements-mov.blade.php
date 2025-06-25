@@ -10,8 +10,8 @@
             <flux:button size="sm" variant="filled" icon:trailing="chevron-down"> Acciones </flux:button>
             <flux:menu>
                 <flux:menu.group heading="Generar Moivimiento">
-                    <flux:menu.item wire:click="openIngresoModal"> Registrar Ingreso </flux:menu.item>
-                    <flux:menu.item wire:click="openSalidaModal"> Registrar Salida </flux:menu.item>
+                    <flux:menu.item wire:click="openIngresoModal"> Registrar Compra </flux:menu.item>
+                    <flux:menu.item wire:click="openSalidaModal"> Registrar Prestamo </flux:menu.item>
                     <flux:menu.item wire:click="openReturnModal"> Devolver Herramienta </flux:menu.item>
                 </flux:menu.group>
                 <flux:menu.group heading="Filtrar Movimientos">
@@ -314,7 +314,7 @@
     <flux:modal.trigger name="salida-modal" />
 
     {{-- ——————————————— MODAL «Devolver Herramienta» ——————————————— --}}
-    <flux:modal name="return-modal" wire:model.live.defer="showReturnModal" class="md:w-[800px]">
+    <flux:modal name="return-modal" wire:model.live.defer="showReturnModal" class="md:w-[1000px]">
         <div class="p-4">
             <h3 class="text-lg font-semibold mb-4"> Herramientas Prestadas Pendientes de Devolución </h3>
 
@@ -325,7 +325,6 @@
                     <table class="table">
                         <thead class="head-table">
                             <tr>
-                                <th class="head-table-item"> #Detalle </th>
                                 <th class="head-table-item"> Herramienta </th>
                                 <th class="head-table-item"> Cantidad </th>
                                 <th class="head-table-item"> Instructor </th>
@@ -336,7 +335,6 @@
                         <tbody>
                             @foreach ($pendingReturns as $detail)
                                 <tr wire:key="pending-return-{{ $detail->detail_id }}" class="table-content">
-                                    <td class="column-item">{{ $detail->detail_id }}</td>
                                     <td class="column-item">{{ $detail->element_name }}</td>
                                     <td class="column-item">{{ $detail->amount }}</td>
                                     <td class="column-item">{{ $detail->instr_name }} {{ $detail->instr_last }}</td>
