@@ -40,7 +40,7 @@
                     <tr>
                         <th class="head-table-item">SERIAL</th>
                         <th class="head-table-item">ESTADO</th>
-                        <th class="head-table-item">IMAGEN</th>
+                        <th class="head-table-item w-28 text-center">IMAGEN</th>
                         <th class="head-table-item">ACCIONES</th>
                     </tr>
                 </thead>

@@ -70,7 +70,7 @@
                                 @include('partials.sort-icon', ['field' => 'element_type_id'])
                             </th>
 
-                            <th class="head-table-item">Imagen</th>
+                            <th class="head-table-item w-28 text-center">Imagen</th>
 
                             <th class="head-table-item">Acciones</th>
                         </tr>
