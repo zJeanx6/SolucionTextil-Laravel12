@@ -24,17 +24,16 @@ Route::middleware('role:administrador')->group(function () {
     Route::get('tipos', [TypeController::class, 'indexTypeCategories'])->name('types.index');
     Route::get('proveedores', [TypeController::class, 'indexProviders'])->name('suppliers.index');
     Route::get('mantenimientos', [TypeController::class, 'indexTypeMaintenance'])->name('maintenance.index');
-    Route::get('reportes',  InventoryReport::class)->name('inventory.reports');
+    Route::view('dashboard-report', 'dashboard-report')->name('dashboard.reportes');
+    Route::view('dashboard-inventory', 'dashboard-inventory')->name('dashboard-inventory');
 });
 
 // Grupo para admin e inventory con acceso solo a productos y elementos
 Route::middleware('role:administrador,inventario')->group(function () {
     Route::get('productos', [InventoryController::class, 'products'])->name('products.index');
     Route::get('elementos', [InventoryController::class, 'elements'])->name('elements.index');
-    // Route::get('elementos/movimiento', [InventoryController::class, 'elementsMovements'])->name('elements.movements');
-    Route::get('elementos/movimiento', ElementsMov::class)->name('elements.movements');
+    Route::get('elementos/movimiento', [InventoryController::class, 'elementsMovements'])->name('elements.movements');
     Route::get('productos/movimiento', [InventoryController::class, 'productsMovements'])->name('products.movements');
-    Route::view('dashboard-inventory', 'dashboard-inventory')->name('dashboard-inventory');
 });
 
 // Grupo para admin y maintenance con acceso solo a maintenance

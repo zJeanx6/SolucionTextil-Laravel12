@@ -6,7 +6,7 @@ use Livewire\Component;
 use Illuminate\Support\Facades\DB;//Proporciona acceso a la base de datos
 use Livewire\Attributes\Lazy;//Permite que el componente se cargue de forma diferida, mejorando el rendimiento al evitar la carga inmediata de datos innecesarios
 
-#[Lazy]
+// #[Lazy]
 class RecentMaintenanceTable extends Component
 {
     public $maintenances;//Propiedad pública para almacenar las mantenimientos recientes

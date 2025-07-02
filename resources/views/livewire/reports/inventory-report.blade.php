@@ -3,7 +3,7 @@
     <div class="breadcrumbs">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item icon="home" :href="route('dashboard')"/>
-            <flux:breadcrumbs.item :href="route('admin.inventory.reports')"> Gestión de Reportes </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item :href="route('admin.dashboard.reportes')"> Gestión de Reportes </flux:breadcrumbs.item>
         </flux:breadcrumbs>
         
         {{-- Botón Exportar --}}

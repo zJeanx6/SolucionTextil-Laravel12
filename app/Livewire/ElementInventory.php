@@ -10,7 +10,7 @@ use App\Models\{Element, ElementType, Color};
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\{Lazy, On, Url};
 
-#[Lazy]
+// #[Lazy]
 class ElementInventory extends Component
 {
     use WithPagination, WithFileUploads;

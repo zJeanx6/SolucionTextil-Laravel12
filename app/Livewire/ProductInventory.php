@@ -9,7 +9,7 @@ use App\Models\{Product, ProductType, Color, Size};
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\{Lazy, On, Url};
 
-#[Lazy]
+// #[Lazy]
 class ProductInventory extends Component
 {
     use WithPagination, WithFileUploads;

@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 use App\Models\{Product, Supplier, User, Ticket, TicketDetail, ExitDetail, ProductExit};
 use Livewire\Attributes\Lazy;
 
-#[Lazy]
+// #[Lazy]
 class ProductsMov extends Component
 {
     use WithPagination;
