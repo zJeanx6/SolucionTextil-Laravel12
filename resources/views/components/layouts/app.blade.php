@@ -11,17 +11,27 @@
                 'icon' => 'home',
                 'url' => route('dashboard'),
                 'current' => request()->routeIs('dashboard'),
-                'roles' => ['administrador'],  // Solo visible para administradores
+                'roles' => ['administrador', 'inventario', 'mantenimiento']  // Solo visible para administradores
             ],
+        ],
+        'Reportes' => [
+            // Sección de enlaces relacionada al los reportes
             [
-                'name' => 'Reportes de inventarios',
+                'name' => 'Movimientos',
                 'icon' => 'chart-pie',
                 'url' => route('admin.dashboard-inventory'),
                 'current' => request()->routeIs('admin.dashboard-inventory'),
-                'roles' => ['administrador', 'inventario'],  // Visible para administradores y personal de inventario
+                'roles' => ['administrador'],  // Visible para administradores y personal de inventario
             ],
+            [
+                'name'    => 'Inventarios',
+                'icon'    => 'users',
+                'url'     => route('admin.dashboard.reportes'),
+                'current' => request()->routeIs('admin.dashboard.reportes'),
+                'roles'   => ['administrador'],
+            ],            
         ],
-        'Inventario' => [
+        'Inventarios' => [
             // Sección de enlaces relacionada al inventario
             [
                 'name' => 'Elementos',
@@ -131,13 +141,6 @@
                 'roles'   => ['administrador'],
             ],
             [
-                'name'    => 'Reportes',
-                'icon'    => 'users',
-                'url'     => route('admin.inventory.reports'),
-                'current' => request()->routeIs('admin.inventory.reports'),
-                'roles'   => ['administrador'],
-            ],
-            [
                 'name'    => 'Roles',
                 'icon'    => 'user-group',
                 'url'     => route('admin.roles.index'),
@@ -155,9 +158,11 @@
     ];
 
     // Filtra los enlaces de 'Utilidades' según el rol del usuario
+    $ComplementoLinks0 = collect($groups['Reportes'])->filter(fn($link0) => in_array($userRole, $link0['roles']));
+    // Filtra los enlaces de 'Utilidades' según el rol del usuario
     $ComplementoLinks = collect($groups['Utilidades'])->filter(fn($link) => in_array($userRole, $link['roles']));
     // Filtra los enlaces de 'Inventario' según el rol del usuario
-    $ComplementoLinks2 = collect($groups['Inventario'])->filter(fn($link) => in_array($userRole, $link['roles']));
+    $ComplementoLinks2 = collect($groups['Inventarios'])->filter(fn($link) => in_array($userRole, $link['roles']));
     // Filtra los enlaces de 'Admin' según el rol del usuario
     $ComplementoLinks3 = collect($groups['Admin'])->filter(fn($link) => in_array($userRole, $link['roles']));
 @endphp
@@ -203,7 +208,7 @@
                     <x-app-logo />
                 </a>
             @elseif ($roleId === 2)
-                <a href="{{ route('admin.dashboard-inventory') }}" class="mr-5 flex items-center space-x-2">
+                <a href="{{ route('dashboard') }}" class="mr-5 flex items-center space-x-2">
                     <x-app-logo />
                 </a>
             @elseif ($roleId === 3)
@@ -222,16 +227,28 @@
                 <!-- Sección 'Menú de Navegación' -->
                 <flux:navlist.group :heading="'Menú de Navegación'" class="grid">
                     @foreach ($groups['Menú de Navegación'] as $link)      
-                        @if (in_array($userRole, $link['roles']))              
-                            <flux:navlist.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']">{{ $link['name'] }}</flux:navlist.item>
-                        @endif
+                    @if (in_array($userRole, $link['roles']))              
+                    <flux:navlist.item :icon="$link['icon']" :href="$link['url']" :current="$link['current']">{{ $link['name'] }}</flux:navlist.item>
+                    @endif
                     @endforeach
                 </flux:navlist.group>
+                
+                <!-- Sección 'Reportes' -->
+                @if($ComplementoLinks0->isNotEmpty())
+                    <flux:navlist.group expandable :heading="'Reportes'" :expanded="collect($groups['Reportes'])->contains(fn($link)=>$link['current'])" class="grid">
+                        @foreach ($groups['Reportes'] as $link0)
+                            @if (in_array($userRole, $link0['roles']))
+                                <flux:navlist.item :icon="$link0['icon']" :href="$link0['url']" :current="$link0['current']"
+                                    wire:navigate>{{ $link0['name'] }}</flux:navlist.item>
+                            @endif
+                        @endforeach
+                    </flux:navlist.group>
+                @endif  
 
                 <!-- Sección 'Inventario' -->
                 @if($ComplementoLinks2->isNotEmpty())
-                    <flux:navlist.group expandable :heading="'Inventario'" :expanded="collect($groups['Inventario'])->contains(fn($link)=>$link['current'])" class="grid">
-                        @foreach ($groups['Inventario'] as $link3)
+                    <flux:navlist.group expandable :heading="'Inventarios'" :expanded="collect($groups['Inventarios'])->contains(fn($link)=>$link['current'])" class="grid">
+                        @foreach ($groups['Inventarios'] as $link3)
                             @if (in_array($userRole, $link3['roles']))
                                 <flux:navlist.item :icon="$link3['icon']" :href="$link3['url']" :current="$link3['current']"
                                     wire:navigate>{{ $link3['name'] }}</flux:navlist.item>
