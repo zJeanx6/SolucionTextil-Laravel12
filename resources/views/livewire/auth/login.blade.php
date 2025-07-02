@@ -27,13 +27,21 @@ new #[Layout('components.layouts.auth')] class extends Component {
     public function login()
     {
         $this->validate();
-        
         $this->ensureIsNotRateLimited();
 
+        $user = User::where('email', $this->email)->first();
+
+        // Si el usuario existe Y tiene role_id = 4, haz como si no existiera
+        if ($user && $user->role_id == 4) {
+            RateLimiter::hit($this->throttleKey());
+            throw ValidationException::withMessages([
+                'email' => __('El correo electrónico no está registrado.'),
+            ]);
+        }
+
+        // Login normal
         if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             RateLimiter::hit($this->throttleKey());
-            
-            $user = User::where('email', $this->email)->first();
 
             if (!$user) {
                 throw ValidationException::withMessages([
@@ -58,20 +66,11 @@ new #[Layout('components.layouts.auth')] class extends Component {
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        switch ($user->role_id) {
-            case 1: // Admin
-                $this->redirect(route('dashboard'), navigate: true);
-                break;
-            case 2: // Inventario
-                $this->redirect(route('admin.dashboard-inventory'), navigate: true);
-                break;
-            case 3: // Mantenimiento
-                $this->redirect(route('admin.dashboard-maintenance'), navigate: true);
-                break;
-            default:
-                $this->redirect(route('home'), navigate: true);
-                break;
-        }
+    if (in_array($user->role_id, [1, 2, 3])) {
+        $this->redirect(route('dashboard'), navigate: true);
+    } else {
+        $this->redirect(route('home'), navigate: true);
+    }
     }
 
     /**
