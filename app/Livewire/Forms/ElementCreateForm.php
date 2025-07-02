@@ -79,9 +79,7 @@ class ElementCreateForm extends Form
             $rules['long']  = 'required|numeric|min:0.01';
             $rules['roll_count'] = 'required|integer|min:1|max:20';
             $rules['roll_codes'] = 'required|array|size:' . $this->roll_count;
-            foreach ($this->roll_codes as $k => $code) {
-                $rules["roll_codes.$k"] = 'required|digits_between:5,10|unique:rolls,code';
-            }
+            $rules['roll_codes.*'] = 'required|digits_between:5,10|distinct|unique:rolls,code';
         }
 
         return $rules;
@@ -148,6 +146,7 @@ class ElementCreateForm extends Form
             'roll_codes.*.required' => 'Debes ingresar el código para cada rollo.',
             'roll_codes.*.digits_between' => 'Cada código de rollo debe tener entre :min y :max dígitos.',
             'roll_codes.*.unique' => 'Ese código de rollo ya existe.',
+            'roll_codes.*.distinct' => 'No puedes repetir códigos de rollo.',
         ];
     }
 
@@ -176,16 +175,16 @@ class ElementCreateForm extends Form
 
         $path = $this->photo ? $this->photo->store('elements', 'public') : null;
 
+        $element = Element::create([
+            'code'            => $this->code,
+            'name'            => $this->name,
+            'stock'           => 0,
+            'color_id'        => $this->color_id,
+            'element_type_id' => $this->element_type_id,
+            'image'           => $path,
+        ]);
+
         if ($this->isMetrajeType()) {
-            $element = Element::create([
-                'code'            => $this->code,
-                'name'            => $this->name,
-                'stock'           => 0, // metraje no usa stock aquí
-                'color_id'        => $this->color_id,
-                'element_type_id' => $this->element_type_id,
-                'image'           => $path,
-            ]);
-            // Crear N rollos
             foreach ($this->roll_codes as $roll_code) {
                 Roll::create([
                     'code'         => $roll_code,
@@ -195,29 +194,8 @@ class ElementCreateForm extends Form
                     'state_id'     => 1, // Activo por defecto
                 ]);
             }
-        } else {
-            Element::create([
-                'code'            => $this->code,
-                'name'            => $this->name,
-                'stock'           => $this->stock,
-                'color_id'        => in_array('color_id', $this->visibleFields) ? $this->color_id : null,
-                'element_type_id' => $this->element_type_id,
-                'image'           => $path,
-            ]);
         }
 
-        $this->reset([
-            'code',
-            'name',
-            'stock',
-            'broad',
-            'long',
-            'color_id',
-            'element_type_id',
-            'photo',
-            'roll_count',
-            'roll_codes',
-            'visibleFields'
-        ]);
+        $this->reset();
     }
 }

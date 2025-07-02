@@ -38,25 +38,21 @@
             <thead class="head-table">
                 <tr>
                     <th class="head-table-item cursor-pointer" wire:click="sortBy('date')">
-                        Fecha
-                        @include('partials.sort-icon', ['field' => 'date'])
+                        Fecha @include('partials.sort-icon', ['field' => 'date'])
                     </th>
                     <th class="head-table-item cursor-pointer" wire:click="sortBy('type')">
-                        Tipo
-                        @include('partials.sort-icon', ['field' => 'type'])
+                        Tipo @include('partials.sort-icon', ['field' => 'type'])
                     </th>
                     <th class="head-table-item cursor-pointer" wire:click="sortBy('party')">
-                        Instructor / Proveedor
-                        @include('partials.sort-icon', ['field' => 'party'])
+                        Instructor / Proveedor @include('partials.sort-icon', ['field' => 'party'])
                     </th>
                     <th class="head-table-item cursor-pointer" wire:click="sortBy('user')">
-                        Registrado por
-                        @include('partials.sort-icon', ['field' => 'user'])
+                        Registrado por @include('partials.sort-icon', ['field' => 'user'])
                     </th>
                     <th class="head-table-item cursor-pointer" wire:click="sortBy('file')">
-                        Ficha / Ambiente
-                        @include('partials.sort-icon', ['field' => 'file'])
+                        Ficha / Ambiente @include('partials.sort-icon', ['field' => 'file'])
                     </th>
+                    <th class="head-table-item"> Detalle </th>
                 </tr>
             </thead>
             <tbody>
@@ -68,12 +64,14 @@
                         <td class="column-item">{{ $item->user }}</td>
                         <td class="column-item">
                             @if ($item->type === 'Compra')
-                                {{ $item->file ? $item->file : 'No aplica' }}
+                                {{ $item->file ?: 'No aplica' }}
                             @else
                                 {{ $item->file }}
                             @endif
                         </td>
-
+                        <td class="column-item">
+                            <flux:button size="xs" variant="filled" wire:click="openDetailModal({{ $item->movement_id }})"> Ver detalle </flux:button>
+                        </td>
                     </tr>
                 @empty
                     <tr>
@@ -357,4 +355,41 @@
 
     {{-- Trigger invisible para abrir el modal de devolución --}}
     <flux:modal.trigger name="return-modal" />
+
+      {{-- ——————————————— Modal Detalle de Movimiento ——————————————— --}}
+    <flux:modal name="detail-modal" wire:model.live.defer="showDetailModal" class="md:w-[600px]">
+        <div class="p-4 space-y-6">
+            <h3 class="text-lg font-semibold">{{ $detailTitle }}</h3>
+
+            @if (empty($detailItems))
+                <div class="text-gray-500 italic"> No hay ítems asociados. </div>
+            @else
+                <div class="div-table">
+                    <table class="table">
+                        <thead class="head-table">
+                            <tr>
+                                <th class="head-table-item"> Elemento </th>
+                                <th class="head-table-item text-right"> Cantidad / Metros </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($detailItems as $itm)
+                                <tr class="table-content">
+                                    <td class="column-item">{{ $itm['nombre'] }}</td>
+                                    <td class="column-item text-right">{{ $itm['cantidad'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+
+            <div class="flex justify-end">
+                <flux:button size="sm" variant="filled" wire:click="closeDetailModal"> Cerrar </flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    {{-- Trigger invisible para abrir el modal de detalle --}}
+    <flux:modal.trigger name="detail-modal" />
 </div>
