@@ -115,12 +115,17 @@
                                 <td class="column-item">
                                     <div class="two-actions">
                                         <flux:button.group>
-                                            <flux:button icon="document-magnifying-glass" size="sm" variant="filled"
-                                                wire:click="show({{ $element->code }})" />
-                                            <flux:button icon="pencil-square" size="sm" variant="filled"
-                                                wire:click="edit({{ $element->code }})" />
-                                            <flux:button icon="trash" size="sm" variant="danger"
-                                                wire:click="delete({{ $element->code }})" />
+                                            @if(auth()->user()->role_id === 1)
+                                                <flux:button icon="document-magnifying-glass" size="sm" variant="filled" wire:click="show({{ $element->code }})"/>
+                                            @else {{-- Estilo diferente sino es admin - Detalle --}}
+                                                <flux:button icon="document-magnifying-glass" size="sm" variant="filled" wire:click="show({{ $element->code }})"> Detalle </flux:button>
+                                            @endif
+
+                                            {{-- Solo para role_id = 1 (admin) --}}
+                                            @if(auth()->user()->role_id === 1)
+                                                <flux:button icon="pencil-square" size="sm" variant="filled" wire:click="edit({{ $element->code }})" />
+                                                <flux:button icon="trash" size="sm" variant="danger" wire:click="delete({{ $element->code }})" />
+                                            @endif
                                         </flux:button.group>
                                     </div>
                                 </td>

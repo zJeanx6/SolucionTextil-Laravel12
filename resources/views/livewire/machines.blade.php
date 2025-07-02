@@ -79,12 +79,17 @@
                         <td class="column-item">
                             <div class="two-actions">
                                 <flux:button.group>
-                                    <flux:button icon="document-magnifying-glass" size="sm" variant="primary"
-                                        wire:click="show({{ $machine->serial }})"></flux:button>
-                                    <flux:button icon="pencil-square" size="sm" variant="primary"
-                                        wire:click="edit({{ $machine->serial }})"></flux:button>
-                                    <flux:button icon="trash" size="sm" variant="danger"
-                                        wire:click="delete({{ $machine->serial }})"></flux:button>
+                                    @if(auth()->user()->role_id === 1)
+                                        <flux:button icon="document-magnifying-glass" size="sm" variant="filled" wire:click="show({{ $machine->code }})"/>
+                                    @else {{-- Estilo diferente sino es admin - Detalle --}}
+                                        <flux:button icon="document-magnifying-glass" size="sm" variant="filled" wire:click="show({{ $machine->code }})"> Detalle </flux:button>
+                                    @endif
+
+                                    {{-- Solo para role_id = 1 (admin) --}}
+                                    @if(auth()->user()->role_id === 1)
+                                        <flux:button icon="pencil-square" size="sm" variant="filled" wire:click="edit({{ $machine->code }})" />
+                                        <flux:button icon="trash" size="sm" variant="danger" wire:click="delete({{ $machine->code }})" />
+                                    @endif
                                 </flux:button.group>
                             </div>
                         </td>

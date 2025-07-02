@@ -98,16 +98,21 @@
                                 </flux:modal>
                             </td>
                             <td class="column-item">
-                                <div class="two-actions">
-                                    <flux:button.group>
-                                        <flux:button icon="document-magnifying-glass" size="sm" variant="filled"
-                                            wire:click="show({{ $product->code }})" />
-                                        <flux:button icon="pencil-square" size="sm" variant="filled"
-                                            wire:click="edit({{ $product->code }})" />
-                                        <flux:button icon="trash" size="sm" variant="danger"
-                                            wire:click="delete({{ $product->code }})" />
-                                    </flux:button.group>
-                                </div>
+                                    <div class="two-actions">
+                                        <flux:button.group>
+                                            @if(auth()->user()->role_id === 1)
+                                                <flux:button icon="document-magnifying-glass" size="sm" variant="filled" wire:click="show({{ $product->code }})"/>
+                                            @else {{-- Estilo diferente sino es admin - Detalle --}}
+                                                <flux:button icon="document-magnifying-glass" size="sm" variant="filled" wire:click="show({{ $product->code }})"> Detalle </flux:button>
+                                            @endif
+
+                                            {{-- Solo para role_id = 1 (admin) --}}
+                                            @if(auth()->user()->role_id === 1)
+                                                <flux:button icon="pencil-square" size="sm" variant="filled" wire:click="edit({{ $product->code }})" />
+                                                <flux:button icon="trash" size="sm" variant="danger" wire:click="delete({{ $product->code }})" />
+                                            @endif
+                                        </flux:button.group>
+                                    </div>
                             </td>
                         </tr>
                     @endforeach
