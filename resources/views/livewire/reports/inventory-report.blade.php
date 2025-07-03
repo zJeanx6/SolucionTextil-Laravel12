@@ -152,6 +152,7 @@
                             <th class="px-4 py-2">Tipo mant.</th>
                             <th class="px-4 py-2">Fecha</th>
                             <th class="px-4 py-2">Técnico</th>
+                            <th class="px-4 py-2">Detalles Tipo Mant.</th>
                             @break
                     @endswitch
                 </tr>
@@ -187,9 +188,10 @@
                             @case('maintenances')
                                 <td class="px-4 py-1">{{ $row->id }}</td>
                                 <td class="px-4 py-1">{{ $row->machine?->serial }}</td>
-                                <td class="px-4 py-1">{{ $row->type?->name }}</td>
+                                <td class="px-4 py-1">{{ $row->type }}</td>
                                 <td class="px-4 py-1">{{ $row->created_at?->format('Y-m-d') }}</td>
                                 <td class="px-4 py-1">{{ $row->user?->name }}</td>
+                                <td class="px-4 py-1">{{ implode(', ', $row->details->pluck('type.name')->toArray()) }}</td>
                                 @break
                         @endswitch
                     </tr>

@@ -14,6 +14,7 @@ class MaintenanceType extends Model
 
     protected $fillable = [
         'name',
+        'type',
         'description',
     ];
 

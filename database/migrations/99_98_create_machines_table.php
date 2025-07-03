@@ -34,12 +34,17 @@ return new class extends Migration
         Schema::create('maintenance_types', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
+            $table->string('type');
             $table->longText('description')->nullable();
         });
 
         Schema::create('maintenances', function (Blueprint $table) {
             $table->id();
-            $table->enum('maintenance_type', ['Correctivo', 'Preventivo']);
+            $table->enum('type', ['Correctivo', 'Preventivo']);
+            $table->text('description')->nullable();
+            $table->date('maintenance_date')->nullable();
+            $table->date('next_maintenance_date')->nullable();
+
 
             //Config laravel
             $table->timestamps();
@@ -57,9 +62,6 @@ return new class extends Migration
 
         Schema::create('maintenance_details', function (Blueprint $table) {
             $table->id();
-            $table->text('description')->nullable();
-            $table->date('maintenance_date')->nullable();
-            $table->date('next_maintenance_date')->nullable();
 
             //ForeignsKeys
             $table->unsignedBigInteger('maintenance_id')->nullable();

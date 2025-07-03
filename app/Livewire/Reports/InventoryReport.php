@@ -110,8 +110,8 @@ class InventoryReport extends Component
 
             case 'maintenances':
                 $query = Maintenance::query()
-                    ->with(['machine', 'type', 'user'])
-                    ->when($this->filters['maintenance_type_id'], fn($q, $id) => $q->where('id', $id))
+                    ->with(['machine', 'type', 'user', 'details.type'])  // Añadimos las relaciones necesarias
+                    ->when($this->filters['maintenance_type_id'], fn($q, $id) => $q->where('type', $id))
                     ->when($this->filters['user_id'], fn($q, $id) => $q->where('user_id', $id))
                     ->when($this->filters['start'], fn($q, $d) => $q->whereDate('created_at', '>=', $d))
                     ->when($this->filters['end'], fn($q, $d) => $q->whereDate('created_at', '<=', $d));
@@ -154,8 +154,8 @@ class InventoryReport extends Component
                         break;
 
                     case 'maintenances':
-                        $query = Maintenance::query()->with(['machine', 'maintenanceType', 'user'])
-                            ->when($this->filters['maintenance_type_id'], fn($q, $id) => $q->where('id', $id))
+                        $query = Maintenance::query()->with(['machine', 'type', 'user', 'details.type'])
+                            ->when($this->filters['maintenance_type_id'], fn($q, $id) => $q->where('type', $id))
                             ->when($this->filters['user_id'], fn($q, $id) => $q->where('user_id', $id))
                             ->when($this->filters['start'], fn($q, $d) => $q->whereDate('created_at', '>=', $d))
                             ->when($this->filters['end'], fn($q, $d) => $q->whereDate('created_at', '<=', $d));
@@ -173,7 +173,7 @@ class InventoryReport extends Component
                     'products' => ['Código', 'Nombre', 'Stock', 'Tipo', 'Color', 'Talla'],
                     'elements' => ['Código', 'Nombre', 'Stock', 'Tipo', 'Color'],
                     'machines' => ['Serial', 'Tipo', 'Marca', 'Estado'],
-                    'maintenances' => ['ID', 'Serial Máquina', 'Tipo Mant.', 'Fecha', 'Técnico'],
+                    'maintenances' => ['ID', 'Serial Máquina', 'Tipo Mant.', 'Fecha', 'Técnico', 'Detalles Tipo Mant.'],
                     default => [],
                 };
             }
@@ -205,9 +205,10 @@ class InventoryReport extends Component
                     'maintenances' => [
                         $row->id,
                         $row->machine?->serial,
-                        $row->type?->name,
+                        $row->type,
                         $row->created_at?->format('Y-m-d'),
                         $row->user?->name,
+                        implode(', ', $row->details->pluck('type.name')->toArray())  // Mostramos los detalles concatenados
                     ],
                     default => [],
                 };

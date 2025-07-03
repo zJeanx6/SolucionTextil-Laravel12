@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Maintenance extends Model
 {
-    /** @use HasFactory<\Database\Factories\MaintenanceFactory> */
     use HasFactory;
 
     protected $fillable = [
-        'maintenance_type',
+        'type',
+        'description',
+        'maintenance_date',
+        'next_maintenance_date',
         'serial_id',
         'card_id',
         'state_id',
@@ -29,7 +31,7 @@ class Maintenance extends Model
 
     public function type()
     {
-        return $this->belongsTo(MaintenanceType::class, 'maintenance_type');
+        return $this->belongsTo(MaintenanceType::class, 'type', 'name'); // Ajuste de relación
     }
 
     public function state()

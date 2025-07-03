@@ -9,66 +9,86 @@ use App\Models\MaintenanceDetail;
 use App\Models\MaintenanceType;
 use App\Models\Maintenance;
 use App\Models\User;
+use App\Models\State;  // Importar la clase State
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-//libreria de laravel que permite trabajar con fechas de manera sencilla
 
 class MakeMaintenance extends Component
 {
     use WithPagination;
 
-    public $view = 'index'; //Variable que maneja la vista 
-    public $search = '';//Almacena la busqueda
-    public $showAll = 'false';//Mantiene esta variable en falso para que solo se muestre su informacion cuando el boton lo requiera
-    public $selectedMachine; //Almacena la maquina a la cual se le va a hacer el mantenimiento
+    public $view = 'index'; 
+    public $search = ''; 
+    public $showAll = false; 
+    public $selectedMachine; 
 
-    // Campos para el formulario que se utilizan como variables publicas
+    // Campos para el formulario que se utilizan como variables públicas
     public $maintenance_date;
     public $next_maintenance_date;
     public $description;
-    public $maintenance_type_id;
+    public $maintenance_type = 'Correctivo'; // Por defecto, el mantenimiento es de tipo 'Correctivo'
+    public $maintenance_types = []; 
+    public $maintenance_type_id = []; 
+    public $state_id; // Para el estado de la máquina seleccionado
 
-    //Metodo que se ejecuta al iniciar el componente
+    // Método que se ejecuta al iniciar el componente
     public function mount()
     {
-        //Se inicializa la fecha actual y la proxima fecha de mantenimiento por defecto un mes despues
         $this->maintenance_date = now()->format('Y-m-d');
         $this->next_maintenance_date = now()->addMonth()->format('Y-m-d');
-        $this->showAll = false;//Por defecto no de muestran todas mas maquinas
+        $this->showAll = false; 
+        $this->updateMaintenanceTypes(); 
     }
 
-    //Vuelve a la viats del indexxc
+    // Método para actualizar los tipos de mantenimiento basados en el tipo seleccionado
+    public function updateMaintenanceTypes()
+    {
+        $this->maintenance_types = MaintenanceType::where('type', $this->maintenance_type)->get();
+    }
+
+    // Método para actualizar el estado de la máquina seleccionado
+    public function updateMachineState()
+    {
+        $machine = Machine::find($this->selectedMachine->serial);
+        $machine->update([
+            'state_id' => $this->state_id // Actualiza el estado de la máquina
+        ]);
+    }
+
+    // Vuelve a la vista del índice
     public function index()
     {
-       $this->view = 'index';
+        $this->view = 'index';
         $this->reset();
     }
 
-    //Alterna entre mostrar todas las máquinas o solo las que necesitan mantenimiento
+    // Alterna entre mostrar todas las máquinas o solo las que necesitan mantenimiento
     public function toggleShowAll()
     {
-        $this->showAll = !$this->showAll;//Cambia el estado de la variable showAll
-        $this->resetPage(); // Reiniciar la paginación al cambiar el filtro
+        $this->showAll = !$this->showAll; 
+        $this->resetPage();
     }
 
-    //Muestra la vista de mantenimiento para una máquina específica
+    // Muestra la vista de mantenimiento para una máquina específica
     public function showCreateForm($serial)
     {
-        $this->reset(['maintenance_type_id', 'maintenance_date', 'next_maintenance_date', 'description']);//Resetea las variables del formulario
-        $this->view = 'create';//Cambia la vista a 'create'
-        $this->selectedMachine = Machine::find($serial);//Busca la maquina por su serial
-        $this->maintenance_date = now()->format('Y-m-d'); // Establece la fecha de mantenimiento a la fecha actual
+        $this->reset(['maintenance_type', 'maintenance_date', 'next_maintenance_date', 'description', 'state_id']); 
+        $this->view = 'create';
+        $this->selectedMachine = Machine::find($serial); 
+        $this->maintenance_date = now()->format('Y-m-d');
+        $this->updateMaintenanceTypes(); 
     }
 
-    //Guarda el mantenimiento de la máquina seleccionada
+    // Guarda el mantenimiento de la máquina seleccionada
     public function saveMaintenance()
     {
-        // Validar los campos del formulario
         $this->validate([
-            'maintenance_type_id' => 'required|exists:maintenance_types,id',
+            'maintenance_type_id' => 'required|array',
+            'maintenance_type_id.*' => 'exists:maintenance_types,id',
             'maintenance_date' => 'required|date',
             'next_maintenance_date' => 'required|date|after:maintenance_date',
-            'description' => 'required|string|max:500'
+            'description' => 'required|string|max:500',
+            'state_id' => 'required|exists:states,id' // Validar el estado
         ]);
 
         // Verificar si el usuario está autenticado
@@ -78,73 +98,54 @@ class MakeMaintenance extends Component
             return;
         }
 
-        // Registrar en la tabla maintenances
+        // Registrar el mantenimiento en la tabla maintenances
         $maintenance = Maintenance::create([
-            'maintenance_type_id' => $this->maintenance_type_id,
             'serial_id' => $this->selectedMachine->serial,
-            'card_id' => $user->card, // ahora seguro
-            'state_id' => 1 // Estado "Completado"
-        ]);
-
-        // Registrar detalles técnicos en la tabla maintenance_details
-        MaintenanceDetail::create([
-            'maintenance_id' => $maintenance->id,
-            'maintenance_type_id' => $this->maintenance_type_id,
+            'card_id' => $user->card,
+            'state_id' => $this->state_id, // Guardamos el estado seleccionado
             'description' => $this->description,
             'maintenance_date' => $this->maintenance_date,
-            'next_maintenance_date' => $this->next_maintenance_date
+            'next_maintenance_date' => $this->next_maintenance_date,
+            'type' => $this->maintenance_type // Guardamos el tipo seleccionado
         ]);
 
-        // Actualizar máquina
+        // Registrar los detalles del mantenimiento (tipos de mantenimiento)
+        foreach ($this->maintenance_type_id as $typeId) {
+            MaintenanceDetail::create([
+                'maintenance_id' => $maintenance->id,
+                'maintenance_type_id' => $typeId,
+            ]);
+        }
+
+        // Actualizar el estado de la máquina
+        $this->updateMachineState();
+
+        // Actualizar la máquina con la última fecha de mantenimiento
         $this->selectedMachine->update([
             'last_maintenance' => $this->maintenance_date
         ]);
 
         session()->flash('success', 'Mantenimiento registrado exitosamente.');
-        $this->view = 'index'; // Volver a la vista de índice después de guardar
-    }
-
-    public function updatedMaintenanceDate($value)
-    {
-        $maintenanceDate = Carbon::parse($value);
-        $minNextDate = $maintenanceDate->addDay()->format('Y-m-d');
-        
-        // Actualiza la próxima fecha si es menor que la fecha mínima permitida
-        if ($this->next_maintenance_date < $minNextDate) {
-            $this->next_maintenance_date = $minNextDate;
-        }
-    }
-
-    // Define las reglas de validación para el formulario
-    protected function rules()
-    {
-        $minDate = $this->maintenance_date 
-            ? Carbon::parse($this->maintenance_date)->addDay()->format('Y-m-d')
-            : Carbon::tomorrow()->format('Y-m-d');
-
-        return [
-            'maintenance_date' => 'required|date',
-            'next_maintenance_date' => ['required','date','after_or_equal:'.$minDate],
-        ];
+        $this->view = 'index';
     }
 
     public function render()
     {
         $query = Machine::query()
             ->with(['maintenances' => fn($q) => $q->latest()])
-            ->when($this->search, fn($q) => $q->where('serial', 'like', '%'.$this->search.'%'));
+            ->when($this->search, fn($q) => $q->where('serial', 'like', '%' . $this->search . '%'));
 
         if (!$this->showAll) {
-            $query->where(function($q) {
+            $query->where(function ($q) {
                 $q->whereNull('last_maintenance')
-                ->orWhere('last_maintenance', '<', now()->subDays(30));
+                    ->orWhere('last_maintenance', '<', now()->subDays(30));
             });
         }
 
         return view('livewire.make-maintenance', [
-            'machines' => $query->paginate(10),
-            'maintenanceTypes' => MaintenanceType::all()
+            'machines' => $query->paginate(12),
+            'maintenanceTypes' => MaintenanceType::all(),
+            'states' => State::whereIn('id', [3, 4, 5])->get() // Filtrar los estados 3, 4 y 5
         ]);
     }
-
 }
