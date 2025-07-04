@@ -153,10 +153,10 @@
         <div class="w-full lg:w-1/2 flex flex-col gap-4">
             <div>
                 <label>Estado</label>
-                <flux:select wire:model="state_id" class="hover-input w-full px-3 py-2 border border-gray-300 rounded-md">
-                    <option value="">Selecciona un estado</option>
+                <flux:select wire:model="state_id">
+                    <flux:select.option value="">Selecciona un estado</flux:select.option>
                     @foreach ($states as $state)
-                        <option value="{{ $state->id }}">{{ $state->name }}</option>
+                        <flux:select.option value="{{ $state->id }}">{{ $state->name }}</flux:select.option>
                     @endforeach
                 </flux:select>
             </div>
