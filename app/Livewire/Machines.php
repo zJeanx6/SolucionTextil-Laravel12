@@ -241,7 +241,7 @@ public function update()
     //Se ejecuta cuando se monta el componente
     public function mount()
     {
-        $this->states = State::all();//Carga los estados una vez para el select
+        $this->states = State::whereIn('id',[3,4,5])->orderBy('name')->get();//Carga los estados una vez para el select
     }
 
     //Renderiza la vista con los datos
@@ -301,7 +301,9 @@ public function update()
     public function saveNewType()
     {
         $this->validate([
-            'newMachineTypeName' => 'required|string|max:100',
+            'newMachineTypeName' => 'required|string|min:3|max:100',
+        ], [], [
+            'newMachineTypeName' => 'nombre del tipo de máquina',
         ]);
 
         $type = \App\Models\MachineType::create([
@@ -319,7 +321,9 @@ public function update()
     public function saveNewBrand()
     {
         $this->validate([
-            'newBrandName' => 'required|string|max:100',
+            'newBrandName' => 'required|string|min:3|max:100',
+        ], [], [
+            'newBrandName' => 'nombre de la marca',
         ]);
 
         $brand = \App\Models\Brand::create([

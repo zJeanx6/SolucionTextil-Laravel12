@@ -384,10 +384,6 @@
 
                 <flux:input type="text" wire:model="newMachineTypeName" label="Nombre del tipo" />
 
-                @error('newMachineTypeName')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-
                 <div class="mt-6 flex justify-end gap-3">
                     <flux:button wire:click="$set('showNewTypeModal', false)" size="sm" variant="outline">Cancelar</flux:button>
                     <flux:button wire:click="saveNewType" size="sm" variant="primary">Crear</flux:button>
@@ -403,10 +399,6 @@
                 <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Crear nueva marca</h2>
 
                 <flux:input type="text" wire:model="newBrandName" label="Nombre de la marca" />
-
-                @error('newBrandName')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
 
                 <div class="mt-6 flex justify-end gap-3">
                     <flux:button wire:click="$set('showNewBrandModal', false)" size="sm" variant="outline">Cancelar</flux:button>
