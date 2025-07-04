@@ -39,6 +39,18 @@ class ProductInventory extends Component
     // Extra para editar
     public $code_edit = '';
 
+    //modales
+    public $showNewTypeModal = false;
+    public $showNewColorModal = false;
+    public $showNewSizeModal = false;
+
+    // Nuevos colores y tipos
+    public $newProductTypeName = '';
+    public $newColorName = '';
+    public $newColorCode = ''; // Esta propiedad almacena el valor hexadecimal
+    public $newSizeName = '';
+    public $newSizeAbbreviation = ''; // Añadir esta propiedad para la abreviatura
+
     // --- Métodos de ciclo de vida ---
     public function mount(): void
     {
@@ -260,6 +272,7 @@ class ProductInventory extends Component
             'unique'   => 'Ese código ya está registrado.',
             'exists'   => 'El valor seleccionado no existe.',
             'digits_between' => 'El código debe tener entre :min y :max dígitos.',
+            'newColorCode.max' => 'El código de color no puede exceder los 7 caracteres.',
         ];
     }
 
@@ -274,6 +287,88 @@ class ProductInventory extends Component
             'size_id'         => 'talla',
             'product_type_id' => 'tipo de producto',
             'photo'           => 'imagen',
+            'newColorCode'    => 'código de color',
+            'newColorName'    => 'nombre del color',
         ];
+    }
+
+    public function updatedProductTypeId($value)
+    {
+        if ($value === 'new_type') {
+            $this->product_type_id = '';
+            $this->showNewTypeModal = true;
+        }
+    }
+
+    public function updatedSizeId($value)
+    {
+        if ($value === 'new_size') {
+            $this->size_id = '';
+            $this->showNewSizeModal = true;
+        }
+    }
+
+    public function updatedColorId($value)
+    {
+        if ($value === 'new_color') {
+            $this->color_id = '';
+            $this->showNewColorModal = true;
+        }
+    }
+    
+    public function saveNewColor()
+    {
+        $this->validate([
+            'newColorName' => 'required|string|min:2|max:50',
+            'newColorCode' => 'required|string|max:7',
+        ]);
+        
+        $colorCode = substr($this->newColorCode, 0, 7); 
+
+        $color = Color::create([
+            'code' => $colorCode, // Usamos newColorCode para el valor hexadecimal
+            'name' => $this->newColorName,
+        ]);
+
+        $this->colors = Color::orderBy('name')->get();
+        $this->reset(['newColorName', 'newColorCode']); // Resetear los campos del formulario
+        $this->color_id = $color->id; // El ID es asignado automáticamente por la base de datos
+        $this->showNewColorModal = false;
+
+        $this->dispatch('event-notify', 'Color creado correctamente');
+    }
+
+    public function saveNewSize()
+    {
+        $this->validate([
+            'newSizeName' => 'required|string|min:1|max:50',
+        ]);
+        
+        $size = Size::create([
+            'name' => $this->newSizeName,
+            'abbreviation' => $this->newSizeAbbreviation ?? null, // Añadir abreviatura si existe
+        ]);
+
+        $this->sizes = Size::orderBy('name')->get();
+        $this->reset(['newSizeName', 'newSizeAbbreviation']); // Resetear ambos campos
+        $this->size_id = $size->id;
+        $this->showNewSizeModal = false;
+
+        $this->dispatch('event-notify', 'Talla creada correctamente');
+    }
+
+    public function saveNewType()
+    {
+        $type = ProductType::create([
+            'name' => $this->newProductTypeName,
+        ]);
+
+        $this->productTypes = ProductType::orderBy('name')->get();
+        $this->newProductTypeName = '';
+        $this->product_type_id = $type->id;
+
+        $this->showNewTypeModal = false;
+
+        $this->dispatch('event-notify', 'Tipo creado correctamente');
     }
 }

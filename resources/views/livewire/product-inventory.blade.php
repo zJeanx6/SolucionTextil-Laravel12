@@ -132,18 +132,21 @@
                         @foreach ($productTypes as $type)
                             <flux:select.option value="{{ $type->id }}">{{ $type->name }}</flux:select.option>
                         @endforeach
+                        <flux:select.option value="new_type">+ Crear nuevo tipo de producto</flux:select.option>
                     </flux:select>
                     <flux:select wire:model.live="size_id">
                         <flux:select.option value="">Talla</flux:select.option>
                         @foreach ($sizes as $size)
                             <flux:select.option value="{{ $size->id }}">{{ $size->abbreviation ?? $size->name }}</flux:select.option>
                         @endforeach
+                        <flux:select.option value="new_size">+ Crear nueva talla</flux:select.option>
                     </flux:select>
                     <flux:select wire:model.live="color_id">
                         <flux:select.option value="">Color</flux:select.option>
                         @foreach ($colors as $color)
                             <flux:select.option value="{{ $color->id }}">{{ $color->name }}</flux:select.option>
                         @endforeach
+                        <flux:select.option value="new_color">+ Crear nuevo color</flux:select.option>
                     </flux:select>
 
                     {{-- Imagen --}}
@@ -305,4 +308,68 @@
             </div>
         </div>
     @endif
+    {{-- NUEVO TIPO DE PRODUCTO --}}
+    @if ($showNewTypeModal)
+        <flux:modal name="new-product-type-modal" wire:model.live.defer="showNewTypeModal" class="max-w-md">
+            <div class="p-6 w-full">
+                <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Crear nuevo tipo de producto</h2>
+
+                <flux:input type="text" wire:model.live="newProductTypeName" label="Nombre del tipo" />
+                @error('newProductTypeName')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <flux:button wire:click="$set('showNewTypeModal', false)" size="sm" variant="outline">Cancelar</flux:button>
+                    <flux:button wire:click="saveNewType" size="sm" variant="primary">Crear</flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endif
+
+
+    {{-- NUEVA TALLA --}}
+    @if ($showNewSizeModal)
+        <flux:modal name="new-size-modal" wire:model.live.defer="showNewSizeModal" class="max-w-md">
+            <div class="p-6 w-full">
+                <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Crear nueva talla</h2>
+
+                <flux:input type="text" wire:model.live="newSizeName" label="Nombre de la talla" />
+                <flux:input type="text" wire:model.live="newSizeAbbreviation" label="Abreviatura" />
+
+                @error('newSizeName')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <flux:button wire:click="$set('showNewSizeModal', false)" size="sm" variant="outline">Cancelar</flux:button>
+                    <flux:button wire:click="saveNewSize" size="sm" variant="primary">Crear</flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endif
+
+
+    {{-- NUEVO COLOR --}}
+    @if ($showNewColorModal)
+        <flux:modal name="new-color-modal" wire:model.live.defer="showNewColorModal" class="max-w-md">
+            <div class="p-6 w-full">
+                <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Crear nuevo color</h2>
+
+                <flux:input type="text" wire:model.live="newColorName" label="Nombre del color"/>
+                <flux:input type="text" wire:model.live="newColorCode" label="Código del color" placeholder="p. ej. #FFFFFF" />
+
+                @error('newColorName')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <flux:button wire:click="$set('showNewColorModal', false)" size="sm" variant="outline">Cancelar</flux:button>
+                    <flux:button wire:click="saveNewColor" size="sm" variant="primary">Crear</flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endif
+
+
 </div>
