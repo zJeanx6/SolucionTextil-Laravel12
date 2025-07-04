@@ -173,6 +173,7 @@
                             {{ $sp->name }}
                         </flux:select.option>
                     @endforeach
+                    <flux:select.option value="new_supplier">+ Crear nuevo proveedor</flux:select.option>
                 </flux:select>
 
                 {{-- 4. Botones de acción --}}
@@ -392,4 +393,44 @@
 
     {{-- Trigger invisible para abrir el modal de detalle --}}
     <flux:modal.trigger name="detail-modal" />
+
+    @if ($showNewSupplierModal)
+        <flux:modal name="new-supplier-modal" wire:model.live.defer="showNewSupplierModal" class="max-w-3xl">
+            <div class="p-6 w-full">
+                <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Crear nuevo proveedor</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <flux:input label="NIT" type="text" wire:model.live="newSupplierNit" />
+                    <flux:input label="Nombre del proveedor" type="text" wire:model.live="newSupplierName" />
+
+                    <flux:select wire:model.live="newSupplierPersonType" label="Tipo de persona">
+                        <option value="">Seleccione una opción</option>
+                        <option value="Natural">Natural</option>
+                        <option value="Juridica">Jurídica</option>
+                    </flux:select>
+                    <div></div>
+
+                    <flux:input label="Correo electrónico" type="email" wire:model.live="newSupplierEmail" />
+                    <flux:input label="Teléfono" type="text" wire:model.live="newSupplierPhone" />
+                </div>
+
+                {{-- Campos de representante, solo si es jurídica --}}
+                @if ($newSupplierShowJuridica)
+                    <hr class="my-4 border-gray-400" />
+                    <h3 class="text-md font-semibold text-gray-700 dark:text-white mb-2">Datos del representante</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <flux:input label="Nombre del representante" type="text" wire:model.live="newSupplierRepName" />
+                        <flux:input label="Correo del representante" type="email" wire:model.live="newSupplierRepEmail" />
+                        <flux:input label="Teléfono del representante" type="text" wire:model.live="newSupplierRepPhone" />
+                    </div>
+                @endif
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <flux:button wire:click="$set('showNewSupplierModal', false)" size="sm" variant="outline">Cancelar</flux:button>
+                    <flux:button wire:click="saveNewSupplier" size="sm" variant="primary">Crear</flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endif
 </div>

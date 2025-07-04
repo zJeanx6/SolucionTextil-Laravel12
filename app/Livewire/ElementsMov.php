@@ -65,6 +65,16 @@ class ElementsMov extends Component
     public string $sortField     = 'date';
     public string $sortDirection = 'desc';
 
+    //Campos para crear un nuevo proveedor
+    public $showNewSupplierModal = false; //Controla la visibilidad del modal para crear un nuevo proveedor
+    public $newSupplierNit, $newSupplierName, $newSupplierPersonType, $newSupplierEmail, $newSupplierPhone;
+    public $newSupplierRepName, $newSupplierRepEmail, $newSupplierRepPhone;
+    public $newSupplierShowJuridica = false;
+    public $supplier_nit = '';
+    //public $ingresoSupplierNit = '';
+
+
+
     protected $queryString = [
         'search'        => ['except' => ''],
         'typeFilter'    => ['except' => ''],
@@ -644,4 +654,81 @@ class ElementsMov extends Component
 
         $this->dispatch('event-notify', 'Herramienta devuelta y stock repuesto.');
     }
+
+    // ————— Crear nuevo proveedor —————//
+    public function updatedSupplierNit($value)
+    {
+        if ($value === 'new_supplier') {
+            $this->supplier_nit = '';
+            $this->showNewSupplierModal = true;
+            return;
+        }
+
+        $this->newSupplierShowJuridica = false;
+    }
+
+    public function updatedIngresoSupplierNit($value)
+    {
+        if ($value === 'new_supplier') {
+            $this->ingresoSupplierNit = '';
+            $this->showNewSupplierModal = true;
+        }
+    }
+
+    public function updatedNewSupplierPersonType($value)
+    {
+        $this->newSupplierShowJuridica = ($value === 'Juridica');
+    }
+
+    public function saveNewSupplier()
+    {
+        $rules = [
+            'newSupplierNit' => 'required|min:3|max:50|unique:suppliers,nit',
+            'newSupplierName' => 'required|min:3|max:50',
+            'newSupplierPersonType' => 'required|in:Natural,Juridica',
+            'newSupplierEmail' => 'required|email|max:50',
+            'newSupplierPhone' => 'required|min:3|max:50',
+        ];
+
+        if ($this->newSupplierPersonType === 'Juridica') {
+            $rules += [
+                'newSupplierRepName' => 'required|min:3|max:50',
+                'newSupplierRepEmail' => 'required|email|max:50',
+                'newSupplierRepPhone' => 'required|min:3|max:50',
+            ];
+        }
+
+        $this->validate($rules);
+
+        $data = [
+            'nit' => $this->newSupplierNit,
+            'name' => $this->newSupplierName,
+            'person_type' => $this->newSupplierPersonType,
+            'email' => $this->newSupplierEmail,
+            'phone' => $this->newSupplierPhone,
+        ];
+
+        if ($this->newSupplierPersonType === 'Juridica') {
+            $data += [
+                'representative_name' => $this->newSupplierRepName,
+                'representative_email' => $this->newSupplierRepEmail,
+                'representative_phone' => $this->newSupplierRepPhone,
+            ];
+        }
+
+        \App\Models\Supplier::create($data);
+
+        $this->dispatch('event-notify', 'Proveedor creado correctamente.');
+
+        $this->suppliers = \App\Models\Supplier::orderBy('name')->get();
+        $this->supplier_nit = $this->newSupplierNit;
+
+        // Resetea y cierra modal
+        $this->reset([
+            'newSupplierNit', 'newSupplierName', 'newSupplierPersonType', 'newSupplierEmail', 'newSupplierPhone',
+            'newSupplierRepName', 'newSupplierRepEmail', 'newSupplierRepPhone', 'newSupplierShowJuridica'
+        ]);
+        $this->showNewSupplierModal = false;
+    }
+
 }
