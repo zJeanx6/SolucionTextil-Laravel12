@@ -7,17 +7,22 @@ use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use App\Models\ProductType;
+use App\Models\Size;
+use App\Models\Color;
 use App\Models\{Product, Supplier, User, Ticket, TicketDetail, ExitDetail, ProductExit};
+use Livewire\WithFileUploads;
 use Livewire\Attributes\Lazy;
 
 // #[Lazy]
 class ProductsMov extends Component
 {
-    use WithPagination;
+    use WithPagination , WithFileUploads;
 
     // Modales
     public bool $showIngresoModal = false;
     public bool $showSalidaModal  = false;
+    public bool $showCreateModal = false;
 
     // Datos ingreso
     public $ingresoProductCode = '';
@@ -39,6 +44,13 @@ class ProductsMov extends Component
     public $products   = [];
     public $suppliers  = [];
     public $receivers  = [];
+    public $productTypes = [];
+    public $sizes = [];
+    public $colors = [];
+
+    //Campos de creacion de productos
+    public $product_type_id, $size_id, $color_id, $code, $name, $stock, $photo;
+
 
     protected $queryString = [
         'search'        => ['except' => ''],
@@ -53,6 +65,7 @@ class ProductsMov extends Component
         $this->products  = Product::orderBy('name')->get();
         $this->suppliers = Supplier::orderBy('name')->get();
         $this->receivers = User::orderBy('name')->get();
+        $this->loadData();
     }
 
     public function placeholder()
@@ -216,4 +229,74 @@ class ProductsMov extends Component
         $this->dispatch('event-notify', 'Salida registrada con éxito.');
         $this->closeSalidaModal();
     }
+        public function loadData()
+    {
+        $this->productTypes = ProductType::orderBy('name')->get();
+        $this->sizes = Size::orderBy('name')->get();
+        $this->colors = Color::orderBy('name')->get();
+    }
+
+    public function updatedProductTypeId($value)
+    {
+        if ($value === 'new_type') {
+            $this->dispatch('open-new-type-modal');
+            $this->product_type_id = '';
+        }
+    }
+
+    public function updatedSizeId($value)
+    {
+        if ($value === 'new_size') {
+            $this->dispatch('open-new-size-modal');
+            $this->size_id = '';
+        }
+    }
+
+    public function updatedColorId($value)
+    {
+        if ($value === 'new_color') {
+            $this->dispatch('open-new-color-modal');
+            $this->color_id = '';
+        }
+    }
+
+    public function save()
+    {
+        $this->validate([
+            'product_type_id' => 'required|exists:product_types,id',
+            'size_id' => 'required|exists:sizes,id',
+            'color_id' => 'required|exists:colors,id',
+            'code' => 'required|numeric|unique:products,code',
+            'name' => 'required|string|max:255',
+            'stock' => 'required|integer|min:0',
+            'photo' => 'nullable|image|max:2048'
+        ]);
+
+        $photoPath = $this->photo ? $this->photo->store('products', 'public') : null;
+
+        Product::create([
+            'product_type_id' => $this->product_type_id,
+            'size_id' => $this->size_id,
+            'color_id' => $this->color_id,
+            'code' => $this->code,
+            'name' => $this->name,
+            'stock' => $this->stock,
+            'photo_path' => $photoPath,
+        ]);
+
+        $this->reset(['product_type_id', 'size_id', 'color_id', 'code', 'name', 'stock', 'photo', 'showCreateModal']);
+
+        $this->dispatch('event-notify', 'Producto creado correctamente.');
+        $this->dispatch('productCreated');
+    }
+
+    public function updatedIngresoProductCode($value)
+    {
+        if ($value === 'new_product') {
+            $this->ingresoProductCode = ''; // Limpia para que no quede en el select
+            $this->showCreateModal = true;  // Muestra el modal
+        }
+    }
+
+
 }
