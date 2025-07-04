@@ -27,6 +27,21 @@ class Machines extends Component
     public $modelSelected = null; //Filtro por tipo de maquina
     public $states; //Lista de estados para el select
 
+    //Modales 
+    public $showNewTypeModal = false; //Controla la visibilidad del modal para crear un nuevo tipo de máquina
+    public $showNewBrandModal = false; //Controla la visibilidad del modal para crear una nueva marca
+    public $showNewSupplierModal = false; //Controla la visibilidad del modal para crear un nuevo proveedor
+
+    public $machineTypes = []; //Lista de tipos de máquinas
+    public $brands = []; //Lista de marcas
+    public $suppliers = []; //Lista de proveedores
+    //Campos para crear un nuevo proveedor respetando el tipo de persona
+    public $newMachineTypeName = '';
+    public $newBrandName = '';
+    public $newSupplierNit, $newSupplierName, $newSupplierPersonType, $newSupplierEmail, $newSupplierPhone;
+    public $newSupplierRepName, $newSupplierRepEmail, $newSupplierRepPhone;
+    public $newSupplierShowJuridica = false;
+
     //Metodo que reinicia la paqina conforme a la barra de busqueda
     public function updatingSearch()
     {
@@ -72,9 +87,12 @@ class Machines extends Component
 
     //cambia a la vista de creavion
     public function create()
-    {  
-        $this->view = 'create';
-        $this->resetFields();        
+    {     
+        $this->resetFields();
+        $this->machineTypes = MachineType::all();
+        $this->brands = Brand::all();
+        $this->suppliers = Supplier::all();
+        $this->view = 'create'; // Cambia la vista a 'create'        
     }
 
     //Vuelve al index y limpia los campos
@@ -168,7 +186,7 @@ public function update()
         $this->currentImagePath = $imagePath;
     }
 
-    session()->flash('success', 'Máquina actualizada exitosamente.');
+    $this->dispatch('event-notify', 'Máquina actualizada exitosamente.');
     $this->resetFields();
     $this->view = 'index';
 }
@@ -243,6 +261,130 @@ public function update()
             'suppliers' => Supplier::all(),
         ]);
     }
+
+    // Al seleccionar "+ Crear nuevo tipo"
+    public function updatedMachineTypeId($value)
+    {
+        if ($value === 'new_machine_type') {
+            $this->machine_type_id = '';
+            $this->showNewTypeModal = true;
+        }
+    }
+
+    // Al seleccionar "+ Crear nueva marca"
+    public function updatedBrandId($value)
+    {
+        if ($value === 'new_brand') {
+            $this->brand_id = '';
+            $this->showNewBrandModal = true;
+        }
+    }
+
+    // Al seleccionar "+ Crear nuevo proveedor"
+    public function updatedSupplierNit($value)
+    {
+        if ($value === 'new_supplier') {
+            $this->supplier_nit = '';
+            $this->showNewSupplierModal = true;
+            return;
+        }
+
+        $this->newSupplierShowJuridica = ($value === 'Juridica');
+    }
+
+    public function updatedNewSupplierPersonType($value)
+    {
+        $this->newSupplierShowJuridica = ($value === 'Juridica');
+    }
+
+    //Muestra el modal para crear un nuevo tipo de maquina
+    public function saveNewType()
+    {
+        $this->validate([
+            'newMachineTypeName' => 'required|string|max:100',
+        ]);
+
+        $type = \App\Models\MachineType::create([
+            'name' => $this->newMachineTypeName,
+        ]);
+
+        $this->machineTypes = \App\Models\MachineType::all();
+        $this->machine_type_id = $type->id;
+        $this->newMachineTypeName = '';
+        $this->showNewTypeModal = false;
+
+        $this->dispatch('event-notify', 'Tipo de máquina creado correctamente.');
+    }
+
+    public function saveNewBrand()
+    {
+        $this->validate([
+            'newBrandName' => 'required|string|max:100',
+        ]);
+
+        $brand = \App\Models\Brand::create([
+            'name' => $this->newBrandName,
+        ]);
+
+        $this->brands = \App\Models\Brand::all();
+        $this->brand_id = $brand->id;
+        $this->newBrandName = '';
+        $this->showNewBrandModal = false;
+
+        $this->dispatch('event-notify', 'Marca creada correctamente.');
+    }
+
+    public function saveNewSupplier()
+    {
+        $rules = [
+            'newSupplierNit' => 'required|min:3|max:50|unique:suppliers,nit',
+            'newSupplierName' => 'required|min:3|max:50',
+            'newSupplierPersonType' => 'required|in:Natural,Juridica',
+            'newSupplierEmail' => 'required|email|max:50',
+            'newSupplierPhone' => 'required|min:3|max:50',
+        ];
+
+        if ($this->newSupplierPersonType === 'Juridica') {
+            $rules += [
+                'newSupplierRepName' => 'required|min:3|max:50',
+                'newSupplierRepEmail' => 'required|email|max:50',
+                'newSupplierRepPhone' => 'required|min:3|max:50',
+            ];
+        }
+
+        $this->validate($rules);
+
+        $data = [
+            'nit' => $this->newSupplierNit,
+            'name' => $this->newSupplierName,
+            'person_type' => $this->newSupplierPersonType,
+            'email' => $this->newSupplierEmail,
+            'phone' => $this->newSupplierPhone,
+        ];
+
+        if ($this->newSupplierPersonType === 'Juridica') {
+            $data += [
+                'representative_name' => $this->newSupplierRepName,
+                'representative_email' => $this->newSupplierRepEmail,
+                'representative_phone' => $this->newSupplierRepPhone,
+            ];
+        }
+
+        \App\Models\Supplier::create($data);
+
+        $this->dispatch('event-notify', 'Proveedor creado correctamente.');
+
+        $this->suppliers = \App\Models\Supplier::orderBy('name')->get();
+        $this->supplier_nit = $this->newSupplierNit;
+
+        // Resetea y cierra modal
+        $this->reset([
+            'newSupplierNit', 'newSupplierName', 'newSupplierPersonType', 'newSupplierEmail', 'newSupplierPhone',
+            'newSupplierRepName', 'newSupplierRepEmail', 'newSupplierRepPhone', 'newSupplierShowJuridica'
+        ]);
+        $this->showNewSupplierModal = false;
+    }
+
 
 }
 

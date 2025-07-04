@@ -49,7 +49,7 @@
                     <tr class="table-content">
                         <th scope="row" class="column-item">
                             {{ $machine->serial }}</th>
-                        <td class="column-item">{{ $machine->state_id }}</td>
+                        <td class="column-item">{{ $machine->state->name }}</td>
                         <td class="column-item">
                             @if ($machine->image && Storage::disk('public')->exists($machine->image))
                                 <flux:modal.trigger name="view-image-{{ $machine->serial }}">
@@ -153,42 +153,45 @@
         <div class="w-full lg:w-1/2 flex flex-col gap-4">
             <div>
                 <label>Estado</label>
-                <select wire:model="state_id" class="hover-input w-full px-3 py-2 border border-gray-300 rounded-md">
+                <flux:select wire:model="state_id" class="hover-input w-full px-3 py-2 border border-gray-300 rounded-md">
                     <option value="">Selecciona un estado</option>
                     @foreach ($states as $state)
                         <option value="{{ $state->id }}">{{ $state->name }}</option>
                     @endforeach
-                </select>
+                </flux:select>
             </div>
 
             <div>
                 <label>Tipo de máquina</label>
-                <select wire:model="machine_type_id" class="hover-input w-full px-3 py-2 border border-gray-300 rounded-md">
-                    <option value="">Selecciona un tipo de máquina</option>
+                <flux:select wire:model.live="machine_type_id">
+                    <flux:select.option value="">Selecciona un tipo de máquina</flux:select.option>
                     @foreach ($machine_types as $machine_type)
-                        <option value="{{ $machine_type->id }}">{{ $machine_type->name }}</option>
+                        <flux:select.option value="{{ $machine_type->id }}">{{ $machine_type->name }}</flux:select.option>
                     @endforeach
-                </select>
+                    <flux:select.option value="new_machine_type">+ Crear nuevo tipo</flux:select.option>
+                </flux:select>
             </div>
 
             <div>
                 <label>Marca</label>
-                <select wire:model="brand_id" class="hover-input w-full px-3 py-2 border border-gray-300 rounded-md">
-                    <option value="">Selecciona una marca</option>
+                <flux:select wire:model.live="brand_id">
+                    <flux:select.option value="">Selecciona una marca</flux:select.option>
                     @foreach ($brands as $brand)
-                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                        <flux:select.option value="{{ $brand->id }}">{{ $brand->name }}</flux:select.option>
                     @endforeach
-                </select>
+                    <flux:select.option value="new_brand">+ Crear nueva marca</flux:select.option>
+                </flux:select>
             </div>
 
             <div>
                 <label>Proveedor</label>
-                <select wire:model="supplier_nit" class="hover-input w-full px-3 py-2 border border-gray-300 rounded-md">
-                    <option value="">Selecciona un proveedor</option>
+                <flux:select wire:model.live="supplier_nit">
+                    <flux:select.option value="">Selecciona un proveedor</flux:select.option>
                     @foreach ($suppliers as $supplier)
-                        <option value="{{ $supplier->nit }}">{{ $supplier->name }}</option>
+                        <flux:select.option value="{{ $supplier->nit }}">{{ $supplier->name }}</flux:select.option>
                     @endforeach
-                </select>
+                    <flux:select.option value="new_supplier">+ Crear nuevo proveedor</flux:select.option>
+                </flux:select>
             </div>
 
             <div class="flex justify-end">
@@ -373,4 +376,85 @@
             </div>
     </div>
     @endif
+    {{-- NUEVO TIPO DE MAQUINA --}}
+    @if ($showNewTypeModal)
+        <flux:modal wire:model="showNewTypeModal">
+            <div class="p-4">
+                <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Crear nuevo tipo de máquina</h2>
+
+                <flux:input type="text" wire:model="newMachineTypeName" label="Nombre del tipo" />
+
+                @error('newMachineTypeName')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <flux:button wire:click="$set('showNewTypeModal', false)" size="sm" variant="outline">Cancelar</flux:button>
+                    <flux:button wire:click="saveNewType" size="sm" variant="primary">Crear</flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endif
+
+    {{-- NUEVA MARCA --}}
+    @if ($showNewBrandModal)
+        <flux:modal wire:model="showNewBrandModal">
+            <div class="p-4">
+                <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Crear nueva marca</h2>
+
+                <flux:input type="text" wire:model="newBrandName" label="Nombre de la marca" />
+
+                @error('newBrandName')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <flux:button wire:click="$set('showNewBrandModal', false)" size="sm" variant="outline">Cancelar</flux:button>
+                    <flux:button wire:click="saveNewBrand" size="sm" variant="primary">Crear</flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endif
+
+    {{-- NUEVO PROVEEDOR --}}
+    @if ($showNewSupplierModal)
+        <flux:modal name="new-supplier-modal" wire:model.live.defer="showNewSupplierModal" class="max-w-3xl">
+            <div class="p-6 w-full">
+                <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Crear nuevo proveedor</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <flux:input label="NIT" type="text" wire:model.live="newSupplierNit" />
+                    <flux:input label="Nombre del proveedor" type="text" wire:model.live="newSupplierName" />
+
+                    <flux:select wire:model.live="newSupplierPersonType" label="Tipo de persona">
+                        <option value="">Seleccione una opción</option>
+                        <option value="Natural">Natural</option>
+                        <option value="Juridica">Jurídica</option>
+                    </flux:select>
+                    <div></div>
+
+                    <flux:input label="Correo electrónico" type="email" wire:model.live="newSupplierEmail" />
+                    <flux:input label="Teléfono" type="text" wire:model.live="newSupplierPhone" />
+                </div>
+
+                {{-- Campos de representante, solo si es jurídica --}}
+                @if ($newSupplierShowJuridica)
+                    <hr class="my-4 border-gray-400" />
+                    <h3 class="text-md font-semibold text-gray-700 dark:text-white mb-2">Datos del representante</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <flux:input label="Nombre del representante" type="text" wire:model.live="newSupplierRepName" />
+                        <flux:input label="Correo del representante" type="email" wire:model.live="newSupplierRepEmail" />
+                        <flux:input label="Teléfono del representante" type="text" wire:model.live="newSupplierRepPhone" />
+                    </div>
+                @endif
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <flux:button wire:click="$set('showNewSupplierModal', false)" size="sm" variant="outline">Cancelar</flux:button>
+                    <flux:button wire:click="saveNewSupplier" size="sm" variant="primary">Crear</flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endif
+
 </div>
