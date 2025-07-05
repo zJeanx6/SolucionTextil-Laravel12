@@ -80,17 +80,17 @@
                             <div class="two-actions">
                                 <flux:button.group>
                                     @if(auth()->user()->role_id === 1)
-                                        <flux:button icon="document-magnifying-glass" size="sm" variant="filled" wire:click="show({{ $machine->code }})"/>
-                                    @else {{-- Estilo diferente sino es admin - Detalle --}}
-                                        <flux:button icon="document-magnifying-glass" size="sm" variant="filled" wire:click="show({{ $machine->code }})"> Detalle </flux:button>
+                                        <flux:button icon="document-magnifying-glass" size="sm" variant="filled" wire:click="show('{{ $machine->serial }}')" />
+                                    @else
+                                        <flux:button icon="document-magnifying-glass" size="sm" variant="filled" wire:click="show('{{ $machine->serial }}')">Detalle</flux:button>
                                     @endif
 
-                                    {{-- Solo para role_id = 1 (admin) --}}
                                     @if(auth()->user()->role_id === 1)
-                                        <flux:button icon="pencil-square" size="sm" variant="filled" wire:click="edit({{ $machine->code }})" />
-                                        <flux:button icon="trash" size="sm" variant="danger" wire:click="delete({{ $machine->code }})" />
+                                        <flux:button icon="pencil-square" size="sm" variant="filled" wire:click="edit('{{ $machine->serial }}')" />
+                                        <flux:button icon="trash" size="sm" variant="danger" wire:click="delete('{{ $machine->code }}')" />
                                     @endif
                                 </flux:button.group>
+
                             </div>
                         </td>
                     </tr>
@@ -318,18 +318,18 @@
                     </div>
 
                     <div>
-    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Imagen</label>
-    
-    <div class="relative w-full h-60 bg-gray-100 rounded-md flex items-center justify-center dark:bg-[#2f2f2f]">
-        @if ($image && Storage::disk('public')->exists('machines-images/'.basename($image)))
-            <img src="{{ Storage::url('machines-images/'.basename($image)) }}" 
-                 alt="Imagen de la máquina" 
-                 class="object-cover w-full h-full rounded-md" />
-        @else
-            <span class="text-sm text-gray-500 dark:text-gray-400">No hay imagen disponible</span>
-        @endif
-    </div>
-</div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Imagen</label>
+            
+            <div class="relative w-full h-60 bg-gray-100 rounded-md flex items-center justify-center dark:bg-[#2f2f2f]">
+                @if ($image && Storage::disk('public')->exists('machines-images/'.basename($image)))
+                    <img src="{{ Storage::url('machines-images/'.basename($image)) }}" 
+                        alt="Imagen de la máquina" 
+                        class="object-cover w-full h-full rounded-md" />
+                @else
+                    <span class="text-sm text-gray-500 dark:text-gray-400">No hay imagen disponible</span>
+                @endif
+            </div>
+        </div>
                 </div>
                 
                 {{-- Division --}}

@@ -313,7 +313,7 @@
     <flux:modal.trigger name="salida-modal" />
 
     {{-- ——————————————— MODAL «Devolver Herramienta» ——————————————— --}}
-    <flux:modal name="return-modal" wire:model.live.defer="showReturnModal" class="md:w-[1000px]">
+    <flux:modal name="return-modal" wire:model.live.defer="showReturnModal" class="w-[95vw] max-w-[1800px]">
         <div class="p-4">
             <h3 class="text-lg font-semibold mb-4"> Herramientas Prestadas Pendientes de Devolución </h3>
 
