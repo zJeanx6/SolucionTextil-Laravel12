@@ -3,15 +3,16 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use Livewire\WithPagination;
+use Livewire\WithPagination;// Para paginar resultados
 use Livewire\Attributes\Lazy;
-use Livewire\WithFileUploads;
-use Illuminate\Validation\Rule;
+use Livewire\WithFileUploads;// Para permitir subida de archivos
+use Illuminate\Validation\Rule;// Para reglas de validación condicionales
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\{Element, Roll, Shopping, ShoppingDetail, Loan, LoanDetail, Supplier, User, RollMovement, LoanReturn, ElementMovement};
 
 // #[Lazy]
+
 class ElementsMov extends Component
 {
     use WithPagination, WithFileUploads;
@@ -97,6 +98,7 @@ class ElementsMov extends Component
         'image'           => 'El archivo de :attribute debe ser una imagen.',
     ];
 
+    //Método para inicializar las propiedades del componente
     public function mount(): void
     {
         // Cargar proveedores e instructores
@@ -108,11 +110,13 @@ class ElementsMov extends Component
         $this->elementsBySalidaGroup   = collect([]);
     }
 
+    // Método para renderizar un placeholder mientras se carga el contenido
     public function placeholder()
     {
         return view('livewire.placeholders.skeleton');
     }
 
+    //Metodo que renderiza la vista del componente, se encarga de filtrar, ordenar y paginar los movimientos de elementos
     public function render()
     {
         $query = ElementMovement::select(['id as movement_id', 'type', 'party', 'user', 'file', 'created_at']);
@@ -165,6 +169,7 @@ class ElementsMov extends Component
     public function updatingSearch()     { $this->resetPage(); }
     public function updatingTypeFilter() { $this->resetPage(); }
 
+    // Método para ordenar por un campo específico
     public function sortBy(string $field): void
     {
         $this->sortDirection = $this->sortField === $field
@@ -176,7 +181,7 @@ class ElementsMov extends Component
     }
 
     /* ————————————————————————————————————————————————
-     | MODAL DETALLE DE MOVIMIENTO
+     | MODAL DETALLE DE MOVIMIENTO, abre el modal con el detalle de un movimiento
      |———————————————————————————————————————————————— */
     public function openDetailModal(int $movementId): void
     {

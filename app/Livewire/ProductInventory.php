@@ -9,49 +9,54 @@ use App\Models\{Product, ProductType, Color, Size};
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\{Lazy, On, Url};
 
-// #[Lazy]
+// Componente para gestionar el inventario de productos
 class ProductInventory extends Component
 {
     use WithPagination, WithFileUploads;
 
+    // Vista actual
     public $view = 'index';
 
+    // Filtros de búsqueda y URL
     #[Url(except: '', keep: false, history: true)]
     public $search = '';
 
     #[Url(as: 'edit', except: '', keep: false, history: true)]
     public $editId = '';
 
+    // Ordenamiento
     public $sortField = 'code';
     public $sortDirection = 'desc';
 
+    // Filtros por tipo y color
     public $productTypeFilter = '';
     public $colorFilter = '';
 
+    // Listas para selects
     public $productTypes = [];
     public $colors = [];
     public $sizes = [];
 
-    // Propiedades para create/edit/show
+    // Propiedades del formulario de producto
     public $code, $name, $stock, $photo, $image_path;
     public $color_id = '', $size_id = '', $product_type_id = '';
 
-    // Extra para editar
+    // Código editado
     public $code_edit = '';
 
-    //modales
+    // Modales
     public $showNewTypeModal = false;
     public $showNewColorModal = false;
     public $showNewSizeModal = false;
 
-    // Nuevos colores y tipos
+    // Nuevos valores para crear tipos, colores y tallas
     public $newProductTypeName = '';
     public $newColorName = '';
-    public $newColorCode = ''; // Esta propiedad almacena el valor hexadecimal
+    public $newColorCode = '';
     public $newSizeName = '';
-    public $newSizeAbbreviation = ''; // Añadir esta propiedad para la abreviatura
+    public $newSizeAbbreviation = '';
 
-    // --- Métodos de ciclo de vida ---
+    // Cargar listas iniciales y editar si hay ID
     public function mount(): void
     {
         $this->productTypes = ProductType::orderBy('name')->get();
@@ -63,23 +68,27 @@ class ProductInventory extends Component
         }
     }
 
+    // Vista de carga inicial
     public function placeholder()
     {
         return view('livewire.placeholders.skeleton');
     }
 
+    // Mostrar vista index
     public function index()
     {
         $this->resetAll();
         $this->view = 'index';
     }
 
+    // Mostrar formulario de creación
     public function create()
     {
         $this->resetAll();
         $this->view = 'create';
     }
 
+    // Mostrar detalles de un producto
     public function show($code)
     {
         $this->resetAll();
@@ -96,6 +105,7 @@ class ProductInventory extends Component
         $this->view = 'show';
     }
 
+    // Cargar datos para edición
     public function edit($code)
     {
         $this->resetAll();
@@ -114,32 +124,34 @@ class ProductInventory extends Component
         $this->view = 'edit';
     }
 
+    // Guardar nuevo producto
     public function save()
     {
         $this->validate($this->rulesCreate(), $this->messages(), $this->attributes());
         $path = $this->photo ? $this->photo->store('products', 'public') : null;
 
         Product::create([
-            'code'            => $this->code,
-            'name'            => $this->name,
-            'stock'           => $this->stock,
-            'color_id'        => $this->color_id,
-            'size_id'         => $this->size_id,
+            'code' => $this->code,
+            'name' => $this->name,
+            'stock' => $this->stock,
+            'color_id' => $this->color_id,
+            'size_id' => $this->size_id,
             'product_type_id' => $this->product_type_id,
-            'image'           => $path,
+            'image' => $path,
         ]);
 
         $this->dispatch('event-notify', 'Producto creado.');
         $this->index();
     }
 
+    // Actualizar producto existente
     public function update()
     {
         $this->validate($this->rulesEdit(), $this->messages(), $this->attributes());
 
         $product = Product::where('code', $this->code)->firstOrFail();
 
-        // Nueva foto
+        // Si hay nueva imagen
         if ($this->photo) {
             if ($product->image && Storage::disk('public')->exists($product->image)) {
                 Storage::disk('public')->delete($product->image);
@@ -147,7 +159,7 @@ class ProductInventory extends Component
             $product->image = $this->photo->store('products', 'public');
         }
 
-        // Sin nueva foto, pero usuario quitó la actual
+        // Eliminar imagen si fue quitada
         if (!$this->photo && is_null($this->image_path) && $product->image) {
             if (Storage::disk('public')->exists($product->image)) {
                 Storage::disk('public')->delete($product->image);
@@ -155,24 +167,27 @@ class ProductInventory extends Component
             $product->image = null;
         }
 
+        // Actualizar datos
         $product->update([
-            'name'             => $this->name,
-            'stock'            => $this->stock,
-            'color_id'         => $this->color_id,
-            'size_id'          => $this->size_id,
-            'product_type_id'  => $this->product_type_id,
-            'image'            => $product->image,
+            'name' => $this->name,
+            'stock' => $this->stock,
+            'color_id' => $this->color_id,
+            'size_id' => $this->size_id,
+            'product_type_id' => $this->product_type_id,
+            'image' => $product->image,
         ]);
 
         $this->dispatch('event-notify', 'Producto actualizado.');
         $this->index();
     }
 
+    // Confirmación para eliminar
     public function delete($code)
     {
         $this->dispatch('event-confirm', $code);
     }
 
+    // Confirmación recibida para eliminar
     #[On('deleteConfirmed')]
     public function deleteConfirmed($code)
     {
@@ -184,32 +199,23 @@ class ProductInventory extends Component
         $this->dispatch('event-notify', 'Producto eliminado.');
     }
 
-    // --- Renderizado ---
+    // Renderiza la vista con datos filtrados y ordenados
     public function render()
     {
         $products = Product::query()
-            ->when(
-                $this->search,
-                fn($q) => $q->where(function ($sub) {
-                    $sub->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('code', 'like', '%' . $this->search . '%');
-                })
-            )
-            ->when(
-                $this->productTypeFilter,
-                fn($q) => $q->where('product_type_id', $this->productTypeFilter)
-            )
-            ->when(
-                $this->colorFilter,
-                fn($q) => $q->where('color_id', $this->colorFilter)
-            )
+            ->when($this->search, fn($q) => $q->where(fn($sub) => $sub
+                ->where('name', 'like', "%{$this->search}%")
+                ->orWhere('code', 'like', "%{$this->search}%")
+            ))
+            ->when($this->productTypeFilter, fn($q) => $q->where('product_type_id', $this->productTypeFilter))
+            ->when($this->colorFilter, fn($q) => $q->where('color_id', $this->colorFilter))
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate(12);
 
         return view('livewire.product-inventory', compact('products'));
     }
 
-    // --- Reseteos y helpers ---
+    // Resetear todos los campos
     public function resetAll()
     {
         $this->reset([
@@ -219,79 +225,85 @@ class ProductInventory extends Component
         ]);
     }
 
+    // Reinicia la paginación al cambiar filtros
     public function updatingSearch() { $this->resetPage(); }
     public function updatingProductTypeFilter() { $this->resetPage(); }
     public function updatingColorFilter() { $this->resetPage(); }
 
+    // Cambiar ordenamiento
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
         } else {
-            $this->sortField     = $field;
+            $this->sortField = $field;
             $this->sortDirection = 'asc';
         }
     }
 
-    // --- Validaciones y mensajes ---
+    // Reglas de validación para crear
     public function rulesCreate()
     {
         return [
-            'code'            => 'required|digits_between:5,10|unique:products,code',
-            'name'            => 'required|string|min:3|max:255',
-            'stock'           => 'required|integer|min:0',
-            'color_id'        => 'required|exists:colors,id',
-            'size_id'         => 'required|exists:sizes,id',
+            'code' => 'required|digits_between:5,10|unique:products,code',
+            'name' => 'required|string|min:3|max:255',
+            'stock' => 'required|integer|min:0',
+            'color_id' => 'required|exists:colors,id',
+            'size_id' => 'required|exists:sizes,id',
             'product_type_id' => 'required|exists:product_types,id',
-            'photo'           => 'nullable|image|max:2048',
+            'photo' => 'nullable|image|max:2048',
         ];
     }
 
+    // Reglas de validación para editar
     public function rulesEdit()
     {
         return [
-            'code_edit'        => 'required|integer|exists:products,code',
-            'name'             => 'required|string|min:3|max:255',
-            'stock'            => 'required|integer|min:0',
-            'color_id'         => 'required|exists:colors,id',
-            'size_id'          => 'required|exists:sizes,id',
-            'product_type_id'  => 'required|exists:product_types,id',
-            'photo'            => 'nullable|image|max:2048',
+            'code_edit' => 'required|integer|exists:products,code',
+            'name' => 'required|string|min:3|max:255',
+            'stock' => 'required|integer|min:0',
+            'color_id' => 'required|exists:colors,id',
+            'size_id' => 'required|exists:sizes,id',
+            'product_type_id' => 'required|exists:product_types,id',
+            'photo' => 'nullable|image|max:2048',
         ];
     }
 
+    // Mensajes personalizados
     public function messages()
     {
         return [
             'required' => 'El campo :attribute es obligatorio.',
-            'min'      => 'El campo :attribute debe tener al menos :min.',
-            'max'      => 'El campo :attribute no puede ser mayor a :max.',
-            'integer'  => 'El campo :attribute debe ser un número entero.',
-            'numeric'  => 'El campo :attribute debe ser un número.',
-            'image'    => 'El archivo debe ser una imagen.',
-            'unique'   => 'Ese código ya está registrado.',
-            'exists'   => 'El valor seleccionado no existe.',
+            'min' => 'El campo :attribute debe tener al menos :min.',
+            'max' => 'El campo :attribute no puede ser mayor a :max.',
+            'integer' => 'El campo :attribute debe ser un número entero.',
+            'numeric' => 'El campo :attribute debe ser un número.',
+            'image' => 'El archivo debe ser una imagen.',
+            'unique' => 'Ese código ya está registrado.',
+            'exists' => 'El valor seleccionado no existe.',
             'digits_between' => 'El código debe tener entre :min y :max dígitos.',
             'newColorCode.max' => 'El código de color no puede exceder los 7 caracteres.',
         ];
     }
 
+    // Etiquetas personalizadas
     public function attributes()
     {
         return [
-            'code'            => 'código',
-            'code_edit'       => 'código',
-            'name'            => 'nombre',
-            'stock'           => 'stock',
-            'color_id'        => 'color',
-            'size_id'         => 'talla',
+            'code' => 'código',
+            'code_edit' => 'código',
+            'name' => 'nombre',
+            'stock' => 'stock',
+            'color_id' => 'color',
+            'size_id' => 'talla',
             'product_type_id' => 'tipo de producto',
-            'photo'           => 'imagen',
-            'newColorCode'    => 'código de color',
-            'newColorName'    => 'nombre del color',
+            'photo' => 'imagen',
+            'newColorCode' => 'código de color',
+            'newColorName' => 'nombre del color',
         ];
     }
 
+    // Abrir modal nuevo tipo si se selecciona "crear nuevo"
     public function updatedProductTypeId($value)
     {
         if ($value === 'new_type') {
@@ -300,6 +312,7 @@ class ProductInventory extends Component
         }
     }
 
+    // Abrir modal nueva talla
     public function updatedSizeId($value)
     {
         if ($value === 'new_size') {
@@ -308,6 +321,7 @@ class ProductInventory extends Component
         }
     }
 
+    // Abrir modal nuevo color
     public function updatedColorId($value)
     {
         if ($value === 'new_color') {
@@ -315,48 +329,51 @@ class ProductInventory extends Component
             $this->showNewColorModal = true;
         }
     }
-    
+
+    // Guardar nuevo color desde el modal
     public function saveNewColor()
     {
         $this->validate([
             'newColorName' => 'required|string|min:2|max:50',
             'newColorCode' => 'required|string|max:7',
         ]);
-        
-        $colorCode = substr($this->newColorCode, 0, 7); 
+
+        $colorCode = substr($this->newColorCode, 0, 7);
 
         $color = Color::create([
-            'code' => $colorCode, // Usamos newColorCode para el valor hexadecimal
+            'code' => $colorCode,
             'name' => $this->newColorName,
         ]);
 
         $this->colors = Color::orderBy('name')->get();
-        $this->reset(['newColorName', 'newColorCode']); // Resetear los campos del formulario
-        $this->color_id = $color->id; // El ID es asignado automáticamente por la base de datos
+        $this->reset(['newColorName', 'newColorCode']);
+        $this->color_id = $color->id;
         $this->showNewColorModal = false;
 
         $this->dispatch('event-notify', 'Color creado correctamente');
     }
 
+    // Guardar nueva talla desde el modal
     public function saveNewSize()
     {
         $this->validate([
             'newSizeName' => 'required|string|min:1|max:50',
         ]);
-        
+
         $size = Size::create([
             'name' => $this->newSizeName,
-            'abbreviation' => $this->newSizeAbbreviation ?? null, // Añadir abreviatura si existe
+            'abbreviation' => $this->newSizeAbbreviation ?? null,
         ]);
 
         $this->sizes = Size::orderBy('name')->get();
-        $this->reset(['newSizeName', 'newSizeAbbreviation']); // Resetear ambos campos
+        $this->reset(['newSizeName', 'newSizeAbbreviation']);
         $this->size_id = $size->id;
         $this->showNewSizeModal = false;
 
         $this->dispatch('event-notify', 'Talla creada correctamente');
     }
 
+    // Guardar nuevo tipo desde el modal
     public function saveNewType()
     {
         $type = ProductType::create([
