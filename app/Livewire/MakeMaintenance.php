@@ -94,7 +94,7 @@ class MakeMaintenance extends Component
         // Verificar si el usuario está autenticado
         $user = Auth::user();
         if (!$user) {
-            session()->flash('error', 'No se pudo registrar el mantenimiento: usuario no autenticado.');
+            $this->dispatch('event-notify', 'No se pudo registrar el mantenimiento: usuario no autenticado.');
             return;
         }
 
@@ -125,16 +125,17 @@ class MakeMaintenance extends Component
             'last_maintenance' => $this->maintenance_date
         ]);
 
-        session()->flash('success', 'Mantenimiento registrado exitosamente.');
+        // Notificación con dispatch
+        $this->dispatch('event-notify', 'Mantenimiento registrado exitosamente.');
         $this->view = 'index';
     }
-
+    
     public function render()
     {
         $query = Machine::query()
             ->with(['maintenances' => fn($q) => $q->latest()])
-            ->when($this->search, fn($q) => $q->where('serial', 'like', '%' . $this->search . '%'));
-
+            ->when($this->search, fn($q) => $q->where('serial', 'like', '%' . $this->search . '%'))
+            ->where('company_nit', Auth::user()->company_nit);
         if (!$this->showAll) {
             $query->where(function ($q) {
                 $q->whereNull('last_maintenance')

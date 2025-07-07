@@ -34,7 +34,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($machines as $machine)
+                    @forelse ($machines as $machine)
                         <tr class="table-content">
                             <td class="column-item">{{ $machine->serial }}</td>
                             <td class="column-item">
@@ -53,7 +53,11 @@
                                 </flux:button.group>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-3 py-4 text-center text-gray-500 italic"> No se encontraron maquinas. </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

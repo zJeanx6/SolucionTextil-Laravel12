@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class RecentMaintenanceTable extends Component
 {
@@ -36,6 +37,7 @@ class RecentMaintenanceTable extends Component
                 'maintenances.type as maintenance_type', // Agregamos el tipo de mantenimiento
                 DB::raw("CONCAT(users.name,' ',users.last_name) as user_name")
             )
+            ->where('machines.company_nit', Auth::user()->company_nit)
             ->groupBy(
                 'maintenances.id',
                 'machines.serial',
@@ -56,13 +58,14 @@ class RecentMaintenanceTable extends Component
     {
         $this->selectedMaintenance = DB::table('maintenances')
             ->leftJoin('machines', 'maintenances.serial_id', '=', 'machines.serial')
-            ->leftJoin('users',    'maintenances.card_id',   '=', 'users.card')
+            ->leftJoin('users', 'maintenances.card_id', '=', 'users.card')
             ->select(
                 'maintenances.*',
                 'machines.serial as machine_serial',
                 DB::raw("CONCAT(users.name,' ',users.last_name) as user_name")
             )
             ->where('maintenances.id', $maintenanceId)
+            ->where('machines.company_nit', Auth::user()->company_nit) // Filtrar por company_nit de la máquina
             ->first();
 
         $this->details = DB::table('maintenance_details')

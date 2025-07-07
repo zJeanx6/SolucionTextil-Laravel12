@@ -23,7 +23,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($maintenances as $mt)
+                @forelse ($maintenances as $mt)
                     <tr class="table-content">
                         <td class="column-item">{{ $mt->machine_serial }}</td>
                         <td class="column-item">
@@ -41,7 +41,11 @@
                             </flux:button>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-3 py-4 text-center text-gray-500 italic"> No se encontraron mantenimientos. </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
