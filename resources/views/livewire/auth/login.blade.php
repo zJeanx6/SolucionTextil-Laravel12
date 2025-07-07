@@ -11,6 +11,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
 use App\Models\User;
+use App\Models\Company;
 
 new #[Layout('components.layouts.auth')] class extends Component {
     #[Validate('required|string|email')]
@@ -36,6 +37,17 @@ new #[Layout('components.layouts.auth')] class extends Component {
             RateLimiter::hit($this->throttleKey());
             throw ValidationException::withMessages([
                 'email' => __('El correo electrónico no está registrado.'),
+            ]);
+        }
+
+        // Validar si la empresa del usuario tiene licencia activa
+        $company = Company::where('nit', $user->company_nit)->first();
+        $license = $company ? $company->licenses()->where('state_id', 1)->first() : null;
+
+        if (!$license) {
+            RateLimiter::hit($this->throttleKey());
+            throw ValidationException::withMessages([
+                'email' => __('La empresa no tiene una licencia activa.'),
             ]);
         }
 
@@ -66,11 +78,11 @@ new #[Layout('components.layouts.auth')] class extends Component {
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-    if (in_array($user->role_id, [1, 2, 3])) {
-        $this->redirect(route('dashboard'), navigate: true);
-    } else {
-        $this->redirect(route('home'), navigate: true);
-    }
+        if (in_array($user->role_id, [1, 2, 3])) {
+            $this->redirect(route('dashboard'), navigate: true);
+        } else {
+            $this->redirect(route('home'), navigate: true);
+        }
     }
 
     /**
@@ -146,11 +158,4 @@ new #[Layout('components.layouts.auth')] class extends Component {
             <flux:button variant="primary" type="submit" class="w-full">{{ __('Log in') }}</flux:button>
         </div>
     </form>
-
-    {{-- @if (Route::has('register'))
-        <div class="space-x-1 text-center text-sm text-zinc-600 dark:text-zinc-400">
-            {{ __('Don\'t have an account?') }}
-            <flux:link :href="route('register')" wire:navigate>{{ __('Sign up') }}</flux:link>
-        </div>
-    @endif --}}
 </div>
