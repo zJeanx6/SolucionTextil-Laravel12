@@ -8,6 +8,9 @@ Route::middleware('guest')->group(function () {
     Volt::route('login', 'auth.login')
         ->name('login');
 
+    Volt::route('sa-login', 'auth.sa-login')
+        ->name('sa-login');
+
     Volt::route('register', 'auth.register')
         ->name('register');
 

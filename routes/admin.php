@@ -9,12 +9,18 @@ use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\Admin\MachineController;
-use App\Livewire\ElementsMov;
-use App\Livewire\Reports\InventoryReport;
 use Illuminate\Support\Facades\Route;
 
 // Grupo para admin con acceso total (recuerda que admin puede hacer todo)
-Route::middleware('role:administrador')->group(function () {
+Route::middleware('role:superadmin', 'checkExpiredLicenses')->group(function () {
+    Route::view('sa.dashboard-sa', 'sa.dashboard-sa')->name('sa.dashboard-sa');
+    Route::view('sa.company-sa', 'sa.company-sa')->name('sa.company-sa');
+    Route::view('sa.type-sa', 'sa.type-sa')->name('sa.type-sa');
+    Route::view('sa.license-sa', 'sa.license-sa')->name('sa.license-sa');
+    Route::view('sa.user-sa', 'sa.user-sa')->name('sa.user-sa');
+});
+
+Route::middleware('role:administrador', 'checkExpiredLicenses')->group(function () {
     Route::resource('tallas', SizeController::class)->parameter('tallas', 'size')->names('sizes');
     Route::resource('roles', RoleController::class)->parameter('roles', 'role')->names('roles');
     Route::resource('estados', StateController::class)->parameter('estados', 'state')->names('states');
@@ -29,7 +35,7 @@ Route::middleware('role:administrador')->group(function () {
 });
 
 // Grupo para admin e inventory con acceso solo a productos y elementos
-Route::middleware('role:administrador,inventario')->group(function () {
+Route::middleware('role:administrador,inventario', 'checkExpiredLicenses')->group(function () {
     Route::get('productos', [InventoryController::class, 'products'])->name('products.index');
     Route::get('elementos', [InventoryController::class, 'elements'])->name('elements.index');
     Route::get('elementos/movimiento', [InventoryController::class, 'elementsMovements'])->name('elements.movements');
@@ -37,7 +43,7 @@ Route::middleware('role:administrador,inventario')->group(function () {
 });
 
 // Grupo para admin y maintenance con acceso solo a maintenance
-Route::middleware('role:administrador,mantenimiento')->group(function () {
+Route::middleware('role:administrador,mantenimiento', 'checkExpiredLicenses')->group(function () {
     Route::view('dashboard-maintenance', 'dashboard-maintenance')->name('dashboard-maintenance');
     Route::get('maquinas', [MachineController::class, 'index'])->name('machines.index');
     Route::get('mantenimiento', [MachineController::class, 'makemaintenance'])->name('maintenance.makemaintenance');
