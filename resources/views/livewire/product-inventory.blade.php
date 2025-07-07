@@ -66,7 +66,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($products as $product)
+                    @forelse ($products as $product)
                         <tr wire:key="product-{{ $product->code }}" class="table-content">
                             <td class="column-item">{{ $product->code }}</td>
                             <td class="column-item">{{ $product->name }}</td>
@@ -115,7 +115,11 @@
                                     </div>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-3 py-4 text-center text-gray-500 italic"> No se encontraron productos. </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -139,7 +143,7 @@
                         @foreach ($sizes as $size)
                             <flux:select.option value="{{ $size->id }}">{{ $size->abbreviation ?? $size->name }}</flux:select.option>
                         @endforeach
-                        <flux:select.option value="new_size">+ Crear nueva talla</flux:select.option>
+                         <flux:select.option value="new_size">+ Crear nueva talla</flux:select.option>
                     </flux:select>
                     <flux:select wire:model.live="color_id">
                         <flux:select.option value="">Color</flux:select.option>
@@ -308,6 +312,7 @@
             </div>
         </div>
     @endif
+    
     {{-- NUEVO TIPO DE PRODUCTO --}}
     @if ($showNewTypeModal)
         <flux:modal name="new-product-type-modal" wire:model.live.defer="showNewTypeModal" class="max-w-md">
@@ -370,6 +375,4 @@
             </div>
         </flux:modal>
     @endif
-
-
 </div>

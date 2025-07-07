@@ -47,11 +47,12 @@ class ProductsMov extends Component
     public $productTypes = [];
     public $sizes = [];
     public $colors = [];
+    public $company_nit = '';
 
     //Campos de creacion de productos
     public $product_type_id, $size_id, $color_id, $code, $name, $stock, $photo;
 
-    // Manejo de parámetros en la URL
+
     protected $queryString = [
         'search'        => ['except' => ''],
         'typeFilter'    => ['except' => ''],
@@ -60,22 +61,19 @@ class ProductsMov extends Component
         'page'          => ['except' => 1],
     ];
 
-    // Se ejecuta al montar el componente
     public function mount()
     {
-        $this->products  = Product::orderBy('name')->get();
+        $this->products  = Product::where('company_nit', Auth::user()->company_nit)->orderBy('name')->get();
         $this->suppliers = Supplier::orderBy('name')->get();
         $this->receivers = User::orderBy('name')->get();
         $this->loadData();
     }
 
-    // Placeholder mientras carga
     public function placeholder()
     {
         return view('livewire.placeholders.skeleton');
     }
 
-    // Renderiza la tabla combinada de ingresos y salidas
     public function render()
     {
         // Entradas (tickets)
@@ -83,6 +81,7 @@ class ProductsMov extends Component
             ->join('tickets', 'ticket_details.ticket_id', '=', 'tickets.id')
             ->join('products', 'ticket_details.product_code', '=', 'products.code')
             ->join('users as u', 'tickets.card_id', '=', 'u.card')
+            ->where('products.company_nit', Auth::user()->company_nit)
             ->selectRaw("
                 ticket_details.id AS movement_id,
                 tickets.created_at AS date,
@@ -90,7 +89,7 @@ class ProductsMov extends Component
                 products.code AS product_code,
                 products.name AS product_name,
                 ticket_details.amount AS amount,
-                '' AS party,
+                '' AS party, -- Si quieres mostrar proveedor, ajusta esto
                 CONCAT(u.name, ' ', u.last_name) AS user
             ");
 
@@ -99,6 +98,7 @@ class ProductsMov extends Component
             ->join('exits', 'exit_details.exit_id', '=', 'exits.id')
             ->join('products', 'exit_details.product_code', '=', 'products.code')
             ->join('users as u', 'exits.card_id', '=', 'u.card')
+            ->where('products.company_nit', Auth::user()->company_nit)
             ->selectRaw("
                 exit_details.id AS movement_id,
                 exits.created_at AS date,
@@ -106,23 +106,21 @@ class ProductsMov extends Component
                 products.code AS product_code,
                 products.name AS product_name,
                 exit_details.amount AS amount,
-                '' AS party,
+                '' AS party, -- Si tienes destinatario, ajústalo aquí
                 CONCAT(u.name, ' ', u.last_name) AS user
             ");
 
-        // Unión de movimientos
+        // Unión
         $unionQuery = $ingresos->unionAll($salidas);
 
-        // Subconsulta para aplicar paginación y filtros
+        // Subconsulta para paginación
         $combined = DB::table(DB::raw("({$unionQuery->toSql()}) as movements"))
             ->mergeBindings($unionQuery);
 
-        // Filtro por tipo de movimiento (Ingreso o Salida)
+        // Filtros
         if ($this->typeFilter) {
             $combined->where('type', $this->typeFilter);
         }
-
-        // Filtro por búsqueda (nombre, código, usuario, etc.)
         if ($this->search) {
             $s = strtolower($this->search);
             $combined->where(function($q) use ($s) {
@@ -133,14 +131,11 @@ class ProductsMov extends Component
             });
         }
 
-        // Validación del campo por el que se ordena
+        // Orden
         $allowed = ['date', 'type', 'product_code', 'product_name', 'amount', 'party', 'user'];
         if (!in_array($this->sortField, $allowed)) $this->sortField = 'date';
-
-        // Aplicar ordenamiento
         $combined->orderBy($this->sortField, $this->sortDirection);
 
-        // Paginación
         $movements = $combined->paginate(12);
 
         return view('livewire.products-mov', [
@@ -148,11 +143,9 @@ class ProductsMov extends Component
         ]);
     }
 
-    // Reinicia paginación al cambiar búsqueda o filtro
     public function updatingSearch()    { $this->resetPage(); }
     public function updatingTypeFilter(){ $this->resetPage(); }
 
-    // Alterna orden asc/desc o cambia el campo de orden
     public function sortBy(string $field)
     {
         if ($this->sortField === $field) {
@@ -164,7 +157,7 @@ class ProductsMov extends Component
         $this->resetPage();
     }
 
-    // Abre el modal de ingreso
+    // Modales
     public function openIngresoModal()
     {
         $this->reset(['ingresoProductCode', 'ingresoAmount', 'ingresoSupplier']);
@@ -172,7 +165,6 @@ class ProductsMov extends Component
     }
     public function closeIngresoModal() { $this->showIngresoModal = false; }
 
-    // Abre el modal de salida
     public function openSalidaModal()
     {
         $this->reset(['salidaProductCode', 'salidaAmount', 'salidaReceiver']);
@@ -180,11 +172,11 @@ class ProductsMov extends Component
     }
     public function closeSalidaModal() { $this->showSalidaModal = false; }
 
-    // Guarda movimiento de ingreso
+    // Guardar Ingreso
     public function saveIngreso()
     {
         $this->validate([
-            'ingresoProductCode' => ['required', Rule::exists('products','code')],
+            'ingresoProductCode' => ['required', Rule::exists('products', 'code')->where('company_nit', Auth::user()->company_nit)],
             'ingresoAmount'      => ['required','integer','min:1'],
         ], [], [
             'ingresoProductCode' => 'producto',
@@ -192,19 +184,14 @@ class ProductsMov extends Component
         ]);
 
         DB::transaction(function () {
-            // Crear ticket
             $ticket = Ticket::create([
                 'card_id' => Auth::user()->card,
             ]);
-
-            // Crear detalle del ingreso
             TicketDetail::create([
                 'ticket_id'    => $ticket->id,
                 'product_code' => $this->ingresoProductCode,
                 'amount'       => $this->ingresoAmount,
             ]);
-
-            // Actualizar stock del producto
             $product = Product::lockForUpdate()->findOrFail($this->ingresoProductCode);
             $product->increment('stock', $this->ingresoAmount);
         });
@@ -213,11 +200,11 @@ class ProductsMov extends Component
         $this->closeIngresoModal();
     }
 
-    // Guarda movimiento de salida
+    // Guardar Salida
     public function saveSalida()
     {
         $this->validate([
-            'salidaProductCode' => ['required', Rule::exists('products','code')],
+            'salidaProductCode' => ['required', Rule::exists('products', 'code')->where('company_nit', Auth::user()->company_nit)],
             'salidaAmount'      => ['required','integer','min:1'],
         ], [], [
             'salidaProductCode' => 'producto',
@@ -225,27 +212,20 @@ class ProductsMov extends Component
         ]);
 
         DB::transaction(function () {
-            // Crear salida
             $exit = ProductExit::create([
                 'card_id' => Auth::user()->card,
             ]);
-
-            // Crear detalle de salida
             ExitDetail::create([
                 'exit_id'     => $exit->id,
                 'product_code'=> $this->salidaProductCode,
                 'amount'      => $this->salidaAmount,
             ]);
-
-            // Verificar stock disponible
             $product = Product::lockForUpdate()->findOrFail($this->salidaProductCode);
             if ($product->stock < $this->salidaAmount) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'salidaAmount' => "Stock insuficiente (actual: {$product->stock})",
                 ]);
             }
-
-            // Descontar stock
             $product->decrement('stock', $this->salidaAmount);
         });
 
@@ -253,7 +233,6 @@ class ProductsMov extends Component
         $this->closeSalidaModal();
     }
 
-    // Carga catálogos auxiliares
     public function loadData()
     {
         $this->productTypes = ProductType::orderBy('name')->get();
@@ -261,7 +240,6 @@ class ProductsMov extends Component
         $this->colors = Color::orderBy('name')->get();
     }
 
-    // Maneja opción para crear nuevo tipo desde select
     public function updatedProductTypeId($value)
     {
         if ($value === 'new_type') {
@@ -270,7 +248,6 @@ class ProductsMov extends Component
         }
     }
 
-    // Maneja opción para crear nueva talla desde select
     public function updatedSizeId($value)
     {
         if ($value === 'new_size') {
@@ -279,7 +256,6 @@ class ProductsMov extends Component
         }
     }
 
-    // Maneja opción para crear nuevo color desde select
     public function updatedColorId($value)
     {
         if ($value === 'new_color') {
@@ -288,7 +264,6 @@ class ProductsMov extends Component
         }
     }
 
-    // Guarda nuevo producto desde el modal de creación rápida
     public function save()
     {
         $this->validate([
@@ -302,7 +277,7 @@ class ProductsMov extends Component
         ]);
 
         $photoPath = $this->photo ? $this->photo->store('products', 'public') : null;
-
+        $this->company_nit = Auth::user()->company_nit;
         Product::create([
             'product_type_id' => $this->product_type_id,
             'size_id' => $this->size_id,
@@ -311,21 +286,20 @@ class ProductsMov extends Component
             'name' => $this->name,
             'stock' => $this->stock,
             'photo_path' => $photoPath,
+            'company_nit' =>$this->company_nit,
         ]);
 
-        // Resetear campos y cerrar modal
-        $this->reset(['product_type_id', 'size_id', 'color_id', 'code', 'name', 'stock', 'photo', 'showCreateModal']);
-
+        $this->reset(['company_nit', 'product_type_id', 'size_id', 'color_id', 'code', 'name', 'stock', 'photo', 'showCreateModal']);
+        $this->products  = Product::where('company_nit', Auth::user()->company_nit)->orderBy('name')->get();
         $this->dispatch('event-notify', 'Producto creado correctamente.');
         $this->dispatch('productCreated');
     }
 
-    // Detecta si se eligió "nuevo producto" para abrir el modal de creación
     public function updatedIngresoProductCode($value)
     {
         if ($value === 'new_product') {
-            $this->ingresoProductCode = '';
-            $this->showCreateModal = true;
+            $this->ingresoProductCode = ''; // Limpia para que no quede en el select
+            $this->showCreateModal = true;  // Muestra el modal
         }
     }
 }

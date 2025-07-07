@@ -71,7 +71,7 @@
             <flux:select label="Producto" wire:model.live="ingresoProductCode">
                 <flux:select.option value="">Seleccione producto</flux:select.option>
                 @foreach ($products as $p)
-                    <flux:select.option value="{{ $p->code }}"> {{ $p->name }}</flux:select.option>
+                    <flux:select.option value="{{ $p->code }}">{{ $p->code }} {{ $p->name }}</flux:select.option>
                 @endforeach
                 <flux:select.option value="new_product">+ Crear nuevo producto</flux:select.option>
             </flux:select>
@@ -104,6 +104,7 @@
     </flux:modal>
 
     <flux:modal.trigger name="salida-modal" />
+    
     {{-- MODAL Nuevo Producto --}}
     @if ($showCreateModal)
         <flux:modal name="create-product-modal" wire:model.live.defer="showCreateModal" class="max-w-5xl">
@@ -190,3 +191,4 @@
     @endif
 
 </div>
+
