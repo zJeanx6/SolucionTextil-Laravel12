@@ -3,16 +3,15 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use Livewire\WithPagination;// Para paginar resultados
+use Livewire\WithPagination;
 use Livewire\Attributes\Lazy;
-use Livewire\WithFileUploads;// Para permitir subida de archivos
-use Illuminate\Validation\Rule;// Para reglas de validación condicionales
+use Livewire\WithFileUploads;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\{Element, Roll, Shopping, ShoppingDetail, Loan, LoanDetail, Supplier, User, RollMovement, LoanReturn, ElementMovement};
 
 // #[Lazy]
-
 class ElementsMov extends Component
 {
     use WithPagination, WithFileUploads;
@@ -72,9 +71,8 @@ class ElementsMov extends Component
     public $newSupplierRepName, $newSupplierRepEmail, $newSupplierRepPhone;
     public $newSupplierShowJuridica = false;
     public $supplier_nit = '';
-    //public $ingresoSupplierNit = '';
-
-
+    public $company_nit = '';
+    
 
     protected $queryString = [
         'search'        => ['except' => ''],
@@ -98,7 +96,6 @@ class ElementsMov extends Component
         'image'           => 'El archivo de :attribute debe ser una imagen.',
     ];
 
-    //Método para inicializar las propiedades del componente
     public function mount(): void
     {
         // Cargar proveedores e instructores
@@ -110,15 +107,14 @@ class ElementsMov extends Component
         $this->elementsBySalidaGroup   = collect([]);
     }
 
-    // Método para renderizar un placeholder mientras se carga el contenido
     public function placeholder()
     {
         return view('livewire.placeholders.skeleton');
     }
 
-    //Metodo que renderiza la vista del componente, se encarga de filtrar, ordenar y paginar los movimientos de elementos
     public function render()
     {
+        // Iniciamos la consulta con los movimientos
         $query = ElementMovement::select(['id as movement_id', 'type', 'party', 'user', 'file', 'created_at']);
 
         // 1. Filtro por tipo
@@ -131,25 +127,53 @@ class ElementsMov extends Component
             $s = strtolower($this->search);
             $query->where(function ($q) use ($s) {
                 $q->whereRaw("LOWER(party) LIKE ?", ["%{$s}%"])
-                ->orWhereRaw("CAST(file AS CHAR) LIKE ?", ["%{$s}%"]);
+                    ->orWhereRaw("CAST(file AS CHAR) LIKE ?", ["%{$s}%"]);
             });
         }
 
-        // 3. Ordenamiento solo por columnas permitidas
+        // 3. Filtrar los movimientos según el company_nit de los elementos relacionados (accediendo a través de los modelos correspondientes)
+        $query->where(function ($q) {
+            // Para movimientos de tipo Prestamo (Loan)
+            $q->orWhere(function ($q) {
+                $q->where('movementable_type', 'App\Models\Loan')
+                    ->whereIn('movementable_id', function ($subQuery) {
+                        // Filtrar préstamos por el company_nit de los elementos relacionados
+                        $subQuery->select('loan_details.loan_id')
+                                ->from('loan_details')
+                                ->join('elements', 'loan_details.element_code', '=', 'elements.code')
+                                ->where('elements.company_nit', Auth::user()->company_nit);
+                    });
+            });
+
+            // Para movimientos de tipo Compra (Shopping)
+            $q->orWhere(function ($q) {
+                $q->where('movementable_type', 'App\Models\Shopping')
+                    ->whereIn('movementable_id', function ($subQuery) {
+                        // Filtrar compras por el company_nit de los elementos relacionados
+                        $subQuery->select('shopping_details.shopping_id')
+                                ->from('shopping_details')
+                                ->join('elements', 'shopping_details.element_code', '=', 'elements.code')
+                                ->where('elements.company_nit', Auth::user()->company_nit);
+                    });
+            });
+        });
+
+        // 4. Ordenamiento
         $allowed = ['created_at', 'type', 'party', 'user', 'file'];
-        $sort    = in_array($this->sortField, $allowed) ? $this->sortField : 'created_at';
+        $sort = in_array($this->sortField, $allowed) ? $this->sortField : 'created_at';
         $query->orderBy($sort, $this->sortDirection);
 
-        // 4. Paginación
+        // 5. Paginación
         $movements = $query->paginate(12);
 
-        // 5. Préstamos pendientes (igual)
+        // 6. Préstamos pendientes (mismo filtro por company_nit)
         $pendingReturns = DB::table('loan_details')
             ->join('loans', 'loan_details.loan_id', '=', 'loans.id')
             ->join('elements', 'loan_details.element_code', '=', 'elements.code')
             ->join('users as instr', 'loans.instructor_id', '=', 'instr.card')
             ->leftJoin('loan_returns', 'loan_details.id', '=', 'loan_returns.loan_detail_id')
             ->whereNull('loan_returns.id')
+            ->where('elements.company_nit', Auth::user()->company_nit)  // Filtro por company_nit
             ->whereBetween('elements.element_type_id', [3100, 3999])
             ->select([
                 'loan_details.id AS detail_id',
@@ -158,7 +182,8 @@ class ElementsMov extends Component
                 'instr.name AS instr_name',
                 'instr.last_name AS instr_last',
                 'loans.file'
-            ])->get();
+            ])
+            ->get();
 
         return view('livewire.elements-mov', ['movements' => $movements, 'pendingReturns' => $pendingReturns]);
     }
@@ -169,7 +194,6 @@ class ElementsMov extends Component
     public function updatingSearch()     { $this->resetPage(); }
     public function updatingTypeFilter() { $this->resetPage(); }
 
-    // Método para ordenar por un campo específico
     public function sortBy(string $field): void
     {
         $this->sortDirection = $this->sortField === $field
@@ -181,7 +205,7 @@ class ElementsMov extends Component
     }
 
     /* ————————————————————————————————————————————————
-     | MODAL DETALLE DE MOVIMIENTO, abre el modal con el detalle de un movimiento
+     | MODAL DETALLE DE MOVIMIENTO
      |———————————————————————————————————————————————— */
     public function openDetailModal(int $movementId): void
     {
@@ -217,6 +241,7 @@ class ElementsMov extends Component
      |———————————————————————————————————————————————— */
     public function openIngresoModal(): void
     {
+        $this->resetValidation();
         if (empty($this->suppliers)) {
             $this->suppliers = Supplier::orderBy('name')->get();
         }
@@ -248,8 +273,9 @@ class ElementsMov extends Component
 
     public function openSalidaModal(): void
     {
+        $this->resetValidation();
         if (empty($this->instructors)) {
-            $this->instructors = User::where('role_id', 4)->orderBy('name')->get();
+            $this->instructors = User::where('role_id', 4)->where('company_nit', Auth::user()->company_nit)->orderBy('name')->get();
         }
 
         $this->salidaGroup           = '';
@@ -277,26 +303,41 @@ class ElementsMov extends Component
      |———————————————————————————————————————————————— */
     public function updatedIngresoGroup($value): void
     {
+        $this->resetValidation();
         $this->ingresoGroup           = $value;
-        $this->elementsByIngresoGroup = collect([]);
+        $this->elementsByIngresoGroup = collect([]); // Reiniciar la lista de elementos
 
+        // Filtrar elementos según el grupo de ingreso seleccionado
         switch ($value) {
             case 'G1':
-                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [1100, 1999])->orderBy('name')->get();
+                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [1100, 1999])
+                    ->where('company_nit', Auth::user()->company_nit) // Filtrar por company_nit del usuario autenticado
+                    ->orderBy('name')
+                    ->get();
                 break;
             case 'G2':
-                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [2100, 2999])->orderBy('name')->get();
+                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [2100, 2999])
+                    ->where('company_nit', Auth::user()->company_nit) // Filtrar por company_nit del usuario autenticado
+                    ->orderBy('name')
+                    ->get();
                 break;
             case 'G3':
-                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [3100, 3999])->orderBy('name')->get();
+                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [3100, 3999])
+                    ->where('company_nit', Auth::user()->company_nit) // Filtrar por company_nit del usuario autenticado
+                    ->orderBy('name')
+                    ->get();
                 break;
             case 'G4':
-                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [4100, 4999])->orderBy('name')->get();
+                $this->elementsByIngresoGroup = Element::whereBetween('element_type_id', [4100, 4999])
+                    ->where('company_nit', Auth::user()->company_nit) // Filtrar por company_nit del usuario autenticado
+                    ->orderBy('name')
+                    ->get();
                 break;
             default:
                 $this->elementsByIngresoGroup = collect([]);
         }
 
+        // Reiniciar los campos de ingreso de elementos
         $this->ingresoElementCode = null;
         $this->ingresoBroad       = null;
         $this->ingresoLong        = null;
@@ -454,19 +495,31 @@ class ElementsMov extends Component
 
         switch ($value) {
             case 'G1':
-                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [1100, 1999])->orderBy('name')->get();
+                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [1100, 1999])
+                    ->where('company_nit', Auth::user()->company_nit)
+                    ->orderBy('name')
+                    ->get();
                 break;
             case 'G2':
-                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [2100, 2999])->orderBy('name')->get();
+                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [2100, 2999])
+                    ->where('company_nit', Auth::user()->company_nit)
+                    ->orderBy('name')
+                    ->get();
                 break;
             case 'G3':
-                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [3100, 3999])->orderBy('name')->get();
+                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [3100, 3999])
+                    ->where('company_nit', Auth::user()->company_nit)
+                    ->orderBy('name')
+                    ->get();
                 break;
             case 'G4':
-                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [4100, 4999])->orderBy('name')->get();
+                $this->elementsBySalidaGroup = Element::whereBetween('element_type_id', [4100, 4999])
+                    ->where('company_nit', Auth::user()->company_nit)
+                    ->orderBy('name')
+                    ->get();
                 break;
             default:
-                $this->elementsBySalidaGroup = collect([]);
+                $this->elementsByIngresoGroup = collect([]);
         }
 
         $this->salidaItems = [
@@ -704,6 +757,8 @@ class ElementsMov extends Component
         }
 
         $this->validate($rules);
+        
+        $this->company_nit = Auth::user()->company_nit;
 
         $data = [
             'nit' => $this->newSupplierNit,
@@ -711,7 +766,10 @@ class ElementsMov extends Component
             'person_type' => $this->newSupplierPersonType,
             'email' => $this->newSupplierEmail,
             'phone' => $this->newSupplierPhone,
+            'company_nit' => $this->company_nit,
         ];
+        
+        $this->company_nit = '';
 
         if ($this->newSupplierPersonType === 'Juridica') {
             $data += [
@@ -737,3 +795,4 @@ class ElementsMov extends Component
     }
 
 }
+
