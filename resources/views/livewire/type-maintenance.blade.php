@@ -29,26 +29,32 @@
                     <thead class="head-table">
                         <tr>
                             <th scope="col" class="px-6 py-2 text-center dark:text-white">NOMBRE</th>
+                            <th scope="col" class="px-6 py-2 text-center dark:text-white">TIPO DE MANTENIMIENTO</th>
                             <th scope="col" class="px-6 py-2 text-center dark:text-white">DESCRIPCIÓN</th>
                             <th scope="col" class="px-6 py-2 text-center dark:text-white">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($maintenanceTypes as $type)
-                            <tr class="table-content">
+                        @forelse ($maintenanceTypes as $type)
+                            <tr wire:key="typeMaintenance-{{ $type->id }}" class="table-content">
                                 <th scope="row" class="px-6 py-4 text-center font-medium whitespace-nowrap">
                                     {{ $type->name }}</th>
+                                <td class="px-6 py-4 text-center">{{ $type->type }}</td> 
                                 <td class="px-6 py-4 text-center uppercase">{{ $type->description }}</td>
                                 <td class="px-6 py-4 text-center">
-                                    <div class="flex justify-center">
-                                        <flux:button size="sm" variant="primary"
-                                            wire:click="edit({{ $type->id }})">Editar</flux:button>
-                                        <flux:button size="sm" variant="danger"
-                                            wire:click="delete({{ $type->id }})">Eliminar</flux:button>
+                                    <div class="two-actions">
+                                        <flux:button.group>
+                                            <flux:button size="sm" icon="pencil-square" variant="primary" wire:click="edit({{ $type->id }})"/>
+                                            <flux:button size="sm" icon="trash" variant="danger" wire:click="delete({{ $type->id }})"/>
+                                        </flux:button.group>
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-3 py-4 text-center text-gray-500 italic"> No se encontraron tipos de mantenimiento. </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -71,6 +77,13 @@
                             placeholder="Escribe la descripción del tipo de mantenimiento">Descripción</flux:input>
                     </div>
 
+                    <div class="mb-4">
+                        <flux:radio.group wire:model="maintenance_type" label="Tipo de mantenimiento">
+                            <flux:radio value="Preventivo" label="Preventivo" checked />
+                            <flux:radio value="Correctivo" label="Correctivo" />
+                        </flux:radio.group>
+                    </div>
+
                     <flux:button size="sm" type="submit" variant="primary"> Guardar </flux:button>
                 </form>
             </div>
@@ -84,12 +97,19 @@
 
                 <div class="mb-4">
                     <flux:input class="hover-input" label="Nombre" wire:model="name"
-                        placeholder="Escribe el nombre del tipo de mantenimiento">Nombre</flux:input>
+                                placeholder="Escribe el nombre del tipo de mantenimiento">Nombre</flux:input>
                 </div>
 
                 <div class="mb-4">
                     <flux:input class="hover-input" label="Descripción" wire:model="description"
-                        placeholder="Escribe la descripción del tipo de mantenimiento">Descripción</flux:input>
+                                placeholder="Escribe la descripción del tipo de mantenimiento">Descripción</flux:input>
+                </div>
+
+                <div class="mb-4">
+                    <flux:radio.group wire:model="maintenance_type" label="Tipo de mantenimiento">
+                        <flux:radio value="Preventivo" label="Preventivo" :checked="$maintenance_type === 'Preventivo'" />
+                        <flux:radio value="Correctivo" label="Correctivo" :checked="$maintenance_type === 'Correctivo'" />
+                    </flux:radio.group>
                 </div>
 
                 <flux:button size="sm" variant="primary" wire:click="update">Actualizar</flux:button>

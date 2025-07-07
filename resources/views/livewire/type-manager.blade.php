@@ -49,7 +49,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($types as $type)
+                        @forelse ($types as $type)
                             <tr wire:key="type-{{ $type->id }}" class="table-content">
                                 <td class="column-item">{{ $type->name }}</td>
                                 <td class="column-item">
@@ -63,7 +63,11 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-3 py-4 text-center text-gray-500 italic"> No se encontraron datos. </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
