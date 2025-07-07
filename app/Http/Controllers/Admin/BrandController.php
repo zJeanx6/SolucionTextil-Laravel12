@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 /**
@@ -99,6 +100,21 @@ class BrandController extends Controller
     }
 
     /**
+     * Verifica si la marca tiene registros relacionados en otras tablas
+     *
+     * @param  \App\Models\Brand  $brand
+     * @return bool
+     */
+    private function hasRelatedData(Brand $brand)
+    {
+        // Verificamos si la marca está siendo utilizada por algúna máquina
+        $hasMachines = DB::table('machines')->where('brand_id', $brand->id)->exists();
+
+        // Si la marca está relacionada con productos o máquinas, retornamos true
+        return $hasMachines;
+    }
+
+    /**
      * Elimina la marca de la base de datos.
      *
      * @param  \App\Models\Brand  $brand
@@ -106,8 +122,20 @@ class BrandController extends Controller
      */
     public function destroy(Brand $brand)
     {
+        // Verificamos si la marca tiene registros relacionados
+        $hasRelatedData = $this->hasRelatedData($brand);
+
+        if ($hasRelatedData) {
+            // Si tiene registros relacionados, mostramos un mensaje amigable
+            return redirect()
+                ->route('admin.brands.index')
+                ->with('success', 'No se puede eliminar la marca porque está relacionada con productos o máquinas.');
+        }
+
+        // Si no tiene datos relacionados, proceder con la eliminación
         $brand->delete();
 
+        // Redirigir y mostrar mensaje de éxito
         return redirect()
             ->route('admin.brands.index')
             ->with('success', 'Marca eliminada correctamente.');

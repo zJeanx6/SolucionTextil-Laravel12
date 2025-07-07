@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\{User, Role, State};
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 /**
@@ -22,7 +24,11 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $users = User::where('card', '!=', 1095305042)->orderBy('card', 'desc')->paginate(12);
+        $users = User::where('company_nit', Auth::user()->company_nit)
+                    ->where('role_id', '!=', 9)
+                    ->orderBy('card', 'desc')
+                    ->paginate(12);
+
         return view('admin.users.index', compact('users'));
     }
 
@@ -34,7 +40,7 @@ class UsersController extends Controller
     public function create()
     {
         return view('admin.users.create', [
-            'roles'  => Role::all(),
+            'roles'  => Role::where('id', '!=', 9)->get(),
             'states' => State::whereIn('id', [1, 2])->get(),
         ]);
     }
@@ -65,6 +71,7 @@ class UsersController extends Controller
             'role_id'     => 'required|exists:roles,id',
             'state_id'    => 'required|exists:states,id',
         ]);
+        $data['company_nit'] = Auth::user()->company_nit;
 
         // Hashear contraseña antes de guardar
         $data['password'] = bcrypt($data['password']);
@@ -84,7 +91,7 @@ class UsersController extends Controller
      */
     public function edit(User $user)
     {
-        $roles  = Role::all();
+        $roles  = Role::where('id', '!=', 9)->get();
         $states = State::whereIn('id', [1, 2])->get();
 
         return view('admin.users.edit', compact('user', 'roles', 'states'));
@@ -141,6 +148,25 @@ class UsersController extends Controller
     }
 
     /**
+     * Verifica si el usuario tiene registros relacionados en otras tablas
+     *
+     * @param  User  $user
+     * @return bool
+     */
+    private function hasRelatedData(User $user)
+    {
+        // Verificamos si el usuario tiene registros en las tablas relacionadas
+        $hasLoans = DB::table('loans')->where('card_id', $user->card)->exists();
+        $hasTickets = DB::table('tickets')->where('card_id', $user->card)->exists();
+        $hasShoppings = DB::table('shoppings')->where('card_id', $user->card)->exists();
+        $hasExits = DB::table('exits')->where('card_id', $user->card)->exists();
+        $hasMaintenances = DB::table('maintenances')->where('card_id', $user->card)->exists();
+
+        // Si alguno de los registros existe, retornamos true
+        return $hasLoans || $hasTickets || $hasShoppings || $hasExits || $hasMaintenances;
+    }
+
+    /**
      * Elimina el usuario de la base de datos.
      *
      * @param  User  $user
@@ -148,8 +174,27 @@ class UsersController extends Controller
      */
     public function destroy(User $user)
     {
+        // Verificamos si el usuario está intentando eliminarse a sí mismo
+        if ($user->card == Auth::user()->card) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with('success', 'No te puedes eliminar a ti mismo.');
+        }
+
+        // Verificamos si el usuario tiene registros relacionados
+        $hasRelatedData = $this->hasRelatedData($user);
+
+        if ($hasRelatedData) {
+            // Si tiene registros relacionados, mostramos un mensaje amigable
+            return redirect()
+                ->route('admin.users.index')
+                ->with('success', 'No se puede eliminar el usuario porque está relacionado con otros registros.');
+        }
+
+        // Si no tiene datos relacionados, proceder con la eliminación
         $user->delete();
 
+        // Redirigir y mostrar mensaje de éxito
         return redirect()
             ->route('admin.users.index')
             ->with('success', 'Usuario eliminado correctamente.');

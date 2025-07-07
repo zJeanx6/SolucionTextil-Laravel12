@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 /**
@@ -27,7 +28,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::orderBy('id', 'desc')->paginate(12);
+        $roles = Role::where('id', '!=', 9)->orderBy('id', 'desc')->paginate(12);
         return view('admin.roles.index', compact('roles'));
     }
 
@@ -104,6 +105,21 @@ class RoleController extends Controller
     }
 
     /**
+     * Verifica si el rol tiene registros relacionados en otras tablas
+     *
+     * @param  \App\Models\Role  $role
+     * @return bool
+     */
+    private function hasRelatedData(Role $role)
+    {
+        // Verificamos si el rol está siendo utilizado por algún usuario
+        $hasUsers = DB::table('users')->where('role_id', $role->id)->exists();
+
+        // Si el rol está asociado a algún usuario, retornamos true
+        return $hasUsers;
+    }
+
+    /**
      * Elimina el rol de la base de datos.
      *
      * @param  \App\Models\Role  $role
@@ -111,8 +127,20 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
+        // Verificamos si el rol tiene registros relacionados
+        $hasRelatedData = $this->hasRelatedData($role);
+
+        if ($hasRelatedData) {
+            // Si tiene registros relacionados, mostramos un mensaje amigable
+            return redirect()
+                ->route('admin.roles.index')
+                ->with('success', 'No se puede eliminar el rol porque está asignado a usuarios.');
+        }
+
+        // Si no tiene datos relacionados, proceder con la eliminación
         $role->delete();
 
+        // Redirigir y mostrar mensaje de éxito
         return redirect()
             ->route('admin.roles.index')
             ->with('success', 'Rol eliminado correctamente.');

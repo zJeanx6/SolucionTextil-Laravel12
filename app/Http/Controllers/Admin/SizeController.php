@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Size;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 /**
@@ -109,6 +110,21 @@ class SizeController extends Controller
     }
 
     /**
+     * Verifica si la talla tiene registros relacionados en otras tablas
+     *
+     * @param  \App\Models\Size  $size
+     * @return bool
+     */
+    private function hasRelatedData(Size $size)
+    {
+        // Verificamos si la talla está siendo utilizada en productos, o cualquier otro modelo que use talla
+        $hasProducts = DB::table('products')->where('size_id', $size->id)->exists();
+
+        // Si algún registro está relacionado con la talla, retornamos true
+        return $hasProducts;
+    }
+
+    /**
      * Elimina la talla de la base de datos.
      *
      * @param  \App\Models\Size  $size
@@ -116,8 +132,20 @@ class SizeController extends Controller
      */
     public function destroy(Size $size)
     {
+        // Verificamos si la talla tiene registros relacionados
+        $hasRelatedData = $this->hasRelatedData($size);
+
+        if ($hasRelatedData) {
+            // Si tiene registros relacionados, mostramos un mensaje amigable
+            return redirect()
+                ->route('admin.sizes.index')
+                ->with('success', 'No se puede eliminar la talla porque está relacionada con productos u otros registros.');
+        }
+
+        // Si no tiene datos relacionados, proceder con la eliminación
         $size->delete();
 
+        // Redirigir y mostrar mensaje de éxito
         return redirect()
             ->route('admin.sizes.index')
             ->with('success', 'Talla eliminada correctamente.');

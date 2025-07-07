@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\State;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 /**
@@ -104,6 +105,23 @@ class StateController extends Controller
     }
 
     /**
+     * Verifica si el estado tiene registros relacionados en otras tablas
+     *
+     * @param  \App\Models\State  $state
+     * @return bool
+     */
+    private function hasRelatedData(State $state)
+    {
+        // Verificamos si el estado está siendo utilizado en productos, máquinas, etc.
+        $hasProducts = DB::table('products')->where('state_id', $state->id)->exists();
+        $hasMachines = DB::table('machines')->where('state_id', $state->id)->exists();
+        $hasMachines = DB::table('users')->where('state_id', $state->id)->exists();
+
+        // Si alguno de los registros existe, retornamos true
+        return $hasProducts || $hasMachines;
+    }
+
+    /**
      * Elimina el estado de la base de datos.
      *
      * @param  \App\Models\State  $state
@@ -111,10 +129,23 @@ class StateController extends Controller
      */
     public function destroy(State $state)
     {
+        // Verificamos si el estado tiene registros relacionados
+        $hasRelatedData = $this->hasRelatedData($state);
+
+        if ($hasRelatedData) {
+            // Si tiene registros relacionados, mostramos un mensaje amigable
+            return redirect()
+                ->route('admin.states.index')
+                ->with('success', 'No se puede eliminar el estado porque está relacionado con otros registros.');
+        }
+
+        // Si no tiene datos relacionados, proceder con la eliminación
         $state->delete();
 
+        // Redirigir y mostrar mensaje de éxito
         return redirect()
             ->route('admin.states.index')
             ->with('success', 'Estado eliminado correctamente.');
     }
+
 }

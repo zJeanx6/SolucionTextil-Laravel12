@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Color;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 /**
@@ -106,6 +107,22 @@ class ColorController extends Controller
     }
 
     /**
+     * Verifica si el color tiene registros relacionados en otras tablas
+     *
+     * @param  \App\Models\Color  $color
+     * @return bool
+     */
+    private function hasRelatedData(Color $color)
+    {
+        // Verificamos si el color está siendo utilizado por algún producto o elemento
+        $hasProducts = DB::table('products')->where('color_id', $color->id)->exists();
+        $hasElements = DB::table('elements')->where('color_id', $color->id)->exists();
+
+        // Si el color está relacionado con productos o elementos, retornamos true
+        return $hasProducts || $hasElements;
+    }
+
+    /**
      * Elimina el color de la base de datos.
      *
      * @param  \App\Models\Color  $color
@@ -113,8 +130,20 @@ class ColorController extends Controller
      */
     public function destroy(Color $color)
     {
+        // Verificamos si el color tiene registros relacionados
+        $hasRelatedData = $this->hasRelatedData($color);
+
+        if ($hasRelatedData) {
+            // Si tiene registros relacionados, mostramos un mensaje amigable
+            return redirect()
+                ->route('admin.colors.index')
+                ->with('success', 'No se puede eliminar el color porque está relacionado con productos o elementos.');
+        }
+
+        // Si no tiene datos relacionados, proceder con la eliminación
         $color->delete();
 
+        // Redirigir y mostrar mensaje de éxito
         return redirect()
             ->route('admin.colors.index')
             ->with('success', 'Color eliminado correctamente.');
