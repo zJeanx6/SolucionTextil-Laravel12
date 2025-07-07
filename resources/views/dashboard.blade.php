@@ -12,17 +12,12 @@
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 dark:text-white">Solución Textil</h2>
                     <p class="text-sm text-gray-600 dark:text-zinc-400">Sistema de Gestión de Integral</p>
-                    <flux:badge class="mt-2" variant="outline">Versión 1.0.8</flux:badge>
+                    <flux:badge class="mt-2" variant="outline">Versión 1.1</flux:badge>
                     
                     <div class="mt-4 space-y-3">
                         <p class="text-sm text-gray-600 dark:text-zinc-400">
                             Sistema para la gestión de inventarios, productos, maquinaria y mantenimiento en la industria textil.
                         </p>
-                        {{-- <div class="flex justify-center space-x-1">
-                            @for($i = 1; $i <= 5; $i++)
-                                <flux:icon.star class="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            @endfor
-                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -36,6 +31,23 @@
                             Tu Rol: {{ ucfirst(auth()->user()->role->name) }}
                         </h3>
                     </div>
+
+                    <!-- Información de la empresa y NIT -->
+                    <div class="grid grid-cols-2 gap-4 mb-2">
+                        <div class="w-1/2">
+                            <h4 class="font-medium text-gray-900 dark:text-white">Empresa:</h4>
+                            <p class="text-sm text-gray-600 dark:text-zinc-400">
+                                {{ auth()->user()->company->name ?? 'No disponible' }}
+                            </p>
+                        </div>
+
+                        <div class="w-1/2">
+                            <h4 class="font-medium text-gray-900 dark:text-white">NIT:</h4>
+                            <p class="text-sm text-gray-600 dark:text-zinc-400">
+                                {{ auth()->user()->company_nit ?? 'No disponible' }}
+                            </p>
+                        </div>
+                    </div>
                     
                     <div class="space-y-4">
                         <div>
@@ -45,7 +57,6 @@
                                     <li>• Gestionar elementos y productos</li>
                                     <li>• Registrar movimientos</li>
                                     <li>• Consultar inventarios</li>
-                                    {{-- <li>• Ver reportes básicos</li> --}}
                                 @elseif(auth()->user()->role->name === 'administrador')
                                     <li>• Acceso completo al sistema</li>
                                     <li>• Gestión de usuarios</li>
@@ -55,7 +66,6 @@
                                     <li>• Gestión de máquinas</li>
                                     <li>• Control de mantenimiento</li>
                                     <li>• Reportes de mantenimiento</li>
-                                    {{-- <li>• Consultar inventarios</li> --}}
                                 @endif
                             </ul>
                         </div>
@@ -77,15 +87,15 @@
                             solucionestextilesapp@gmail.com
                         </flux:button>
                         
-                        <flux:button variant="outline" class="w-full justify-start" size="sm">
+                        {{-- <flux:button variant="outline" class="w-full justify-start" size="sm">
                             <flux:icon.phone class="mr-2 h-4 w-4" />
                             +57 (313) 280-0855
-                        </flux:button>
+                        </flux:button> --}}
                         
-                        <flux:button variant="outline" class="w-full justify-start" size="sm">
+                        {{-- <flux:button variant="outline" class="w-full justify-start" size="sm">
                             <flux:icon.book-open class="mr-2 h-4 w-4" />
                             Manual de Usuario
-                        </flux:button>
+                        </flux:button> --}}
                         
                         <hr class="border-gray-200 dark:border-zinc-700">
                         <p class="text-xs text-gray-500 dark:text-zinc-500">

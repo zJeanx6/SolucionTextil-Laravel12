@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Models\{Element, Roll};
+use Illuminate\Support\Facades\Auth;
 use Livewire\Form;
 use Livewire\WithFileUploads;
 
@@ -11,7 +12,7 @@ class ElementCreateForm extends Form
     use WithFileUploads;
 
     //Para datos del formulario
-    public $code, $name, $stock, $broad, $long, $photo;
+    public $code, $name, $stock, $broad, $long, $photo, $company_nit;
     public $element_type_id = '', $color_id = '';
 
     // Solo G-01
@@ -172,6 +173,11 @@ class ElementCreateForm extends Form
     public function save()
     {
         $this->validate();
+        $this->company_nit = Auth::user()->company_nit;
+        
+        if (!in_array('color_id', $this->visibleFields)) {
+            $this->color_id = null;
+        }
 
         $path = $this->photo ? $this->photo->store('elements', 'public') : null;
 
@@ -182,6 +188,7 @@ class ElementCreateForm extends Form
             'color_id'        => $this->color_id,
             'element_type_id' => $this->element_type_id,
             'image'           => $path,
+            'company_nit'     => $this->company_nit, 
         ]);
 
         if ($this->isMetrajeType()) {
@@ -196,6 +203,7 @@ class ElementCreateForm extends Form
             }
         }
 
+        // Restablecer el formulario después de guardar
         $this->reset();
     }
 }
