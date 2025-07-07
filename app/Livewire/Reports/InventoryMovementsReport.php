@@ -5,6 +5,7 @@ namespace App\Livewire\Reports;
 use Livewire\Component;
 use App\Models\User;
 use App\Models\Supplier;
+use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -33,14 +34,20 @@ class InventoryMovementsReport extends Component
 
     public function mount()
     {
-        $this->users = User::whereIn('role_id', [1, 2])->where('card', '!=', 1095305042)->orderBy('name')->get(['card', 'name', 'last_name']);
+        $this->users = User::where('company_nit', Auth::user()->company_nit)
+                            ->whereIn('role_id', [1, 2]) 
+                            ->orderBy('name')
+                            ->get(['card', 'name', 'last_name']);
 
-        $instructors = User::where('role_id', 4)->orderBy('name')->get(['card', 'name', 'last_name'])
-            ->mapWithKeys(fn ($u) => [
-                $u->card => "{$u->name} {$u->last_name}",
-            ]);
+        $instructors = User::where('company_nit', Auth::user()->company_nit)
+                            ->where('role_id', 4)
+                            ->orderBy('name')
+                            ->get(['card', 'name', 'last_name'])
+                            ->mapWithKeys(fn ($u) => [
+                                $u->card => "{$u->name} {$u->last_name}",
+                            ]);
 
-        $suppliers = Supplier::orderBy('name')->pluck('name', 'nit');
+        $suppliers = Supplier::where('company_nit', Auth::user()->company_nit)->orderBy('name')->pluck('name', 'nit');
 
         $this->parties = $instructors->toArray() + $suppliers->toArray();
     }
@@ -91,11 +98,12 @@ class InventoryMovementsReport extends Component
                 'unidad/es' AS unit,
                 loan_returns.return_date AS return_date,
                 CASE
-                  WHEN elements.element_type_id BETWEEN 3100 AND 3999 THEN
+                WHEN elements.element_type_id BETWEEN 3100 AND 3999 THEN
                     CASE WHEN loan_returns.id IS NOT NULL THEN 'Devuelto/a' ELSE 'Prestado/a' END
-                  ELSE 'Para consumo'
+                ELSE 'Para consumo'
                 END AS movement_type
-            ");
+            ")
+            ->where('elements.company_nit', Auth::user()->company_nit); // Aplica filtro company_nit
 
         // COMPRAS
         $shoppings = DB::table('shoppings')
@@ -115,7 +123,8 @@ class InventoryMovementsReport extends Component
                 'unidad/es' AS unit,
                 NULL AS return_date,
                 'Compra de elemento' AS movement_type
-            ");
+            ")
+            ->where('elements.company_nit', Auth::user()->company_nit); // Aplica filtro company_nit
 
         // ENTRADAS
         $tickets = DB::table('ticket_details')
@@ -134,7 +143,8 @@ class InventoryMovementsReport extends Component
                 'unidad/es' AS unit,
                 NULL AS return_date,
                 'Entrada de producto' AS movement_type
-            ");
+            ")
+            ->where('products.company_nit', Auth::user()->company_nit); // Aplica filtro company_nit
 
         // SALIDAS
         $exits = DB::table('exit_details')
@@ -153,7 +163,8 @@ class InventoryMovementsReport extends Component
                 'unidad/es' AS unit,
                 NULL AS return_date,
                 'Salida de producto' AS movement_type
-            ");
+            ")
+            ->where('products.company_nit', Auth::user()->company_nit); // Aplica filtro company_nit
 
         // UNIÓN
         $movements = $loans
@@ -163,7 +174,7 @@ class InventoryMovementsReport extends Component
             ->orderBy('date', 'desc')
             ->get();
 
-        // Aplica filtros (collection)
+        // Aplica filtros adicionales (collection)
         return collect($movements)->filter(function ($row) {
             $start = $this->filters['start_date'];
             $end = $this->filters['end_date'];

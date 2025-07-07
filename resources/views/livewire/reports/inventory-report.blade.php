@@ -21,7 +21,7 @@
                 <flux:select.option value="maintenances">Mantenimientos</flux:select.option>
             </flux:select>
         </div>
-
+        
         @if($reportType === 'products')
             <div>
                 <label class="block text-sm font-medium mb-2">Tipo de producto</label>
@@ -81,9 +81,8 @@
                 <label class="block text-sm font-medium mb-2">Tipo de mantenimiento</label>
                 <flux:select wire:model.live="filters.maintenance_type_id" class="w-full border rounded-md px-2 py-1">
                     <flux:select.option value="">Todos</flux:select.option>
-                    @foreach($maintenanceTypes as $id => $name)
-                        <flux:select.option value="{{ $id }}">{{ $name }}</flux:select.option>
-                    @endforeach
+                    <flux:select.option value="Preventivo">Preventivo</flux:select.option>
+                    <flux:select.option value="Correctivo">Correctivo</flux:select.option>
                 </flux:select>
             </div>
             <div>

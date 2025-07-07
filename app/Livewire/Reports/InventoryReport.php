@@ -17,6 +17,7 @@ use App\Models\State;
 use App\Models\Maintenance;
 use App\Models\MaintenanceType;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class InventoryReport extends Component
 {
@@ -91,13 +92,15 @@ class InventoryReport extends Component
             case 'products':
                 $query = Product::query()
                     ->with(['productType', 'color', 'size'])
-                    ->when($this->filters['product_type_id'], fn($q, $id) => $q->where('product_type_id', $id));
+                    ->when($this->filters['product_type_id'], fn($q, $id) => $q->where('product_type_id', $id))
+                    ->where('company_nit', Auth::user()->company_nit);
                 break;
 
             case 'elements':
                 $query = Element::query()
                     ->with(['elementType', 'color'])
-                    ->when($this->filters['element_type_id'], fn($q, $id) => $q->where('element_type_id', $id));
+                    ->when($this->filters['element_type_id'], fn($q, $id) => $q->where('element_type_id', $id))
+                    ->where('company_nit', Auth::user()->company_nit);
                 break;
 
             case 'machines':
@@ -105,7 +108,8 @@ class InventoryReport extends Component
                     ->with(['machineType', 'brand', 'state'])
                     ->when($this->filters['machine_type_id'], fn($q, $id) => $q->where('machine_type_id', $id))
                     ->when($this->filters['brand_id'], fn($q, $id) => $q->where('brand_id', $id))
-                    ->when($this->filters['state_id'], fn($q, $id) => $q->where('state_id', $id));
+                    ->when($this->filters['state_id'], fn($q, $id) => $q->where('state_id', $id))
+                    ->where('company_nit', Auth::user()->company_nit);
                 break;
 
             case 'maintenances':
@@ -114,7 +118,11 @@ class InventoryReport extends Component
                     ->when($this->filters['maintenance_type_id'], fn($q, $id) => $q->where('type', $id))
                     ->when($this->filters['user_id'], fn($q, $id) => $q->where('user_id', $id))
                     ->when($this->filters['start'], fn($q, $d) => $q->whereDate('created_at', '>=', $d))
-                    ->when($this->filters['end'], fn($q, $d) => $q->whereDate('created_at', '<=', $d));
+                    ->when($this->filters['end'], fn($q, $d) => $q->whereDate('created_at', '<=', $d))
+                    ->whereHas('machine', function ($query) {
+                        // Filtrar las máquinas que tienen el mismo company_nit del usuario autenticado
+                        $query->where('company_nit', Auth::user()->company_nit);
+                    });
                 break;
 
             default:
@@ -138,27 +146,35 @@ class InventoryReport extends Component
                 switch ($this->type) {
                     case 'products':
                         $query = Product::query()->with(['productType', 'color', 'size'])
-                            ->when($this->filters['product_type_id'], fn($q, $id) => $q->where('product_type_id', $id));
+                            ->when($this->filters['product_type_id'], fn($q, $id) => $q->where('product_type_id', $id))
+                            ->where('company_nit', Auth::user()->company_nit);
                         break;
 
                     case 'elements':
                         $query = Element::query()->with(['elementType', 'color'])
-                            ->when($this->filters['element_type_id'], fn($q, $id) => $q->where('element_type_id', $id));
+                            ->when($this->filters['element_type_id'], fn($q, $id) => $q->where('element_type_id', $id))
+                            ->where('company_nit', Auth::user()->company_nit);
                         break;
 
                     case 'machines':
                         $query = Machine::query()->with(['machineType', 'brand', 'state'])
                             ->when($this->filters['machine_type_id'], fn($q, $id) => $q->where('machine_type_id', $id))
                             ->when($this->filters['brand_id'], fn($q, $id) => $q->where('brand_id', $id))
-                            ->when($this->filters['state_id'], fn($q, $id) => $q->where('state_id', $id));
+                            ->when($this->filters['state_id'], fn($q, $id) => $q->where('state_id', $id))
+                            ->where('company_nit', Auth::user()->company_nit);
                         break;
 
                     case 'maintenances':
-                        $query = Maintenance::query()->with(['machine', 'type', 'user', 'details.type'])
+                        $query = Maintenance::query()
+                            ->with(['machine', 'type', 'user', 'details.type'])
                             ->when($this->filters['maintenance_type_id'], fn($q, $id) => $q->where('type', $id))
                             ->when($this->filters['user_id'], fn($q, $id) => $q->where('user_id', $id))
                             ->when($this->filters['start'], fn($q, $d) => $q->whereDate('created_at', '>=', $d))
-                            ->when($this->filters['end'], fn($q, $d) => $q->whereDate('created_at', '<=', $d));
+                            ->when($this->filters['end'], fn($q, $d) => $q->whereDate('created_at', '<=', $d))
+                            ->whereHas('machine', function ($query) {
+                                // Filtrar las máquinas que tienen el mismo company_nit del usuario autenticado
+                                $query->where('company_nit', Auth::user()->company_nit);
+                            });
                         break;
 
                     default:
