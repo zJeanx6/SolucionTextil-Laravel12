@@ -25,7 +25,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($users as $user)
+                @forelse ($users as $user)
                     <tr wire:key="usuario-{{ $user->card }}" class="table-content">
                         <td class="column-item">{{ $user->card }}</td>
                         <td class="column-item">{{ $user->name }}</td>
@@ -52,7 +52,11 @@
                             </div>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-3 py-4 text-center text-gray-500 italic"> No se encontraron usuarios. </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

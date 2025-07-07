@@ -21,7 +21,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($sizes as $size)
+                @forelse ($sizes as $size)
                     <tr wire:key="size-{{ $size->id }}" class="table-content">
                         <td class="column-item">{{ $size->name }}</td>
                         <td class="column-item">{{ $size->abbreviation }}</td>
@@ -39,7 +39,11 @@
                             </div>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-3 py-4 text-center text-gray-500 italic"> No se encontraron tallas. </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

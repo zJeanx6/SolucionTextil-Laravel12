@@ -21,7 +21,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($colors as $color)
+                @forelse ($colors as $color)
                     <tr wire:key="color-{{ $color->id }}" class="table-content">
                         <td class=column-item>#{{ $color->code }}</td>
                         <td class=column-item>{{ $color->name }}</td>
@@ -39,7 +39,11 @@
                             </div>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-3 py-4 text-center text-gray-500 italic"> No se encontraron colores. </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

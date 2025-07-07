@@ -20,7 +20,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($brands as $brand)
+                @forelse ($brands as $brand)
                     <tr wire:key="marca-{{ $brand->id }}" class="table-content">
                         <td class="column-item">{{ $brand->name }}</td>
                         <td class="column-item">
@@ -37,7 +37,11 @@
                             </div>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-3 py-4 text-center text-gray-500 italic"> No se encontraron marcas. </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
