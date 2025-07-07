@@ -76,7 +76,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($elements as $element)
+                        @forelse ($elements as $element)
                             <tr wire:key="element-{{ $element->code }}" class="table-content">
                                 <td class="column-item">{{ $element->code }}</td>
                                 <td class="column-item">{{ $element->name }}</td>
@@ -130,7 +130,11 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-3 py-4 text-center text-gray-500 italic"> No se encontraron elementos. </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
