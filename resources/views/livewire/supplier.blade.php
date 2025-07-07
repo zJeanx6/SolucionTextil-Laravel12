@@ -26,6 +26,7 @@
                 <thead
                     class="head-table">
                     <tr>
+                        <th scope="col" class="px-6 py-3 text-center dark:text-white">TIPO DE PERSONA</th>
                         <th scope="col" class="px-6 py-3 text-center dark:text-white">NIT</th>
                         <th scope="col" class="px-6 py-3 text-center dark:text-white">NOMBRE</th>
                         <th scope="col" class="px-6 py-3 text-center dark:text-white">REPRESENTANTE</th>
@@ -33,13 +34,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($suppliers as $supplier)
+                    @forelse ($suppliers as $supplier)
                     <tr
                         class="table-content">
-                        <th scope="row" class="px-6 py-4 text-center font-medium whitespace-nowrap">
-                            {{ $supplier->nit }}</th>
+                        <td class="px-6 py-4 text-center uppercase">{{ $supplier->person_type }}</td>
+                        <th class="px-6 py-4 text-center font-medium whitespace-nowrap">{{ $supplier->nit }}</th>
                         <td class="px-6 py-4 text-center uppercase">{{ $supplier->name }}</td>
-                        <td class="px-6 py-4 text-center uppercase">{{ $supplier->representative_name }}</td>
+                        <td class="px-6 py-4 text-center uppercase">{{ $supplier->representative_name  ?? 'N/A'}}</td>
                         <td class="px-6 py-4 text-center">
                             <div class="flex justify-center">
                                 <flux:button.group>
@@ -53,7 +54,11 @@
                             </div>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-3 py-4 text-center text-gray-500 italic"> No se encontraron proveedores. </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

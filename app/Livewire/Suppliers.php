@@ -3,6 +3,9 @@
 namespace App\Livewire;
 
 use App\Models\Supplier;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -51,6 +54,7 @@ class Suppliers extends Component
             'person_type' => $this->person_type,
             'email' => $this->email,
             'phone' => $this->phone,
+            'company_nit' => Auth::user()->company_nit,
         ];
 
         if ($this->person_type === 'Juridica') {
@@ -179,12 +183,32 @@ class Suppliers extends Component
         session()->flash('success', 'Proveedor actualizado exitosamente.');
     }
 
-    //Método que elimina un proveedor por su NIT
+    private function hasRelatedData(Supplier $supplier)
+    {
+        return DB::table('machines')
+            ->where('supplier_nit', $supplier->nit)
+            ->exists();
+    }
+
     public function delete($nit)
     {
-        Supplier::findOrFail($nit)->delete(); 
+        $this->dispatch('event-confirm', $nit);
+    }
+
+    #[On('deleteConfirmed')]
+    public function deleteConfirmed($nit)
+    {
+        $supplier = Supplier::findOrFail($nit);
+
+        if ($this->hasRelatedData($supplier)) {
+            $this->dispatch('event-notify', 'No se puede eliminar el proveedor porque está relacionado con máquinas.');
+            return;
+        }
+
+        $supplier->delete();
+
         $this->resetFields(); 
-        session()->flash('success', 'Proveedor eliminado exitosamente.');
+        $this->dispatch('event-notify', 'Proveedor eliminado exitosamente.');
     }
 
     //Método que resetea los campos del formulario
@@ -213,17 +237,17 @@ class Suppliers extends Component
 
     //Método que renderiza la vista del componente
     public function render()
-    {   //Filtrado condicionael si hay texto en la variable search
+    {
         $suppliers = Supplier::query()
+            ->where('company_nit', Auth::user()->company_nit) // Filtrar por company_nit del usuario autenticado
             ->when($this->search, function ($query) {
-            $query->where(function ($q) {
-            $q->where('nit', 'like', '%' . $this->search . '%')
-          ->orWhere('name', 'like', '%' . $this->search . '%')
-          ->orWhere('representative_name', 'like', '%' . $this->search . '%')
-          ->orWhere('email', 'like', '%' . $this->search . '%');
-    });
-})
-
+                $query->where(function ($q) {
+                    $q->where('nit', 'like', '%' . $this->search . '%')
+                    ->orWhere('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('representative_name', 'like', '%' . $this->search . '%')
+                    ->orWhere('email', 'like', '%' . $this->search . '%');
+                });
+            })
             ->paginate(10);
 
         return view('livewire.supplier', [
