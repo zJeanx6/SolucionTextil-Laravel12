@@ -21,6 +21,7 @@ class Product extends Model
         'color_id',
         'size_id',
         'product_type_id',
+        'company_nit',
     ];
 
     public function color()
@@ -31,6 +32,11 @@ class Product extends Model
     public function size()
     {
         return $this->belongsTo(Size::class);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(ProductType::class);
     }
 
     public function productType()

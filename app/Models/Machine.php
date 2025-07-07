@@ -23,6 +23,7 @@ class Machine extends Model
         'brand_id',
         'supplier_nit',
         'last_maintenance',
+        'company_nit',
     ];
 
     public function state()
@@ -33,6 +34,11 @@ class Machine extends Model
     public function machineType()
     {
         return $this->belongsTo(MachineType::class, 'machine_type_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function brand()

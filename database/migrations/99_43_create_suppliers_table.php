@@ -16,11 +16,13 @@ return new class extends Migration
             $table->string('name', 50)->nullable();
             $table->string('email')->unique()->nullable();
             $table->unsignedBigInteger('phone')->nullable();
+            $table->string('company_nit')->nullable();
             
             //Persona Juridica
             $table->string('representative_name', 50)->nullable();
             $table->string('representative_email')->unique()->nullable();
             $table->unsignedBigInteger('representative_phone')->nullable();
+            $table->foreign('company_nit')->references('nit')->on('companies')->onDelete('set null');
         });
     }   
 

@@ -11,24 +11,28 @@ return new class extends Migration
         Schema::create('machine_types', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
+            $table->string('company_nit')->nullable();
+            $table->foreign('company_nit')->references('nit')->on('companies')->onDelete('set null');
         });
-
+        
         Schema::create('machines', function (Blueprint $table) {
             $table->string('serial')->primary();
             $table->string('image')->nullable();
             $table->date('last_maintenance')->nullable();
-
+            
             //Foreings Keys
             $table->unsignedBigInteger('state_id')->nullable();
             $table->unsignedBigInteger('machine_type_id')->nullable();
             $table->unsignedBigInteger('brand_id')->nullable();
             $table->string('supplier_nit')->nullable();
-
+            $table->string('company_nit')->nullable();
+            
             //Config ForeignsKeys
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('set null');
             $table->foreign('state_id')->references('id')->on('states')->onDelete('set null');
             $table->foreign('machine_type_id')->references('id')->on('machine_types')->onDelete('set null');
             $table->foreign('supplier_nit')->references('nit')->on('suppliers')->onDelete('set null');
+            $table->foreign('company_nit')->references('nit')->on('companies')->onDelete('set null');
         });
 
         Schema::create('maintenance_types', function (Blueprint $table) {

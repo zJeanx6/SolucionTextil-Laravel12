@@ -20,6 +20,7 @@ class Element extends Model
         'image',
         'color_id',
         'element_type_id',
+        'company_nit',
     ];
 
     public function color()
@@ -30,6 +31,11 @@ class Element extends Model
     public function elementType()
     {
         return $this->belongsTo(ElementType::class, 'element_type_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_nit');
     }
 
     public function loanDetails()

@@ -17,7 +17,13 @@ class ElementType extends Model
         'id',
         'name',
         'description',
+        'company_nit',
     ];
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 
     public function elements()
     {

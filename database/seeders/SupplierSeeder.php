@@ -23,6 +23,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => null,
                 'representative_email'  => null,
                 'representative_phone'  => null,
+                'company_nit'           => '12345678-1',
             ],
             [
                 'nit'                   => '9000000002',
@@ -33,6 +34,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => null,
                 'representative_email'  => null,
                 'representative_phone'  => null,
+                'company_nit'           => '12345678-1',
             ],
             [
                 'nit'                   => '9000000003',
@@ -43,6 +45,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => null,
                 'representative_email'  => null,
                 'representative_phone'  => null,
+                'company_nit'           => '12345678-1',
             ],
             [
                 'nit'                   => '9000000004',
@@ -53,6 +56,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => null,
                 'representative_email'  => null,
                 'representative_phone'  => null,
+                'company_nit'           => '12345678-1',
             ],
             [
                 'nit'                   => '9000000005',
@@ -63,6 +67,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => null,
                 'representative_email'  => null,
                 'representative_phone'  => null,
+                'company_nit'           => '12345678-1',
             ],
             [
                 'nit'                   => '9000000006',
@@ -73,6 +78,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => null,
                 'representative_email'  => null,
                 'representative_phone'  => null,
+                'company_nit'           => '12345678-2',
             ],
             [
                 'nit'                   => '9000000007',
@@ -83,6 +89,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => null,
                 'representative_email'  => null,
                 'representative_phone'  => null,
+                'company_nit'           => '12345678-2',
             ],
             [
                 'nit'                   => '9000000008',
@@ -93,6 +100,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => null,
                 'representative_email'  => null,
                 'representative_phone'  => null,
+                'company_nit'           => '12345678-2',
             ],
             [
                 'nit'                   => '9000000009',
@@ -103,6 +111,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => null,
                 'representative_email'  => null,
                 'representative_phone'  => null,
+                'company_nit'           => '12345678-2',
             ],
             [
                 'nit'                   => '9000000010',
@@ -113,6 +122,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => null,
                 'representative_email'  => null,
                 'representative_phone'  => null,
+                'company_nit'           => '12345678-2',
             ],
 
             // Proveedores PERSONA JURÍDICA
@@ -125,6 +135,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => 'Carlos Sánchez',
                 'representative_email'  => 'contacto@empresa1.com',
                 'representative_phone'  => 3002234001,
+                'company_nit'           => '12345678-1',
             ],
             [
                 'nit'                   => '8000000002',
@@ -135,6 +146,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => 'Ana Martínez',
                 'representative_email'  => 'contacto@empresa2.com',
                 'representative_phone'  => 3002234002,
+                'company_nit'           => '12345678-1',
             ],
             [
                 'nit'                   => '8000000003',
@@ -145,6 +157,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => 'Luis Rodríguez',
                 'representative_email'  => 'contacto@empresa3.com',
                 'representative_phone'  => 3002234003,
+                'company_nit'           => '12345678-1',
             ],
             [
                 'nit'                   => '8000000004',
@@ -155,6 +168,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => 'Laura Gómez',
                 'representative_email'  => 'contacto@empresa4.com',
                 'representative_phone'  => 3002234004,
+                'company_nit'           => '12345678-1',
             ],
             [
                 'nit'                   => '8000000005',
@@ -165,6 +179,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => 'David Hernández',
                 'representative_email'  => 'contacto@empresa5.com',
                 'representative_phone'  => 3002234005,
+                'company_nit'           => '12345678-1',
             ],
             [
                 'nit'                   => '8000000006',
@@ -175,6 +190,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => 'Patricia López',
                 'representative_email'  => 'contacto@empresa6.com',
                 'representative_phone'  => 3002234006,
+                'company_nit'           => '12345678-2',
             ],
             [
                 'nit'                   => '8000000007',
@@ -185,6 +201,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => 'Jorge Ramírez',
                 'representative_email'  => 'contacto@empresa7.com',
                 'representative_phone'  => 3002234007,
+                'company_nit'           => '12345678-2',
             ],
             [
                 'nit'                   => '8000000008',
@@ -195,6 +212,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => 'Sofía Torres',
                 'representative_email'  => 'contacto@empresa8.com',
                 'representative_phone'  => 3002234008,
+                'company_nit'           => '12345678-2',
             ],
             [
                 'nit'                   => '8000000009',
@@ -205,6 +223,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => 'Miguel Álvarez',
                 'representative_email'  => 'contacto@empresa9.com',
                 'representative_phone'  => 3002234009,
+                'company_nit'           => '12345678-2',
             ],
             [
                 'nit'                   => '8000000010',
@@ -215,6 +234,7 @@ class SupplierSeeder extends Seeder
                 'representative_name'   => 'Camila Díaz',
                 'representative_email'  => 'contacto@empresa10.com',
                 'representative_phone'  => 3002234010,
+                'company_nit'           => '12345678-2',
             ],
         ];
 

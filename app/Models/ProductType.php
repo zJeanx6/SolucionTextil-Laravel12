@@ -13,9 +13,14 @@ class ProductType extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'name'
+        'name',
+        'company_nit',
     ];
 
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
     public function products()
     {
         return $this->hasMany(Product::class, 'product_type_id');

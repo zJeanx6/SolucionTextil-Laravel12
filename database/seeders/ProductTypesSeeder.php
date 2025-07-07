@@ -11,16 +11,16 @@ class ProductTypesSeeder extends Seeder
     public function run(): void
     {
         $types = [
-            ['id' => 1, 'name' => 'Camisa'],
-            ['id' => 2, 'name' => 'Camiseta'],
-            ['id' => 3, 'name' => 'Pantalón'],
-            ['id' => 4, 'name' => 'Falda'],
-            ['id' => 5, 'name' => 'Vestido'],
-            ['id' => 6, 'name' => 'Short'],
-            ['id' => 7, 'name' => 'Chaqueta'],
-            ['id' => 8, 'name' => 'Sudadera'],
-            ['id' => 9, 'name' => 'Blusa'],
-            ['id' => 10, 'name' => 'Saco'],
+            ['id' => 1, 'name' => 'Camisa', 'company_nit'=>'12345678-1'],
+            ['id' => 2, 'name' => 'Camiseta', 'company_nit'=>'12345678-1'],
+            ['id' => 3, 'name' => 'Pantalón', 'company_nit'=>'12345678-1'],
+            ['id' => 4, 'name' => 'Falda', 'company_nit'=>'12345678-1'],
+            ['id' => 5, 'name' => 'Vestido', 'company_nit'=>'12345678-1'],
+            ['id' => 6, 'name' => 'Short', 'company_nit'=>'12345678-2'],
+            ['id' => 7, 'name' => 'Chaqueta', 'company_nit'=>'12345678-2'],
+            ['id' => 8, 'name' => 'Sudadera', 'company_nit'=>'12345678-2'],
+            ['id' => 9, 'name' => 'Blusa', 'company_nit'=>'12345678-2'],
+            ['id' => 10, 'name' => 'Saco', 'company_nit'=>'12345678-2'],
         ];
 
         ProductType::insert($types);

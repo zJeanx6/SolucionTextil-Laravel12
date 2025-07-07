@@ -24,11 +24,17 @@ class Supplier extends Model
         'representative_name',
         'representative_email',
         'representative_phone',
+        'company_nit',
     ];
 
     public function machines()
     {
         return $this->hasMany(Machine::class, 'supplier_nit', 'nit');
+    }
+    
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function shoppings()

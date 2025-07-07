@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password',
         'role_id',
         'state_id',
+        'company_nit'
     ];
 
     protected $hidden = [
@@ -40,6 +41,11 @@ class User extends Authenticatable
     public function state()
     {
         return $this->belongsTo(State::class);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function maintenances()

@@ -15,8 +15,14 @@ class MachineType extends Model
     protected $fillable = [
         'name',
         'description',
+        'company_nit',
     ];
 
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+    
     public function machines()
     {
         return $this->hasMany(Machine::class, 'machine_type_id');

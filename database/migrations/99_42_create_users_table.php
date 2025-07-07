@@ -8,6 +8,34 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::create('companies', function (Blueprint $table) {
+            $table->string('nit')->primary();
+            $table->string('name');
+            $table->string('email');
+            $table->timestamps();
+        });
+
+        Schema::create('license_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->integer('duration');
+            $table->timestamps();
+        });
+
+        Schema::create('licenses', function (Blueprint $table) {
+            $table->string('license', 255)->primary();
+            $table->string('company_nit')->nullable();
+            $table->date('purchase_date');
+            $table->date('end_date');
+            $table->unsignedBigInteger('state_id')->nullable();
+            $table->unsignedBigInteger('license_type_id')->nullable();
+            $table->timestamps();
+            
+            $table->foreign('company_nit')->references('nit')->on('companies')->onDelete('set null');
+            $table->foreign('state_id')->references('id')->on('states')->onDelete('set null');
+            $table->foreign('license_type_id')->references('id')->on('license_types')->onDelete('set null');
+        });
+
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
@@ -24,6 +52,7 @@ return new class extends Migration
             $table->string('password');
             
             //ForeignsKeys
+            $table->string('company_nit')->nullable();
             $table->unsignedBigInteger('role_id')->nullable();
             $table->unsignedBigInteger('state_id')->nullable();
 
@@ -32,6 +61,7 @@ return new class extends Migration
             $table->timestamps();
 
             //Config ForeignsKeys
+            $table->foreign('company_nit')->references('nit')->on('companies')->onDelete('set null');
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('set null');
             $table->foreign('state_id')->references('id')->on('states')->onDelete('set null');
         });
@@ -54,6 +84,9 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::dropIfExists('companies');
+        Schema::dropIfExists('license_types');
+        Schema::dropIfExists('licenses');
         Schema::dropIfExists('roles');
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
